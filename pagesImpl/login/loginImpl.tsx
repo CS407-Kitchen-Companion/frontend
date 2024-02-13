@@ -1,4 +1,6 @@
 import styled from '@emotion/styled'
+import { useRouter } from"next/navigation";
+import { FormEvent } from 'react'
 import React, { useState } from 'react';
 import { PageImplView } from '@pagesImpl/__components__/PageImplView'
 
@@ -17,9 +19,24 @@ export default function LoginImpl() {
 const LoginForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const router = useRouter();
 
-  const handleSubmit = ()  => {
-    // You can handle form submission logic here, e.g., sending data to an API
+  const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
+    event.preventDefault();
+    
+    const res = await fetch("/api/login", {
+      method: "POST",
+      body: JSON.stringify({ username, password }),
+    });
+    const { success } = await res.json();
+    
+
+    if (res.status == 200) { 
+      router.push("/");
+    } else {
+      alert("Login failed" + res.status);
+    }
+
     console.log('Submitted:', { username, password });
   };
 
