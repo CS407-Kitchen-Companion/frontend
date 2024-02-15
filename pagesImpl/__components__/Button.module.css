@@ -1,0 +1,54 @@
+/**css for buttons**/
+
+.error {
+  color: white;
+  background-color: red;
+}
+
+.main_black {
+  background-color: #343C6A; 
+  font-family: Inter;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  display: inline-block;
+  font-size: 24px;
+  cursor: pointer;
+  border-radius: 25px;
+  width: 50%;
+  margin: 0.5em;
+}
+
+.main_black:hover {
+  background-color: #000000;
+}
+
+.circle_grey {
+  background-color: #F5F7FA; 
+  border: none;
+  display: inline-block;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 15px;
+  margin: auto;
+  text-align: center;
+}
+
+.circle_grey:hover {
+  background-color: #dcdee1;
+}
+
+.redIcon { /*on click for save, turn red*/
+  color: red;
+}
+
+.defaultIcon {
+  color: initial; /* Or whatever your default icon color is */
+  border: none;
+  background-color: transparent;
+  align-items: center;
+
+
+}
+

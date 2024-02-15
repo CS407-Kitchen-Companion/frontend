@@ -3,8 +3,10 @@ import { PageImplView } from '@pagesImpl/__components__/PageImplView'
 
 export default function MainImpl() {
   return (
-    <PageImplView>
-      <MainBackgroundWrapper>Main Page</MainBackgroundWrapper>
+    <PageImplView children={undefined}>
+      <MainBackgroundWrapper>
+        <h1>Main Page</h1>
+      </MainBackgroundWrapper>
     </PageImplView>
   )
 }
