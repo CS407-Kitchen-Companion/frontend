@@ -1,12 +1,12 @@
 import styled from '@emotion/styled'
+import { Header } from '@pagesImpl/__components__/Header'
 import { PageImplView } from '@pagesImpl/__components__/PageImplView'
 
 export default function MainImpl() {
   return (
-    <PageImplView children={undefined}>
-      <MainBackgroundWrapper>
-        <h1>Main Page</h1>
-      </MainBackgroundWrapper>
+    <PageImplView>
+      <Header />
+      <MainBackgroundWrapper>Main Page</MainBackgroundWrapper>
     </PageImplView>
   )
 }

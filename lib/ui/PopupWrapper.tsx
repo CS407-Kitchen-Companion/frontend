@@ -4,6 +4,7 @@ import { EaseInCubic, EaseOutCubic, TransitionAnimate, opacityAnimation } from '
 import { Portal } from './Portal'
 import { State } from '@lib/constants'
 import { popUpActions } from '@lib/store/ui/popUp/popUp.slice'
+import { ReactNode } from 'react'
 
 type ComponentState = State.Default | State.Hidden
 
@@ -11,6 +12,7 @@ interface Option {
   state?: ComponentState
   zIndex?: number
   isClosedByOutsideTouch?: boolean
+  children: ReactNode
 }
 
 export const PopUpWrapper: React.FC<Option> = ({
