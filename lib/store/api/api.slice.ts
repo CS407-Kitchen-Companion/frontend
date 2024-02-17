@@ -29,15 +29,20 @@ export const apiSlice = createApi({
   }),
   endpoints(builder) {
     return {
-      submitRegister: builder.mutation<ISubmitRegisterParams, ISubmitRegisterResult>({
+      // POST
+      submitRegister: builder.mutation({
         query: ({ ...body }) => ({
           body: JSON.stringify(body),
           url: '/specific-url',
           method: METHOD_TYPE,
         }),
       }),
+      // GET
+      getRelatedRecipes: builder.query({
+        query: ({ keyword }) => `/specific-url with keyword=${keyword}`,
+      }),
     }
   },
 })
 
-export const { useSubmitRegisterMutation } = apiSlice
+export const { useSubmitRegisterMutation, useGetRelatedRecipesQuery } = apiSlice
