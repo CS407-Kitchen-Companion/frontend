@@ -41,8 +41,11 @@ export const apiSlice = createApi({
       getRelatedRecipes: builder.query({
         query: ({ keyword }) => `/specific-url with keyword=${keyword}`,
       }),
+      getSearchedResults: builder.query({
+        query: ({ keyword }) => `/specific-url with keyword=${keyword}`,
+      }),
     }
   },
 })
 
-export const { useSubmitRegisterMutation, useGetRelatedRecipesQuery } = apiSlice
+export const { useSubmitRegisterMutation, useGetRelatedRecipesQuery, useGetSearchedResultsQuery } = apiSlice

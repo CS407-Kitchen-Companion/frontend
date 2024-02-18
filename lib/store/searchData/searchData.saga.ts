@@ -1,4 +1,4 @@
-import submitRegister from '@lib/store/userData/__sagas__/submitRegister.saga'
 import searchRelatedRecipesSaga from '@lib/store/searchData/__sagas__/searchRelatedRecipes.saga'
+import submitSearchSaga from '@lib/store/searchData/__sagas__/submitSearch.saga'
 
-export default [...searchRelatedRecipesSaga]
+export default [...searchRelatedRecipesSaga, ...submitSearchSaga]

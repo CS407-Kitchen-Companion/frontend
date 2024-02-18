@@ -11,24 +11,18 @@ function* flowSearchRelatedRecipesSaga() {
     return
   }
 
-  const { data, error, isLoading } = yield fetchEndpoint('getRelatedRecipes', {
+  const { data, error } = yield fetchEndpoint('getRelatedRecipes', {
     keyword,
   })
 
-  if (isLoading) {
-    // TODO handle loading
-  }
-
   if (error) {
-    // TODO popup
     yield put(searchDataAction.failureFlowRelatedRecepies())
     return
   }
 
-  const { result } = data
+  const { relatedRecipes } = data
 
-  // TODO success popup
-
+  yield put(searchDataAction.setRelatedRecipes({ relatedRecipes }))
   yield put(searchDataAction.successFlowRelatedRecepies())
 }
 

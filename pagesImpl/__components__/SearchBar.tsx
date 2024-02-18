@@ -21,13 +21,16 @@ export const SearchBar: React.FC = () => {
 
   const handleInputSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    dispatch(searchDataAction.beginFlowSubmitSearch())
     console.log('submit')
   }
 
   const handleRecipeClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
+    const keyword = event.currentTarget.textContent ?? ''
+    dispatch(searchDataAction.setKeyword({ keyword }))
+    dispatch(searchDataAction.beginFlowSubmitSearch())
     console.log('click recipe')
-    // TODO: routing
   }
   return (
     <SearchbarWrapper>
