@@ -4,6 +4,8 @@ import Link from 'next/link'
 
 
 import { PageImplView } from '@pagesImpl/__components__/PageImplView'
+import { Header } from '@pagesImpl/__components__/Header'
+
 import styles from '@pagesImpl/__components__/Button.module.css'
 import ShareIcon from '@mui/icons-material/Share';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
@@ -13,6 +15,128 @@ import PushPinIcon from '@mui/icons-material/PushPin';
 
 
 /**npm install @mui/icons-material */
+
+/** direction step list**/
+const StepList = ({ steps }) => {
+  return (
+    <Container>
+      {steps.map((step, index) => (
+        <Step key={index}>
+          <StepHeader>Step {index + 1}</StepHeader>
+          <StepInstructions>{step}</StepInstructions>
+        </Step>
+      ))}
+    </Container>
+  );
+};
+
+const Container = styled.div`
+  margin-bottom: 20px;
+`;
+
+const Step = styled.div`
+  margin-bottom: 10px;
+`;
+
+const StepHeader = styled.h3`
+  margin-bottom: 5px;
+`;
+
+const StepInstructions = styled.p`
+  margin-bottom: 0;
+`;
+
+
+/** checkbox **/
+const CheckboxStyledList = ({ items }) => {
+  const [checkedItems, setCheckedItems] = useState([]);
+
+  const handleCheckboxChange = (item) => {
+    if (checkedItems.includes(item)) {
+      setCheckedItems(checkedItems.filter((checkedItem) => checkedItem !== item));
+      console.log("DELETED ",(item))
+    } else {
+      setCheckedItems([...checkedItems, item]);
+      
+      console.log("ADDED ",(item))
+    }
+  };
+
+  return (
+    <div>
+      <List>
+        {items.map((item, index) => (
+          <li key={index}>
+            <input
+              type="checkbox"
+              id={`checkbox-${index}`}
+              checked={checkedItems.includes(item)}
+              onChange={() => handleCheckboxChange(item)}
+            />
+            <label htmlFor={`checkbox-${index}`}>{item}</label>
+          </li>
+        ))}
+      </List>
+      {/* 
+      <CheckedList>
+        {checkedItems.length > 0 && (
+          <p>Checked List: {checkedItems.join(', ')}</p>
+        )}
+      </CheckedList>
+       */}
+    </div>
+  );
+};
+
+const List = styled.ul`
+  list-style-type: none;
+  padding: 0 0 0 1em;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #343C6A;
+
+  li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.25rem;
+  }
+
+  input[type='checkbox'] {
+    margin-right: 0.5rem;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 2px solid #343C6A;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type='checkbox']:checked {
+    background-color: #343C6A;
+    //border-color: #343C6A;
+  }
+
+  label {
+    cursor: pointer;
+  }
+
+  /* Responsive two-column layout */
+  @media (min-width: 768px) {
+    columns: 2;
+    column-gap: 10px;
+  }
+`;
+
+const CheckedList = styled.div`
+  margin-top: 1rem;
+`;
 
 
 
@@ -30,6 +154,7 @@ const StyledSaveButton = styled.button`
 function SaveButton() {
   const [isClicked, setIsClicked] = useState(false);
   const handleClick = () => {
+    
     setIsClicked(!isClicked); // Toggle the state
   };
   return (
@@ -38,7 +163,6 @@ function SaveButton() {
     </StyledSaveButton>
   );
 }
-
 
 
 /**three dot more button**/
@@ -69,6 +193,14 @@ const MoreVertButton = () => {
 const ViewPostImpl = () => {
   const [isSticky, setIsSticky] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+  // temp string inputs
+  const groceryItems = ["Apples", "Bananas", "Milk", "Bread", "Eggs", "Coffee", "a pinch of salt", "item1", "item2", "item3", "item4", "item5"];
+  const steps = [
+    'Do something',
+    'Do something else',
+    'Do another thing',
+  ];
+
   const handleClick = () => {
     setIsClicked(!isClicked); // Toggle the state
     setIsSticky(!isSticky); 
@@ -77,9 +209,9 @@ const ViewPostImpl = () => {
   return (
     <PageImplView children={undefined}>
       <MainBackgroundWrapper>
-        <h1>Viewing a Post</h1>
+        <Header/>
         <FloatingCardWrapper>
-          <div>
+          <div> {/* title */}
             <CardPostImg></CardPostImg>
             <AuthorIcon></AuthorIcon>
             <MoreVertButton/>
@@ -101,66 +233,40 @@ const ViewPostImpl = () => {
               </div>     
             </ViewPostSectionWrapper>
           </div>
-
-          <DivSticky isSticky={isSticky}>
+          <DivSticky isSticky={isSticky} > {/* ingredients */}
             <ViewPostSectionWrapperNoBar>
               <AlignRight>
                 <StyledPinButton onClick={handleClick} title="Pin Ingredients" textColor={isClicked ? 'red' : null } >
                   <PushPinIcon sx={{ fontSize: 40 }} />
                 </StyledPinButton>            
               </AlignRight>
-                <SectionTitles>Ingredients</SectionTitles>
-                <StyledList>
-                    <li>1 lemon, thinly sliced</li>
-                    <li>4 sprigs fresh rosemary</li>
-                    <li>2 salmon fillets, bones and skin removed</li>
-                    <li>coarse salt to taste</li>
-                    <li>1 tablespoon olive oil, or as needed</li>
-                    <li>Item 1</li>
-                    <li>Item 2</li>
-                    <li>Item 3</li>
-                    <li>Coffee</li>
-                    <li>Tea</li>
-                    <li>Milk</li>
-                </StyledList>
+              <SectionTitles>Ingredients</SectionTitles>
+              <CheckboxStyledList items={groceryItems}/>
             </ViewPostSectionWrapperNoBar>
           </DivSticky>
-            
-            <ViewPostSectionWrapper>
-                <SectionTitles>Appliances</SectionTitles>
-                <StyledList>
-                    <li>Oven</li>
-                    <li>Refrigerator</li>
-                </StyledList>
-            </ViewPostSectionWrapper>
-            <ViewPostSectionWrapper>
-                <SectionTitles>Directions</SectionTitles>
-                <h3>Step 1</h3>
-                <div>Preheat the oven to 400 degrees F (200 degrees C).</div>
-                <h3>Step 2</h3>
-                <div>
-                Arrange half the lemon slices in a single layer in a baking dish. 
-                Layer with 2 sprigs rosemary, and top with salmon fillets. 
-                Sprinkle salmon with salt, layer with remaining rosemary sprigs, and top with remaining lemon slices. 
-                Drizzle with olive oil.
-                </div>
-                <h3>Step 3</h3>
-                <div>
-                Bake 20 minutes in the preheated oven, or until fish is easily flaked with a fork.
-                </div>
-            </ViewPostSectionWrapper>
-            <ViewPostSectionWrapper>
-                <div>
-                  <button type="button" className={styles.main_black}> I made this! </button>
-                  <button type="button" className={styles.circle_grey}><ShareIcon sx={{color: "#C5C5CF"}} fontSize="medium"/></button>
-                </div>
-            </ViewPostSectionWrapper>
-            <ViewPostSectionWrapper>
-                <SectionTitles>Nutrition Facts</SectionTitles>
-            </ViewPostSectionWrapper>
-            <ViewPostSectionWrapperNoBar>
-                <SectionTitles>Tags</SectionTitles>
-            </ViewPostSectionWrapperNoBar>
+          <ViewPostSectionWrapper> {/* appliances */}
+              <SectionTitles>Appliances</SectionTitles>
+              <StyledList>
+                  <li>Oven</li>
+                  <li>Refrigerator</li>
+              </StyledList>
+          </ViewPostSectionWrapper>
+          <ViewPostSectionWrapper> {/* directions */}
+              <SectionTitles>Directions</SectionTitles>
+              <StepList steps={steps}/>
+          </ViewPostSectionWrapper>
+          <ViewPostSectionWrapper> {/* buttons */}
+              <div>
+                <button type="button" className={styles.main_black}> I made this! </button>
+                <button type="button" className={styles.circle_grey}><ShareIcon sx={{color: "#C5C5CF"}} fontSize="medium"/></button>
+              </div>
+          </ViewPostSectionWrapper>
+          <ViewPostSectionWrapper> {/* nutrition facts */}
+              <SectionTitles>Nutrition Facts</SectionTitles>
+          </ViewPostSectionWrapper>
+          <ViewPostSectionWrapperNoBar> {/* tags */}
+              <SectionTitles>Tags</SectionTitles>
+          </ViewPostSectionWrapperNoBar>
         </FloatingCardWrapper>
       </MainBackgroundWrapper>
     </PageImplView>
@@ -225,7 +331,7 @@ const ServingCalorieTime = styled.div`
 /* TODO: re-due position after add heading */
 const AuthorIcon = styled.div`
   position: absolute;
-  top: 330px; left: 47%;
+  top: 420px; left: 47%;
   width: 90px;
   height: 90px;
   border-radius: 50%;
@@ -235,7 +341,7 @@ const AuthorIcon = styled.div`
 /* img header for viewing posts*/
 const CardPostImg = styled.div`
   width: auto;
-  height: 300px;
+  height: 310px;
   background: blue;
   border-radius: 25px 25px 0px 0px;
 `
@@ -249,8 +355,7 @@ const MainBackgroundWrapper = styled.div`
 const FloatingCardWrapper = styled.div`
   border-radius: 25px;
   background: white;
-  margin-left: 20%;
-  margin-right: 20%;
+  margin: 20px 20% 20% 20%;
 `
 /* sections within the floating card for viewing posts */
 const ViewPostSectionWrapper = styled.div`
