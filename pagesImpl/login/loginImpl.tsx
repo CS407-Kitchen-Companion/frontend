@@ -2,7 +2,9 @@ import styled from '@emotion/styled'
 import { useRouter } from"next/navigation";
 import { FormEvent } from 'react'
 import React, { useState } from 'react';
-import { PageImplView } from '@pagesImpl/__components__/PageImplView'
+import { PageImplView } from '@pagesImpl/__components__/PageImplView';
+import Cookies from 'js-cookie';
+
 
 export default function LoginImpl() {
   return (
@@ -27,16 +29,23 @@ const LoginForm = () => {
     const res = await fetch("/api/login", {
       method: "POST",
       body: JSON.stringify({ username, password }),
+    }).then(response => {
+      if (response.ok) {
+        response.json().then(json => {
+          console.log(json);
+        });
+      }
     });
-    const { success } = await res.json();
     
-
+/*
     if (res.status == 200) { 
-      router.push("/");
+      //const token = Cookies.get('token');
+      console.log(bod);
+     // router.push("/");
     } else {
       alert("Login failed" + res.status);
     }
-
+*/
     console.log('Submitted:', { username, password });
   };
 
