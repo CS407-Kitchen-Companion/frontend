@@ -3,7 +3,7 @@ import { RootState } from '@lib/store/store'
 import { ISubmitRegisterParams, ISubmitRegisterResult } from '@lib/store/api/api.type'
 
 // TODO
-const baseUrl = 'SERVER URL'
+const baseUrl = 'https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/'
 
 const METHOD_TYPE = 'POST'
 
@@ -29,10 +29,17 @@ export const apiSlice = createApi({
   }),
   endpoints(builder) {
     return {
-      submitRegister: builder.mutation<ISubmitRegisterParams, ISubmitRegisterResult>({
+      submitRegister: builder.mutation({
         query: ({ ...body }) => ({
           body: JSON.stringify(body),
-          url: '/specific-url',
+          url: '/new',
+          method: METHOD_TYPE,
+        }),
+      }),
+      submitLogin: builder.mutation({
+        query: ({ ...body }) => ({
+          body: JSON.stringify(body),
+          url: '/login',
           method: METHOD_TYPE,
         }),
       }),
@@ -40,4 +47,4 @@ export const apiSlice = createApi({
   },
 })
 
-export const { useSubmitRegisterMutation } = apiSlice
+export const { useSubmitRegisterMutation,useSubmitLoginMutation } = apiSlice
