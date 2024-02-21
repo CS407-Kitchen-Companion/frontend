@@ -9,16 +9,15 @@ export default function ForgotImpl() {
     <PageImplView>
       <LoginBackgroundWrapper>
         <h1>Forgot Password</h1>
-        <RegisterForm></RegisterForm>
+        <ForgotForm></ForgotForm>
         </LoginBackgroundWrapper>
     </PageImplView>
   )
 }
 
 
-const RegisterForm = () => {
+const ForgotForm = () => {
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const router = useRouter();
 
@@ -27,7 +26,7 @@ const RegisterForm = () => {
     
     const res = await fetch("/api/login", {
       method: "POST",
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username }),
     });
     const { success } = await res.json();
     
@@ -38,7 +37,7 @@ const RegisterForm = () => {
       alert("Login failed" + res.status);
     }
 
-    console.log('Submitted:', { username, password });
+    console.log('Submitted:', { username });
   };
 
   return (
@@ -53,26 +52,8 @@ const RegisterForm = () => {
           required
         />
       </div>
-      <div>
-        <label htmlFor="username">Username:</label>
-        <input
-          type="text"
-          id="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </div>
+      
+      
       <button type="submit">Submit</button>
     </form>
   );
@@ -86,3 +67,15 @@ const LoginBackgroundWrapper = styled.div`
   height: 100vh;
   text-align: center;
 `
+/*
+<div>
+        <label htmlFor="username">Username:</label>
+        <input
+          type="text"
+          id="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+      </div>
+*/

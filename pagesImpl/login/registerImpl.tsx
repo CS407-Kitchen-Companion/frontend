@@ -8,7 +8,7 @@ export default function RegisterImpl() {
   return (
     <PageImplView>
       <LoginBackgroundWrapper>
-        <h1>Login Page</h1>
+        <h1>Register</h1>
         <RegisterForm></RegisterForm>
         </LoginBackgroundWrapper>
     </PageImplView>
@@ -25,28 +25,27 @@ const RegisterForm = () => {
   const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
     event.preventDefault();
     
-    const res = await fetch("/api/login", {
-      method: "POST",
-      body: JSON.stringify({ username, password }),
-    });
-    const { success } = await res.json();
-    
-
-    if (res.status == 200) { 
-      router.push("/");
+    if(!email.includes('@')){
+        alert('Invalid email');
     } else {
-      alert("Login failed" + res.status);
+      router.push("/login");
+      console.log('Submitted:', { username, email });
     }
-
-    console.log('Submitted:', { username, password });
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <label htmlFor="Email">Email:</label>
         <input
+          style={{
+            width: '35%',
+            height: '50px',
+            border: '1px solid #ccc',
+            borderRadius: '20px 20px 0% 0%',
+            textAlign: 'center',
+          }}
           type="text"
+          placeholder='Email'
           id="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -54,9 +53,17 @@ const RegisterForm = () => {
         />
       </div>
       <div>
-        <label htmlFor="username">Username:</label>
         <input
+          style={{
+            width: '35%',
+            height: '50px',
+            border: '1px solid #ccc',
+            borderTop:'none',
+            borderBottom: 'none',
+            textAlign: 'center'
+          }}        
           type="text"
+          placeholder='Username'
           id="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
@@ -64,16 +71,39 @@ const RegisterForm = () => {
         />
       </div>
       <div>
-        <label htmlFor="password">Password:</label>
         <input
+          style={{
+            width: '35%',
+            height: '50px',
+            border: '1px solid #ccc',
+            borderRadius: '0% 0% 20px 20px',
+            borderBottom:'none',
+            textAlign: 'center'
+          }}        
           type="password"
+          placeholder='Password'
           id="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
       </div>
-      <button type="submit">Submit</button>
+      <button
+      style={{
+        width: '30%',
+        height: '50px',
+        border: '1px solid #2A53FF',
+        backgroundColor: '#2A53FF',
+        borderRadius: '20px',
+        color: 'white',
+        fontSize: '15px',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginTop: '20px'
+      }}      
+       type="submit">
+        Submit
+        </button>
     </form>
   );
 };
@@ -85,4 +115,6 @@ const LoginBackgroundWrapper = styled.div`
   width: 100vw;
   height: 100vh;
   text-align: center;
+  margin: 0;
+  padding: 0;
 `

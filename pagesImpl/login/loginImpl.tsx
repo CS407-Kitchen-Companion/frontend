@@ -35,7 +35,7 @@ const LoginForm = () => {
 
   const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
     event.preventDefault();
-    
+    router.push("/");
     console.log('Submitted:', { username, password });
   };
 
