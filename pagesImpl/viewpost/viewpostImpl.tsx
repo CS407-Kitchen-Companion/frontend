@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import React, { useState } from 'react';
 import Link from 'next/link'
+import Image from 'next/image'
 
 
 import { PageImplView } from '@pagesImpl/__components__/PageImplView'
@@ -13,8 +14,55 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PushPinIcon from '@mui/icons-material/PushPin';
 
+import fish from 'public/fish_post_dummy.jpg';
 
 /**npm install @mui/icons-material */
+
+/* img header for viewing posts*/
+const HeaderImageDiv = styled.div`
+  width: 100%;
+  height: 310px; 
+  background-image: url(${props => props.ImageURL});
+  background-size: cover; /* This ensures the image covers the entire div */
+  background-position: center; 
+  overflow: "hidden";
+  border-radius: 25px 25px 0px 0px;
+`;
+const CardPostImg = styled.div`
+  position: "relative"
+  width: 100%;
+  height: 310px;
+  border-radius: 25px 25px 0px 0px;
+  background-color: blue;
+  overflow: "hidden";
+`
+const HeaderImage = ({ headerImageURL }) => {
+
+  return (
+    <CardPostImg>
+      <HeaderImageDiv ImageURL={headerImageURL}/>
+    </CardPostImg>
+    
+  );
+};
+
+/** Author **/
+const authorImageStyle = {
+  borderRadius: '50%',
+  border: '1px solid #fff',
+}
+const AuthorProfileImage = () => {
+  return (
+    <div>
+      <Image src={fish} 
+      width={90}
+      height={90}
+      placeholder = 'empty'
+      alt="Picture of the author"
+      style={authorImageStyle}/>
+    </div>
+  );
+};
 
 /** direction step list**/
 const StepList = ({ steps }) => {
@@ -128,7 +176,7 @@ const List = styled.ul`
   }
 
   /* Responsive two-column layout */
-  @media (min-width: 768px) {
+  @media (min-width: 700px) {
     columns: 2;
     column-gap: 10px;
   }
@@ -164,7 +212,6 @@ function SaveButton() {
   );
 }
 
-
 /**three dot more button**/
 const StyledMoreVertButton = styled.button`
   padding: 10px 10px;
@@ -174,7 +221,6 @@ const StyledMoreVertButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
 `;
-
 const MoreVertButton = () => {
   const [isClicked, setIsClicked] = useState(false);
   const handleClick = () => {
@@ -194,11 +240,14 @@ const ViewPostImpl = () => {
   const [isSticky, setIsSticky] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   // temp string inputs
-  const groceryItems = ["Apples", "Bananas", "Milk", "Bread", "Eggs", "Coffee", "a pinch of salt", "item1", "item2", "item3", "item4", "item5"];
+  const headerImageURL = '/fish_post_dummy.jpg';
+  const groceryItems = ["Apples peeled", "Bananas", "Milk", "Bread", "Eggs", "Coffee", "a pinch of salt", "item1", "item2", "item3", "item4", "item5"];
   const steps = [
-    'Do something',
-    'Do something else',
-    'Do another thing',
+    'Preheat the oven to 400 degrees F (200 degrees C).',
+    'Arrange half the lemon slices in a single layer in a baking dish. Layer with 2 sprigs rosemary, and top with salmon fillets. Sprinkle salmon with salt, layer with remaining rosemary sprigs, and top with remaining lemon slices. Drizzle with olive oil.',
+    'Bake 20 minutes in the preheated oven, or until fish is easily flaked with a fork.',
+    'Do something else.',
+    'Enjoy!!'
   ];
 
   const handleClick = () => {
@@ -212,8 +261,12 @@ const ViewPostImpl = () => {
         <Header/>
         <FloatingCardWrapper>
           <div> {/* title */}
-            <CardPostImg></CardPostImg>
-            <AuthorIcon></AuthorIcon>
+          <HeaderImage headerImageURL={headerImageURL} ></HeaderImage>
+           
+            <AuthorIcon>
+              <AuthorProfileImage/>
+            </AuthorIcon>
+            
             <MoreVertButton/>
             <ViewPostSectionWrapper>
               <br/><br/>
@@ -329,33 +382,33 @@ const ServingCalorieTime = styled.div`
 /* author */
 /* TODO: add author background img */
 /* TODO: re-due position after add heading */
+ 
 const AuthorIcon = styled.div`
   position: absolute;
-  top: 420px; left: 47%;
+  top: 420px; left: 48%;
   width: 90px;
   height: 90px;
   border-radius: 50%;
   background: #FFE0EB;
 `
 
-/* img header for viewing posts*/
-const CardPostImg = styled.div`
-  width: auto;
-  height: 310px;
-  background: blue;
-  border-radius: 25px 25px 0px 0px;
-`
+
 /*grey background */
 const MainBackgroundWrapper = styled.div`
   background: #f5f7fa;
   padding-bottom: 1em;   
   font-family: Inter;
+  align: center;
 `
 /* floating card for viewing posts */
 const FloatingCardWrapper = styled.div`
   border-radius: 25px;
   background: white;
-  margin: 20px 20% 20% 20%;
+  width: 850px;
+  margin: 20px auto 20px auto;
+  @media (max-width: 800px) {
+    width: auto;
+  }
 `
 /* sections within the floating card for viewing posts */
 const ViewPostSectionWrapper = styled.div`
@@ -396,7 +449,7 @@ const StyledList = styled.ul`
   list-style: disc;
 
   /* Responsive two-column layout */
-  @media (min-width: 768px) {
+  @media (min-width: 700px) {
     columns: 2;
     column-gap: 10px;
   }
