@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 import React, { useState, useEffect } from 'react';
+
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -17,6 +18,100 @@ import PushPinIcon from '@mui/icons-material/PushPin';
 import fish from 'public/fish_post_dummy.jpg';
 
 /**npm install @mui/icons-material */
+const StarRating = () => {
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/recipe/1')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch rating');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data)
+        setRating(data.data.calculatedRating);
+      })
+      .catch(error => {
+        console.error('Error fetching rating:', error);
+      });
+  }, []);
+
+  const handleRatingClick = (ratingValue) => {
+    console.log('User rated:', ratingValue);
+    setRating(ratingValue);
+  
+    if (!submitted) {
+      fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/rating/new', {
+        method: 'POST',
+        body: JSON.stringify({ "recipe_id": 1, "rating": ratingValue }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        setSubmitted(true);
+      })
+      .catch(error => console.error('Error:', error));
+    }
+  };  
+
+  const handleMouseOver = (ratingValue) => {
+    setHoverRating(ratingValue);
+  };
+
+  const handleMouseLeave = () => {
+    setHoverRating(0);
+  };
+
+  const renderStars = () => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <Star
+          key={i}
+          filled={i <= (hoverRating || rating)}
+          onClick={() => handleRatingClick(i)}
+          onMouseOver={() => handleMouseOver(i)}
+          onMouseLeave={handleMouseLeave}
+        >
+          &#9733;
+        </Star>
+      );
+    }
+    return stars;
+  };
+
+  return (
+    <div>
+      {renderStars()}
+      {submitted && (
+        <SubmitButton onClick={() => setSubmitted(false)}>Confirm Rating</SubmitButton>
+      )}
+    </div>
+  );
+};
+
+
+const RatingContainer = styled.div`
+  display: flex;
+`;
+
+const Star = styled.span`
+  font-size: 50px;
+  color: ${props => (props.filled ? "#ffc107" : "#e4e5e9")};
+  transition: color 0.2s;
+
+  &:hover {
+    color: #ff5733;
+  }
+`;
+
 
 /* img header for viewing posts*/
 const HeaderImageDiv = styled.div`
@@ -115,7 +210,10 @@ const Container = styled.div`
 const Step = styled.div`
   margin-bottom: 10px;
 `;
-
+const Gap = styled.div`
+  margin-left: 60px;
+  margin-right: 60px;
+`;
 const StepHeader = styled.h3`
   margin-bottom: 5px;
 `;
@@ -124,6 +222,16 @@ const StepInstructions = styled.p`
   margin-bottom: 0;
 `;
 
+const SubmitButton = styled.button`
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  width: 40%;
+  height: 40px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+`;
 /** checkbox **/
 const CheckboxStyledList = ({ items }) => {
   const [checkedItems, setCheckedItems] = useState([]);
@@ -268,6 +376,7 @@ const MoreVertButton = () => {
 const ViewPostImpl = () => {
   const [isSticky, setIsSticky] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+
   // temp string inputs
   const headerImageURL = '/fish_post_dummy.jpg';
   const groceryItems = ["Apples peeled", "Bananas", "Milk", "Bread", "Eggs", "Coffee", "a pinch of salt", "item1", "item2", "item3", "item4", "item5"];
@@ -321,7 +430,14 @@ const ViewPostImpl = () => {
             <ViewPostSectionWrapper>
               <br/><br/>
               <div>
+                <DivFlex>
                 <TitleText>{recipeData.title} <SaveButton/> </TitleText>
+                <Gap></Gap>
+                <StarRating/>
+
+                </DivFlex>
+                
+                
                 <DivFlex>
                   <AuthorAndDate> Author:  </AuthorAndDate>
                   {/*TODO: change link to author profile from id*/}
