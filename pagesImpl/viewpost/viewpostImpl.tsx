@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -19,6 +19,15 @@ import fish from 'public/fish_post_dummy.jpg';
 /**npm install @mui/icons-material */
 
 /* img header for viewing posts*/
+const HeaderImage = ({ headerImageURL }) => {
+
+  return (
+    <CardPostImg>
+      <HeaderImageDiv ImageURL={headerImageURL}/>
+    </CardPostImg>
+    
+  );
+};
 const HeaderImageDiv = styled.div`
   width: 100%;
   height: 310px; 
@@ -36,15 +45,6 @@ const CardPostImg = styled.div`
   background-color: blue;
   overflow: "hidden";
 `
-const HeaderImage = ({ headerImageURL }) => {
-
-  return (
-    <CardPostImg>
-      <HeaderImageDiv ImageURL={headerImageURL}/>
-    </CardPostImg>
-    
-  );
-};
 
 /** Author **/
 const authorImageStyle = {
@@ -78,6 +78,17 @@ const StepList = ({ steps }) => {
   );
 };
 
+
+/* two column layout for bullet lists */
+const TwoStyledList = ({ items }) => {
+  return (
+    <TwoColumnStyledList>
+      {items.map((item, index) => (
+        <li key={index}>{item}</li>
+      ))}
+    </TwoColumnStyledList>
+  );
+};
 const TwoColumnStyledList = styled.ul`
   list-style-type: disc;
   padding: 0 0 0 1em;
@@ -97,29 +108,15 @@ const TwoColumnStyledList = styled.ul`
   }
 `;
 
-/* two column layout for bullet lists */
-const TwoStyledList = ({ items }) => {
-  return (
-    <TwoColumnStyledList>
-      {items.map((item, index) => (
-        <li key={index}>{item}</li>
-      ))}
-    </TwoColumnStyledList>
-  );
-};
-
 const Container = styled.div`
   margin-bottom: 20px;
 `;
-
 const Step = styled.div`
   margin-bottom: 10px;
 `;
-
 const StepHeader = styled.h3`
   margin-bottom: 5px;
 `;
-
 const StepInstructions = styled.p`
   margin-bottom: 0;
 `;
@@ -164,7 +161,6 @@ const CheckboxStyledList = ({ items }) => {
     </div>
   );
 };
-
 const List = styled.ul`
   list-style-type: none;
   padding: 0 0 0 1em;
@@ -210,7 +206,6 @@ const List = styled.ul`
     column-gap: 10px;
   }
 `;
-
 const CheckedList = styled.div`
   margin-top: 1rem;
 `;
@@ -218,28 +213,7 @@ const CheckedList = styled.div`
 
 
 
-/**saved button */
-const StyledSaveButton = styled.button`
-  text-align: center;
-  color: ${props => props.textColor || 'lightgrey'};
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  transition: color 0.3s ease; // Transition for color change
-  
-`;
-function SaveButton() {
-  const [isClicked, setIsClicked] = useState(false);
-  const handleClick = () => {
-    
-    setIsClicked(!isClicked); // Toggle the state
-  };
-  return (
-    <StyledSaveButton onClick={handleClick} title="Save Recipe" textColor={isClicked ? 'red' : null }>
-      <BookmarkIcon sx={{ fontSize: 40 }} />
-    </StyledSaveButton>
-  );
-}
+
 
 /**three dot more button**/
 const StyledMoreVertButton = styled.button`
@@ -265,27 +239,183 @@ const MoreVertButton = () => {
   );
 };
 
+
+
+
+
+const DialogueBox = styled.div`
+  display: float;
+  height: 15rem;
+  width: 10rem;
+  background-color: #fff;
+  border-radius: 25px;
+  border: 3px solid #f5f7fa;
+  padding: 20px;
+
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+`;
+
+const SaveMsg = styled.div`
+  font-style: normal;
+  font-weight: 500;
+  font-size: 10px;
+  color: 'lightgrey'};
+`
+
+
+const OpenButton = styled.button`
+  text-align: center;
+  color: ${props => props.textColor || 'lightgrey'};
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease; // Transition for color change
+`;
+
+const InlineCenteredDiv = styled.div`
+  display: flex;
+  //justify-content: center;
+  align-items: center;
+`;
+
+/**saved button */
+const SaveButton = () => {
+  const [isOpen, setIsOpen] = useState(false);  //for dialogue box
+  const [isSaved, setIsSaved] = useState(false);  //for save button
+  const [showMessage, setShowMessage] = useState(false); //for saved or unsaved msg
+  const [msg, setMsg] = useState('');
+  const dialogRef = useRef(null);
+  const openButtonRef = useRef(null);
+
+
+  const clickSave = () => {
+    setIsSaved(!isSaved); // save and unsave
+    if (!isSaved)
+    { //save recipe
+      setMsg("Saved Recipe");
+      setShowMessage(true); //show saved message
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 5000);
+
+      //only show folder box if we want to save recipe
+      setIsOpen(!isOpen);
+    }
+    else
+    { //unsave recipe
+      setMsg("Unsaved Recipe");
+      setShowMessage(true); //show saved message
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 5000);
+
+      setIsOpen(false); //close dialogue
+    }
+  };
+
+  //position dilogue right under button
+  const positionDialogBox = () => {
+    if (openButtonRef.current) {
+      const buttonRect = openButtonRef.current.getBoundingClientRect();
+      const top = buttonRect.bottom + window.scrollY;
+      const left = buttonRect.left + window.scrollX;
+
+      return { top, left };
+    }
+    return { top: 0, left: 0 };
+  };
+  //checks if save button clicked --> opens card
+  const DialogueWrapper = styled.div`
+    display: ${props => (props.open ? 'block' : 'none')};
+
+    position: absolute;
+    top: ${positionDialogBox().top}px;
+    left: ${positionDialogBox().left}px;
+    transform: translateX(-50%); //Adjust for centering 
+    z-index: 999; //float on top of all other content
+  `;
+  useEffect(() => {
+    //close save folder if click off
+    const handleClickOutside = (event) => {
+      if (
+        dialogRef.current &&
+        !dialogRef.current.contains(event.target) &&
+        openButtonRef.current &&
+        !openButtonRef.current.contains(event.target) 
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    //event listeners if user clicks off dilogue box
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
+  //TODO: fetch save data
+  //TODO: check auth for save data
+  const [saveData, setSaveData] = useState(null);
+  useEffect(() => {
+    const fetchSaveData = async () => {
+      try {
+        const response = await fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/recipe/1/saved');
+        if (!response.ok) {
+          throw new Error('Failed to fetch save data');
+        }
+        const responseData = await response.json();
+        setSaveData(responseData.data); // Extracting the data object from the response
+      } catch (error) {
+        console.error('Error fetching save data:', error);
+      }
+    };
+
+    fetchSaveData();
+  }, []);
+
+  return (
+    <>
+      <InlineCenteredDiv>
+        <OpenButton ref={openButtonRef} onClick={clickSave} title="Save Recipe" textColor={isSaved ? 'red' : null }>
+            <BookmarkIcon sx={{ fontSize: 40 }} />
+          </OpenButton>
+          {showMessage && (
+            <SaveMsg>{msg}</SaveMsg>
+          )}
+      </InlineCenteredDiv>
+      
+
+      <DialogueWrapper open={isOpen}>
+        <DialogueBox ref={dialogRef}>
+          <p>Save Recipe to a folder? </p>
+        </DialogueBox>
+      </DialogueWrapper>
+    </>
+  );
+};
+
+
 const ViewPostImpl = () => {
   const [isSticky, setIsSticky] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   // temp string inputs
-  const headerImageURL = '/fish_post_dummy.jpg';
-  const groceryItems = ["Apples peeled", "Bananas", "Milk", "Bread", "Eggs", "Coffee", "a pinch of salt", "item1", "item2", "item3", "item4", "item5"];
-  const steps = [
-    'Preheat the oven to 400 degrees F (200 degrees C).',
-    'Arrange half the lemon slices in a single layer in a baking dish. Layer with 2 sprigs rosemary, and top with salmon fillets. Sprinkle salmon with salt, layer with remaining rosemary sprigs, and top with remaining lemon slices. Drizzle with olive oil.',
-    'Bake 20 minutes in the preheated oven, or until fish is easily flaked with a fork.',
-    'Do something else.',
-    'Enjoy!!'
-  ];
+  const headerImageURL = '/spaget.jpg';
 
-  const handleClick = () => {
+  const handleClick = () => { //for pin button on ingredients
     setIsClicked(!isClicked); // Toggle the state
     setIsSticky(!isSticky); 
   };
 
   const [recipeData, setRecipeData] = useState(null);
-
+  //fetch recipe data
   useEffect(() => {
     const fetchRecipeData = async () => {
       try {
@@ -304,7 +434,7 @@ const ViewPostImpl = () => {
   }, []);
 
   return (
-    <PageImplView children={undefined}>
+    <PageImplView>
       <MainBackgroundWrapper>
         <Header/>
         {recipeData && (
@@ -321,7 +451,10 @@ const ViewPostImpl = () => {
             <ViewPostSectionWrapper>
               <br/><br/>
               <div>
-                <TitleText>{recipeData.title} <SaveButton/> </TitleText>
+                <DivFlexCenter>
+                  <TitleText>{recipeData.title} </TitleText>  
+                  <SaveButton/> 
+                </DivFlexCenter>                
                 <DivFlex>
                   <AuthorAndDate> Author:  </AuthorAndDate>
                   {/*TODO: change link to author profile from id*/}
@@ -484,9 +617,6 @@ const ViewPostSectionWrapperNoBar = styled.div`
 
 /* title text */
 const TitleText = styled.div`
-/* Lemon Yummy Salmon */
-  width: 50%;
-
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 700;
@@ -498,6 +628,10 @@ const TitleText = styled.div`
 `
 
 
+const DivFlexCenter = styled.div`
+  display:flex;
+  align-items: center;
+`
 const DivFlex = styled.div`
   display:flex;
 `
