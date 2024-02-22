@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -78,6 +78,36 @@ const StepList = ({ steps }) => {
   );
 };
 
+const TwoColumnStyledList = styled.ul`
+  list-style-type: disc;
+  padding: 0 0 0 1em;
+  //display: grid;
+  //grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adjust the column width as needed */
+  gap: 20px; /* Adjust the gap between columns */
+  
+  li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.25rem;
+  }
+
+  @media (min-width: 700px) {
+    columns: 2;
+    column-gap: 20px;
+  }
+`;
+
+/* two column layout for bullet lists */
+const TwoStyledList = ({ items }) => {
+  return (
+    <TwoColumnStyledList>
+      {items.map((item, index) => (
+        <li key={index}>{item}</li>
+      ))}
+    </TwoColumnStyledList>
+  );
+};
+
 const Container = styled.div`
   margin-bottom: 20px;
 `;
@@ -93,7 +123,6 @@ const StepHeader = styled.h3`
 const StepInstructions = styled.p`
   margin-bottom: 0;
 `;
-
 
 /** checkbox **/
 const CheckboxStyledList = ({ items }) => {
@@ -255,11 +284,32 @@ const ViewPostImpl = () => {
     setIsSticky(!isSticky); 
   };
 
+  const [recipeData, setRecipeData] = useState(null);
+
+  useEffect(() => {
+    const fetchRecipeData = async () => {
+      try {
+        const response = await fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/recipe/1');
+        if (!response.ok) {
+          throw new Error('Failed to fetch recipe data');
+        }
+        const responseData = await response.json();
+        setRecipeData(responseData.data); // Extracting the data object from the response
+      } catch (error) {
+        console.error('Error fetching recipe data:', error);
+      }
+    };
+
+    fetchRecipeData();
+  }, []);
+
   return (
     <PageImplView children={undefined}>
       <MainBackgroundWrapper>
         <Header/>
-        <FloatingCardWrapper>
+        {recipeData && (
+        <div>
+          <FloatingCardWrapper>
           <div> {/* title */}
           <HeaderImage headerImageURL={headerImageURL} ></HeaderImage>
            
@@ -271,17 +321,28 @@ const ViewPostImpl = () => {
             <ViewPostSectionWrapper>
               <br/><br/>
               <div>
-                <TitleText>Lemon Yummy Salmon <SaveButton/> </TitleText>
+                <TitleText>{recipeData.title} <SaveButton/> </TitleText>
                 <DivFlex>
                   <AuthorAndDate> Author:  </AuthorAndDate>
-                  <AuthorAndDate><Link href="/main"> AuthorName </Link></AuthorAndDate>
+                  {/*TODO: change link to author profile from id*/}
+                  <AuthorAndDate><Link href="/main"> {recipeData.createdBy} </Link></AuthorAndDate>
                   <AuthorAndDate> | </AuthorAndDate>
-                  <AuthorAndDate>Updated insert_date_here</AuthorAndDate>
+                  <div>
+                    {recipeData.edited ? (
+                    <div>
+                      <AuthorAndDate>Updated {recipeData.updatedAt}</AuthorAndDate>
+                    </div>
+                    ) : (
+                      <div>
+                        <AuthorAndDate>Created {recipeData.createdAt}</AuthorAndDate>
+                      </div>
+                    )}
+                  </div>
                 </DivFlex>
                 <DivFlex>
-                  <ServingCalorieTime> Serves 2</ServingCalorieTime>
-                  <ServingCalorieTime>257 Calories (Jump to Nutrition Facts)</ServingCalorieTime>
-                  <ServingCalorieTime><AccessTimeIcon/> 20 min</ServingCalorieTime>
+                  <ServingCalorieTime> Serves {recipeData.serves}</ServingCalorieTime>
+                  <ServingCalorieTime>{recipeData.calories} Calories (Jump to Nutrition Facts)</ServingCalorieTime>
+                  <ServingCalorieTime><AccessTimeIcon/> {recipeData.time} min</ServingCalorieTime>
                 </DivFlex>   
               </div>     
             </ViewPostSectionWrapper>
@@ -294,19 +355,18 @@ const ViewPostImpl = () => {
                 </StyledPinButton>            
               </AlignRight>
               <SectionTitles>Ingredients</SectionTitles>
-              <CheckboxStyledList items={groceryItems}/>
+              <CheckboxStyledList items={Object.entries(recipeData.ingredients).map(([ingredientName, ingredientAmount]) => (
+                `${ingredientAmount} of ${ingredientName}`
+              ))} />
             </ViewPostSectionWrapperNoBar>
           </DivSticky>
           <ViewPostSectionWrapper> {/* appliances */}
               <SectionTitles>Appliances</SectionTitles>
-              <StyledList>
-                  <li>Oven</li>
-                  <li>Refrigerator</li>
-              </StyledList>
+              <TwoStyledList items={recipeData.appliances}/>
           </ViewPostSectionWrapper>
           <ViewPostSectionWrapper> {/* directions */}
               <SectionTitles>Directions</SectionTitles>
-              <StepList steps={steps}/>
+              <StepList steps={recipeData.content}/>
           </ViewPostSectionWrapper>
           <ViewPostSectionWrapper> {/* buttons */}
               <div>
@@ -321,6 +381,8 @@ const ViewPostImpl = () => {
               <SectionTitles>Tags</SectionTitles>
           </ViewPostSectionWrapperNoBar>
         </FloatingCardWrapper>
+        </div>
+      )}
       </MainBackgroundWrapper>
     </PageImplView>
   )
@@ -444,14 +506,5 @@ const AlignRight = styled.div`
   text-align: right;
   float: right;
 `
-/* two column layout for bullet lists */
-const StyledList = styled.ul`
-  list-style: disc;
 
-  /* Responsive two-column layout */
-  @media (min-width: 700px) {
-    columns: 2;
-    column-gap: 10px;
-  }
-`
 
