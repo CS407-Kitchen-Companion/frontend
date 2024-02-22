@@ -4,14 +4,28 @@ import { RootState } from '@lib/store/store'
 export interface IName {
   name: string
 }
-
+export interface IEmail {
+  email: string
+}
+export interface IPassword {
+  password: string
+}
+export interface IToken {
+  token: string
+}
 export interface UserDataState {
-  name: string
+  username: string,
+  email: string,
+  password: string,
+  token: string
 }
 
 const initialState = (): UserDataState => {
   return {
-    name: '',
+    username: '',
+    email: '',
+    password: '',
+    token: ''
   }
 }
 
@@ -27,7 +41,16 @@ const userDataSlice = createSlice({
 
     // setter
     setName: (state, action: PayloadAction<IName>) => {
-      state.name = action.payload.name
+      state.username = action.payload.name
+    },
+    setEmail: (state, action: PayloadAction<IEmail>) => {
+      state.email = action.payload.email
+    },
+    setPassword: (state, action: PayloadAction<IPassword>) => {
+      state.password = action.payload.password
+    },
+    setToken: (state, action: PayloadAction<IToken>) => {
+      state.token = action.payload.token
     },
   },
 })
@@ -39,7 +62,8 @@ export const userDataAction = userDataSlice.actions
 
 // selector
 export const selectuserData = createSelector(userData, state => state)
-export const selectUserName = createSelector(userData, state => state.name)
+export const selectUserName = createSelector(userData, state => state.username)
+export const selectEmail = createSelector(userData, state => state.email)
 
 // root reducer
 export const userDataReducer = combineReducers({

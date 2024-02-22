@@ -55,7 +55,7 @@ const LoginForm = () => {
             border: '1px solid #ccc',
             borderRadius: '20px 20px 0% 0%',
             borderBottom:'none',
-            textAlign: 'center'
+            textAlign: 'center',
           }}
           type="text"
       
@@ -124,12 +124,7 @@ const LoginLeftImage = () => {
 }
 
 const BottomText = () => {
-  const forgot =  async ()  => {
-    console.log('forgot password');
-  };
-  const register =  async ()  => {
-    console.log('register');
-  };
+
   return(
     <div>
    <div>
@@ -167,7 +162,4 @@ const LoginFormWrapper = styled.div`
   background-size: auto;
   height: 100vh;
   text-align: center;
-`
-const Username = styled.input`
-
 `

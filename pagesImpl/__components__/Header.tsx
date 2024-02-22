@@ -13,7 +13,7 @@ export const Header: React.FC = () => {
   // TODO: If logined, then do the thing. IF NOT, redirect to auth page
   const onClickPost = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
-    router.push('/writePost')
+    router.push('/createRecipe')
   }
   const onClickBookMark = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()

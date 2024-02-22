@@ -24,11 +24,11 @@ function generateSubmitApplicationErrorNotifictionTexts(error: ResponseError) {
 
 function* flowSubmitRegisterSaga() {
   yield put(userDataAction.beginFlowSubmitRegister())
-  const { name }: UserDataState = yield select(selectuserData)
+  const { username, email, password }: UserDataState = yield select(selectuserData)
   // noti that request user to check the form
   if (
     !checkLength({
-      string: name,
+      string: username,
       length: 1,
       comparisonType: ComparisonType.BIGGER,
     })
@@ -38,8 +38,10 @@ function* flowSubmitRegisterSaga() {
     return
   }
 
-  const { data, error }: { data: ISubmitRegisterResult; error: ResponseError } = yield fetchEndpoint('submitRegister', {
-    name,
+  const { data, error } = yield fetchEndpoint('submitRegister', {
+    username,
+    email,
+    password
   })
 
   if (error) {
