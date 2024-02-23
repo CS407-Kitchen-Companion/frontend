@@ -145,19 +145,6 @@ const CardPostImg = styled.div`
 `
 
 
-const StarRating = ({ rating }) => {
-  const StyledRating = styled(Rating)({
-    '& .MuiRating-iconFilled': {
-      color: '#FDDD83',
-    },
-  });
-  return (
-    <div>
-      <StyledRating name="read-only" value={rating} defaultValue={0} precision={0.5} readOnly size="large" emptyIcon={<StarIcon sx={{ fontSize: 30 }} style={{ opacity: 1 }} />} />
-    </div>
-  );
-};
-
 /** Author **/
 const authorImageStyle = {
   borderRadius: '50%',
