@@ -13,6 +13,9 @@ export interface IPassword {
 export interface IOldPwd{
   oldpwd: string
 }
+export interface INewPwd{
+  newPwd: string
+}
 export interface IToken {
   token: string
 }
@@ -24,9 +27,10 @@ export interface UserDataState {
   username: string,
   email: string,
   password: string,
-  oldpwd: string,
+  newPassword: string,
+  oldPassword: string,
   token: string,
-  id: string,
+  userId: string,
 }
 
 const initialState = (): UserDataState => {
@@ -34,9 +38,10 @@ const initialState = (): UserDataState => {
     username: '',
     email: '',
     password: '',
-    oldpwd: '',
+    newPassword: '',
+    oldPassword: '',
     token: '',
-    id: '',
+    userId: '',
   }
 }
 
@@ -75,13 +80,16 @@ const userDataSlice = createSlice({
       state.password = action.payload.password
     },
     setOldPwd: (state, action: PayloadAction<IOldPwd>) => {
-      state.oldpwd = action.payload.oldpwd
+      state.oldPassword = action.payload.oldpwd
+    },
+    setNewPwd: (state, action: PayloadAction<INewPwd>) => {
+      state.newPassword = action.payload.newPwd
     },
     setToken: (state, action: PayloadAction<IToken>) => {
       state.token = action.payload.token
     },
     setId: (state, action: PayloadAction<Iid>) => {
-      state.id = action.payload.id
+      state.userId = action.payload.id
     },
   },
 })
@@ -97,7 +105,7 @@ export const selectUserName = createSelector(userData, state => state.username)
 export const selectEmail = createSelector(userData, state => state.email)
 export const selectToken = createSelector(userData, state => state.token)
 export const selectPassword = createSelector(userData, state => state.password)
-export const selectId = createSelector(userData, state => state.id)
+export const selectId = createSelector(userData, state => state.userId)
 
 // root reducer
 export const userDataReducer = combineReducers({

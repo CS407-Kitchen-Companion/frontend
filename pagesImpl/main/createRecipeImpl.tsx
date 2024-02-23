@@ -4,6 +4,9 @@ import { PageImplView } from '@pagesImpl/__components__/PageImplView'
 import { useRouter } from"next/navigation";
 import { FormEvent } from 'react'
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux'
+import { recipeDataAction } from '@lib/store/recipeData/recipeData.slice'
+
 
 export default function CreateRecipeImpl() {
   return (
@@ -31,6 +34,7 @@ const RecipeForm = () => {
   const [time, setTime] = useState('');
   const [servings, setServings] = useState('');
   const router = useRouter();
+  const dispatch = useDispatch()
   
   //Ingredient handling
   const [ingredients, setIngredients] = useState([{ value: '' }]);

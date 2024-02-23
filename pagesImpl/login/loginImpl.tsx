@@ -30,7 +30,6 @@ export default function LoginImpl() {
 
 
 const LoginForm = () => {
-  const [email] = useState('test@mail');
   const [name, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
@@ -41,10 +40,9 @@ const LoginForm = () => {
   const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
     event.preventDefault();
     dispatch(userDataAction.setName({name}))
-    dispatch(userDataAction.setEmail({email}))
     dispatch(userDataAction.setPassword({password}))
     dispatch(userDataAction.requestFlowSubmitLogin())
-    router.push("/main");
+    
 
     /*
     if(name === storedName
