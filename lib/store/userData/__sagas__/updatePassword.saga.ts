@@ -4,18 +4,21 @@ import { fetchEndpoint } from '@lib/store/helperSaga/fetchEndpoint'
 import { ISubmitRegisterResult, ResponseError } from '@lib/store/api/api.type'
 import { userDataAction, UserDataState, selectuserData } from '@lib/store/userData/userData.slice'
 import { checkLength, ComparisonType } from '@lib/utils/checkLength'
+import { navActions } from '@lib/store/nav/nav.slice'
 
 
 function* flowUpdatePasswordSaga() {
     console.log('test')
   yield put(userDataAction.beginFlowUpdatePassword())
-  const { password, oldpwd, id }: UserDataState = yield select(selectuserData)
+  const { newPassword, oldPassword, userId }: UserDataState = yield select(selectuserData)
   // noti that request user to check the form
   
   const { data, error } = yield fetchEndpoint('changePassword', {
-    password,
-    oldpwd,    
-    id
+    userId,
+    oldPassword,
+    newPassword,
+        
+    
   })
 
   if (error) {
@@ -27,7 +30,7 @@ function* flowUpdatePasswordSaga() {
   const { result } = data
 
   // TODO success popup
-
+  yield put(navActions.push({ url: '/login' }))
   yield put(userDataAction.successFlowUpdatePassword())
 }
 

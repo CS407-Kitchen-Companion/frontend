@@ -16,7 +16,7 @@ export default function EditRecipeImpl() {
                   color: 'black',
                   
                   }}> 
-                Add a Recipe 
+                Edit Recipe 
                 </h1>
                 <RecipeForm></RecipeForm>
             </FormWrapper>

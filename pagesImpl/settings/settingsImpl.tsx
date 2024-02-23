@@ -20,7 +20,8 @@ export default function ForgotImpl() {
 
 const ForgotForm = () => {
   const [oldpwd, setOldPwd] = useState('');
-  const [password, setNewPwd] = useState('');
+  const [password, setPass] = useState('');
+  const[newPwd, setNewPwd]= useState('');
   const [id, setId] = useState('11');
   const router = useRouter();
   const dispatch = useDispatch();
@@ -28,7 +29,9 @@ const ForgotForm = () => {
   const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
     event.preventDefault();
       console.log(id)
+      setPass(newPwd) 
       dispatch(userDataAction.setOldPwd({oldpwd}))
+      dispatch(userDataAction.setNewPwd({newPwd}))
       dispatch(userDataAction.setPassword({password}))
       dispatch(userDataAction.setId({id}))
       dispatch(userDataAction.requestFlowUpdatePassword())
@@ -51,7 +54,7 @@ const ForgotForm = () => {
         <input
           type="text"
           id="newPwd"
-          value={password}
+          value={newPwd}
           onChange={(e) => setNewPwd(e.target.value)}
           required
         />

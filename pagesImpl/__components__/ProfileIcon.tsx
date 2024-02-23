@@ -53,7 +53,7 @@ export const ProfileIcon: React.FC = () => {
       <ProfileImage onClick={onClickProfileImage} />
       <ProfileWindow isClicked={isProfileClicked}>
         <ProfileWrapper>
-          <ProfileName>{username}</ProfileName>
+          <ProfileName>demoUser</ProfileName>
           <ProfileTaskList>
             <ProfileTaskListItem onClick={onClickMyPosts}>My Posts</ProfileTaskListItem>
             <ProfileTaskListItem paddingTop={17} onClick={onClickInteractions}>

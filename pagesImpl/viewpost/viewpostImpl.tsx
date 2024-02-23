@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
-import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/router'
+
+import React, { useState, useEffect, useRef } from 'react'
+
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from"next/navigation";
@@ -9,12 +10,15 @@ import { PageImplView } from '@pagesImpl/__components__/PageImplView'
 import { Header } from '@pagesImpl/__components__/Header'
 
 import styles from '@pagesImpl/__components__/Button.module.css'
-import ShareIcon from '@mui/icons-material/Share';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import PushPinIcon from '@mui/icons-material/PushPin';
-import fish from 'public/fish_post_dummy.jpg';
+import Rating from '@mui/material/Rating'
+import StarIcon from '@mui/icons-material/Star'
+import ShareIcon from '@mui/icons-material/Share'
+import BookmarkIcon from '@mui/icons-material/Bookmark'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
+import AccessTimeIcon from '@mui/icons-material/AccessTime'
+import PushPinIcon from '@mui/icons-material/PushPin'
+
+import fish from 'public/fish_post_dummy.jpg'
 
 /**npm install @mui/icons-material */
 
@@ -92,11 +96,13 @@ const StarRating = () => {
       {renderStars()}
       {submitted && <SubmitButton onClick={() => setSubmitted(false)}>Confirm Rating</SubmitButton>}
     </div>
-  );
-};
+  )
+}
+
 const RatingContainer = styled.div`
   display: flex;
-`;
+`
+
 const Star = styled.span`
   font-size: 50px;
   color: ${props => (props.filled ? '#ffc107' : '#e4e5e9')};
@@ -206,13 +212,12 @@ const TwoStyledList = ({ items }) => {
         <li key={index}>{item}</li>
       ))}
     </TwoColumnStyledList>
-  );
-};
-
+  )
+}
 
 const Container = styled.div`
   margin-bottom: 20px;
-`;
+`
 
 const Step = styled.div`
   margin-bottom: 10px;
@@ -390,7 +395,7 @@ const DialogueBox = styled.div`
   font-style: normal;
   font-weight: 500;
   font-size: 20px;
-`;
+`
 
 const SaveMsg = styled.div`
   font-style: normal;
@@ -399,7 +404,6 @@ const SaveMsg = styled.div`
   color: 'lightgrey'};
 `
 
-
 const OpenButton = styled.button`
   text-align: center;
   color: ${props => props.textColor || 'lightgrey'};
@@ -407,147 +411,170 @@ const OpenButton = styled.button`
   border: none;
   cursor: pointer;
   transition: color 0.3s ease; // Transition for color change
-`;
+`
 
 const InlineCenteredDiv = styled.div`
   display: flex;
   align-items: center;
 `
 
-/**saved button */
+const DialogueWrapper = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+`;
+
+const FolderList = styled.ul`
+  list-style: none;
+  padding: 0;
+`;
+
+const FolderItem = styled.li`
+  cursor: pointer;
+  /* Your folder item styles */
+  padding: 5px 10px; /* Example padding */
+  &:hover {
+    background-color: #f0f0f0; /* Example background color on hover */
+  }
+`;
+
+
 const SaveButton = () => {
-  const [isOpen, setIsOpen] = useState(false);  //for dialogue box
-  const [isSaved, setIsSaved] = useState(false);  //for save button
-  const [showMessage, setShowMessage] = useState(false); //for saved or unsaved msg
+  const [isOpen, setIsOpen] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
   const [msg, setMsg] = useState('');
+  const [folders, setFolders] = useState([]);
   const dialogRef = useRef(null);
-  const openButtonRef = useRef(null);
+  const [isInFolder, setIsInFolder] = useState(false);
 
-
-  const clickSave = () => {
-    setIsSaved(!isSaved) // save and unsave
-    if (!isSaved) {
-      //save recipe
-      setMsg('Saved Recipe')
-      setShowMessage(true) //show saved message
-      setTimeout(() => {
-        setShowMessage(false)
-      }, 5000)
-
-      //only show folder box if we want to save recipe
-      setIsOpen(!isOpen)
-    } else {
-      //unsave recipe
-      setMsg('Unsaved Recipe')
-      setShowMessage(true) //show saved message
-      setTimeout(() => {
-        setShowMessage(false)
-      }, 5000)
-
-      setIsOpen(false) //close dialogue
-    }
-  }
-
-  //position dilogue right under button
-  const positionDialogBox = () => {
-    if (openButtonRef.current) {
-      const buttonRect = openButtonRef.current.getBoundingClientRect();
-      const top = buttonRect.bottom + window.scrollY;
-      const left = buttonRect.left + window.scrollX;
-
-      return { top, left }
-    }
-    return { top: 0, left: 0 }
-  }
-  //checks if save button clicked --> opens card
-  const DialogueWrapper = styled.div`
-    display: ${props => (props.open ? 'block' : 'none')};
-
-    position: absolute;
-    top: ${positionDialogBox().top}px;
-    left: ${positionDialogBox().left}px;
-    transform: translateX(-50%); //Adjust for centering
-    z-index: 999; //float on top of all other content
-  `;
   useEffect(() => {
-    //close save folder if click off
-    const handleClickOutside = event => {
-      if (
-        dialogRef.current &&
-        !dialogRef.current.contains(event.target) &&
-        openButtonRef.current &&
-        !openButtonRef.current.contains(event.target) 
-      ) {
-        setIsOpen(false)
-      }
-    }
-
-    //event listeners if user clicks off dilogue box
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isOpen])
-
-  //TODO: fetch save data
-  //TODO: check auth for save data
-  const [saveData, setSaveData] = useState(null)
-  useEffect(() => {
-    const fetchSaveData = async () => {
+    const checkRecipeInFolder = async () => {
       try {
-        const response = await fetch('http://localhost:8080/folder/save');
+        const response = await fetch(`https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/folder/2/recipe/1`);
         if (!response.ok) {
-          throw new Error('Failed to fetch save data')
+          throw new Error('Failed to check if recipe is in folder');
         }
-        const responseData = await response.json()
-        setSaveData(responseData.data) // Extracting the data object from the response
+        const data = await response.json();
+        console.log("check")
+        console.log(data.data)
+        console.log(data.data === 'True')
+        setIsInFolder(data.data === 'True');
       } catch (error) {
-        console.error('Error fetching save data:', error)
+        console.error('Error:', error);
+      }
+    };
+
+    checkRecipeInFolder();
+  }, [2, 1]);
+  useEffect(() => {
+    const fetchFolders = async () => {
+      try {
+        const response = await fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/folder/2');
+        if (!response.ok) {
+          throw new Error('Failed to fetch folders');
+        }
+        const data = await response.json();
+        console.log(data.data)
+        setFolders(data.data);
+      } catch (error) {
+        console.error('Error fetching folders:', error);
       }
     }
 
-    fetchSaveData()
-  }, [])
+    fetchFolders();
+  }, []);
+  const handleClickOutside = (event) => {
+    if (dialogRef.current && !dialogRef.current.contains(event.target)) {
+      setIsOpen(false); // Close the pop-up when clicked outside
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [folders]);
+
+  const handleSaveToFolder = async (folderId, recipeId) => {
+    try {
+      const response = await fetch(`https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/folder/save`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          folder: 2,
+          recipe: 1
+        })
+      });
+        console.log(response)
+      if (!response.ok) {
+        throw new Error('Failed to save recipe to folder');
+      }
+  
+      const responseData = await response.json();
+  
+      setMsg('Saved Recipe');
+      setShowMessage(true);
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 5000);
+  
+      setIsOpen(false);
+    } catch (error) {
+      console.error('Error saving recipe to folder:', error);
+    }
+  };
+  
 
   return (
     <TempWrapper>
       <InlineCenteredDiv>
-        <OpenButton ref={openButtonRef} onClick={clickSave} title="Save Recipe" textColor={isSaved ? 'red' : null }>
-            <BookmarkIcon sx={{ fontSize: 40 }} />
-          </OpenButton>
-          {showMessage && (
-            <SaveMsg>{msg}</SaveMsg>
-          )}
+
+        <button onClick={() => setIsOpen(true)}>
+         <BookmarkIcon sx={{ fontSize: 40, color: isInFolder ? 'red' : 'black' }} />
+        </button>
+        {showMessage && <SaveMsg>{msg}</SaveMsg>}
       </InlineCenteredDiv>
 
-      <DialogueWrapper open={isOpen}>
+      {isOpen && (
+        <DialogueWrapper>
         <DialogueBox ref={dialogRef}>
-          <p>Save Recipe to a folder? </p>
+          <p>Save Recipe to a folder?</p>
+          {folders ? (
+            <FolderList>
+              <FolderItem key={folders.id} onClick={() => handleSaveToFolder(folders.id)}>
+                {folders.title}
+              </FolderItem>
+            </FolderList>
+          ) : (
+            <p>Loading folders...</p>
+          )}
         </DialogueBox>
       </DialogueWrapper>
+      
+      )}
     </>
   );
 };
 
-
 const ViewPostImpl = () => {
-  const [isSticky, setIsSticky] = useState(false);
-  const [isClicked, setIsClicked] = useState(false);
+  const [isSticky, setIsSticky] = useState(false)
+  const [isClicked, setIsClicked] = useState(false)
 
   // temp string inputs
   const headerImageURL = '/spaget.jpg'
 
-  const handleClick = () => { //for pin button on ingredients
-    setIsClicked(!isClicked); // Toggle the state
-    setIsSticky(!isSticky); 
-  };
+  const handleClick = () => {
+    //for pin button on ingredients
+    setIsClicked(!isClicked) // Toggle the state
+    setIsSticky(!isSticky)
+  }
 
-  const [recipeData, setRecipeData] = useState(null);
+  const [recipeData, setRecipeData] = useState(null)
   //fetch recipe data
   useEffect(() => {
     const fetchRecipeData = async () => {
@@ -574,79 +601,111 @@ const ViewPostImpl = () => {
           <div>
             <FloatingCardWrapper>
               <div>
-
-                <DivFlex>
-                  <DivFlexCenter>
-                    <TitleText>{recipeData.title} </TitleText>  
-                    <SaveButton/> 
-                  </DivFlexCenter>   
-                <Gap></Gap>
-                <StarRating/>
-
-                </DivFlex>
-                
-                <DivFlex>
-                  <AuthorAndDate> Author:  </AuthorAndDate>
-                  {/*TODO: change link to author profile from id*/}
-                  <AuthorAndDate><Link href="/main"> {recipeData.createdBy} </Link></AuthorAndDate>
-                  <AuthorAndDate> | </AuthorAndDate>
+                {' '}
+                {/* title */}
+                <HeaderImage headerImageURL={headerImageURL}></HeaderImage>
+                <AuthorIcon>
+                  <AuthorProfileImage />
+                </AuthorIcon>
+                <MoreVertButton />
+                <ViewPostSectionWrapper>
+                  <br />
+                  <br />
                   <div>
-                    {recipeData.edited ? (
-                    <div>
-                      <AuthorAndDate>Updated {recipeData.updatedAt}</AuthorAndDate>
-                    </div>
-                    ) : (
+                    <DivFlex>
+                      <DivFlexCenter>
+                        <TitleText>{recipeData.title} </TitleText>
+                        <SaveButton />
+                      </DivFlexCenter>
+                      <Gap></Gap>
+                      <StarRating />
+                    </DivFlex>
+
+                    <DivFlex>
+                      <AuthorAndDate> Author: </AuthorAndDate>
+                      {/*TODO: change link to author profile from id*/}
+                      <AuthorAndDate>
+                        <Link href="/main"> {recipeData.createdBy} </Link>
+                      </AuthorAndDate>
+                      <AuthorAndDate> | </AuthorAndDate>
                       <div>
-                        <AuthorAndDate>Created {recipeData.createdAt}</AuthorAndDate>
+                        {recipeData.edited ? (
+                          <div>
+                            <AuthorAndDate>Updated {recipeData.updatedAt}</AuthorAndDate>
+                          </div>
+                        ) : (
+                          <div>
+                            <AuthorAndDate>Created {recipeData.createdAt}</AuthorAndDate>
+                          </div>
+                        )}
                       </div>
-                    )}
+                    </DivFlex>
+                    <DivFlex>
+                      <ServingCalorieTime> Serves {recipeData.serves}</ServingCalorieTime>
+                      <ServingCalorieTime>{recipeData.calories} Calories (Jump to Nutrition Facts)</ServingCalorieTime>
+                      <ServingCalorieTime>
+                        <AccessTimeIcon /> {recipeData.time} min
+                      </ServingCalorieTime>
+                    </DivFlex>
                   </div>
-                </DivFlex>
-                <DivFlex>
-                  <ServingCalorieTime> Serves {recipeData.serves}</ServingCalorieTime>
-                  <ServingCalorieTime>{recipeData.calories} Calories (Jump to Nutrition Facts)</ServingCalorieTime>
-                  <ServingCalorieTime><AccessTimeIcon/> {recipeData.time} min</ServingCalorieTime>
-                </DivFlex>   
-              </div>     
-            </ViewPostSectionWrapper>
-          </div>
-          <DivSticky isSticky={isSticky} > {/* ingredients */}
-            <ViewPostSectionWrapperNoBar>
-              <AlignRight>
-                <StyledPinButton onClick={handleClick} title="Pin Ingredients" textColor={isClicked ? 'red' : null } >
-                  <PushPinIcon sx={{ fontSize: 40 }} />
-                </StyledPinButton>            
-              </AlignRight>
-              <SectionTitles>Ingredients</SectionTitles>
-              <CheckboxStyledList items={Object.entries(recipeData.ingredients).map(([ingredientName, ingredientAmount]) => (
-                `${ingredientAmount} of ${ingredientName}`
-              ))} />
-            </ViewPostSectionWrapperNoBar>
-          </DivSticky>
-          <ViewPostSectionWrapper> {/* appliances */}
-              <SectionTitles>Appliances</SectionTitles>
-              <TwoStyledList items={recipeData.appliances}/>
-          </ViewPostSectionWrapper>
-          <ViewPostSectionWrapper> {/* directions */}
-              <SectionTitles>Directions</SectionTitles>
-              <StepList steps={recipeData.content}/>
-          </ViewPostSectionWrapper>
-          <ViewPostSectionWrapper> {/* buttons */}
-              <div>
-                <button type="button" className={styles.main_black}> I made this! </button>
-                <button type="button" className={styles.circle_grey}><ShareIcon sx={{color: "#C5C5CF"}} fontSize="medium"/></button>
+                </ViewPostSectionWrapper>
               </div>
-          </ViewPostSectionWrapper>
-          <ViewPostSectionWrapper> {/* nutrition facts */}
-              <SectionTitles>Nutrition Facts</SectionTitles>
-          </ViewPostSectionWrapper>
-          <ViewPostSectionWrapperNoBar> {/* tags */}
-              <SectionTitles>Tags</SectionTitles>
-              <Tags items={recipeData.tags}/>
-          </ViewPostSectionWrapperNoBar>
-        </FloatingCardWrapper>
-        </div>
-      )}
+              <DivSticky isSticky={isSticky}>
+                {' '}
+                {/* ingredients */}
+                <ViewPostSectionWrapperNoBar>
+                  <AlignRight>
+                    <StyledPinButton onClick={handleClick} title="Pin Ingredients" textColor={isClicked ? 'red' : null}>
+                      <PushPinIcon sx={{ fontSize: 40 }} />
+                    </StyledPinButton>
+                  </AlignRight>
+                  <SectionTitles>Ingredients</SectionTitles>
+                  <CheckboxStyledList
+                    items={Object.entries(recipeData.ingredients).map(
+                      ([ingredientName, ingredientAmount]) => `${ingredientAmount} of ${ingredientName}`
+                    )}
+                  />
+                </ViewPostSectionWrapperNoBar>
+              </DivSticky>
+              <ViewPostSectionWrapper>
+                {' '}
+                {/* appliances */}
+                <SectionTitles>Appliances</SectionTitles>
+                <TwoStyledList items={recipeData.appliances} />
+              </ViewPostSectionWrapper>
+              <ViewPostSectionWrapper>
+                {' '}
+                {/* directions */}
+                <SectionTitles>Directions</SectionTitles>
+                <StepList steps={recipeData.content} />
+              </ViewPostSectionWrapper>
+              <ViewPostSectionWrapper>
+                {' '}
+                {/* buttons */}
+                <div>
+                  <button type="button" className={styles.main_black}>
+                    {' '}
+                    I made this!{' '}
+                  </button>
+                  <button type="button" className={styles.circle_grey}>
+                    <ShareIcon sx={{ color: '#C5C5CF' }} fontSize="medium" />
+                  </button>
+                </div>
+              </ViewPostSectionWrapper>
+              <ViewPostSectionWrapper>
+                {' '}
+                {/* nutrition facts */}
+                <SectionTitles>Nutrition Facts</SectionTitles>
+              </ViewPostSectionWrapper>
+              <ViewPostSectionWrapperNoBar>
+                {' '}
+                {/* tags */}
+                <SectionTitles>Tags</SectionTitles>
+                <Tags items={recipeData.tags} />
+              </ViewPostSectionWrapperNoBar>
+            </FloatingCardWrapper>
+          </div>
+        )}
       </MainBackgroundWrapper>
     </PageImplView>
   )
@@ -660,15 +719,13 @@ const StyledPinButton = styled.button`
   color: ${props => props.textColor || '#F5F7FA'};
   background-color: transparent;
   transition: color 0.3s ease; // Transition for color change
-`;
+`
 const DivSticky = styled.div`
   top: 0;
-  position: ${props => props.isSticky ? 'sticky' : 'static'};
+  position: ${props => (props.isSticky ? 'sticky' : 'static')};
   background: white;
   border-bottom: 3px solid #f5f7fa;
-
-`;
-
+`
 
 const SectionTitles = styled.div`
   font-family: 'Inter';
@@ -716,7 +773,7 @@ const AuthorIcon = styled.div`
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: #FFE0EB;
+  background: #ffe0eb;
 `
 
 /*grey background */
@@ -755,12 +812,12 @@ const TitleText = styled.div`
   font-size: 48px;
   display: inline;
   align-items: center;
-  color: #343C6A;
+  color: #343c6a;
   display: block;
 `
 
 const DivFlexCenter = styled.div`
-  display:flex;
+  display: flex;
   align-items: center;
 `
 const DivFlex = styled.div`
