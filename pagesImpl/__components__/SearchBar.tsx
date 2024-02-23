@@ -2,19 +2,25 @@ import React, { useState } from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 import { useDispatch, useSelector } from 'react-redux'
-import { searchDataAction, selectIsKeywordNotEmpty, selectRelatedRecipes } from '@lib/store/searchData/searchData.slice'
+import {
+  searchDataAction,
+  selectIsKeywordNotEmpty,
+  selectIsSubmitted,
+  selectKeyword,
+  selectRelatedRecipes,
+} from '@lib/store/searchData/searchData.slice'
 import { MagnifyingGlassIcon } from '@pagesImpl/__components__/MagnifyingGlassIcon'
 import { FoodIcon } from '@pagesImpl/__components__/FoodIcon'
 
 export const SearchBar: React.FC = () => {
   const dispatch = useDispatch()
   const isKeywordNotEmpty = useSelector(selectIsKeywordNotEmpty)
+  const keyword = useSelector(selectKeyword)
   const relatedRecipes = useSelector(selectRelatedRecipes)
-  // const relatedRecipes = useSelector()
+  const isSubmitted = useSelector(selectIsSubmitted)
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const keyword = event.target.value
-    dispatch(searchDataAction.setKeyword({ keyword }))
+    dispatch(searchDataAction.setKeyword({ keyword: event.target.value }))
     dispatch(searchDataAction.requestFlowRelatedRecepies())
     console.log('Input value:', event.target.value)
   }
@@ -27,8 +33,7 @@ export const SearchBar: React.FC = () => {
 
   const handleRecipeClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
-    const keyword = event.currentTarget.textContent ?? ''
-    dispatch(searchDataAction.setKeyword({ keyword }))
+    dispatch(searchDataAction.setKeyword({ keyword: event.currentTarget.textContent?.trim() ?? '' }))
     dispatch(searchDataAction.requestFlowSubmitSearch())
     console.log('click recipe')
   }
@@ -38,8 +43,8 @@ export const SearchBar: React.FC = () => {
         <MagnifyingGlassIconWrapper>
           <MagnifyingGlassIcon />
         </MagnifyingGlassIconWrapper>
-        <Searchbar placeholder={'Find a recipe, get cooking!'} onChange={handleInputChange} />
-        <RelatedRecipes isKeywordNotEmpty={isKeywordNotEmpty}>
+        <Searchbar placeholder={'Find a recipe, get cooking!'} onChange={handleInputChange} value={keyword} />
+        <RelatedRecipes isVisible={isKeywordNotEmpty && !isSubmitted}>
           {relatedRecipes.map((item, i) => (
             <RelatedRecipe key={i} isFirst={i == 0} onClick={handleRecipeClick}>
               <FoodIconWrapper isFirst={i == 0}>
@@ -91,9 +96,9 @@ const MagnifyingGlassIconWrapper = styled.div`
   left: 30px;
 `
 
-const RelatedRecipes = styled.div<{ isKeywordNotEmpty: boolean }>`
-  ${({ isKeywordNotEmpty }) => css`
-    ${isKeywordNotEmpty
+const RelatedRecipes = styled.div<{ isVisible: boolean }>`
+  ${({ isVisible }) => css`
+    ${isVisible
       ? css`
           visibility: visible;
           opacity: 1;

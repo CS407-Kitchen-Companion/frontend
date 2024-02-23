@@ -5,25 +5,8 @@ import { ISubmitRegisterResult, ResponseError } from '@lib/store/api/api.type'
 import { userDataAction, UserDataState, selectuserData } from '@lib/store/userData/userData.slice'
 import { checkLength, ComparisonType } from '@lib/utils/checkLength'
 
-function generateSubmitApplicationErrorNotifictionTexts(error: ResponseError) {
-  switch (error.status) {
-    case 400:
-      return {
-        mainTexts: ['Error', '400'],
-      }
-    case 401:
-      return {
-        mainTexts: ['Error', '401'],
-      }
-    default:
-      return {
-        mainTexts: ['Error', 'DEFAULT'],
-      }
-  }
-}
 
 function* flowSubmitLoginSaga() {
-    alert('test')
   yield put(userDataAction.beginFlowSubmitLogin())
   const { username, password }: UserDataState = yield select(selectuserData)
   // noti that request user to check the form
@@ -38,7 +21,6 @@ function* flowSubmitLoginSaga() {
     yield put(userDataAction.failureFlowSubmitLogin())
     return
   }
-  alert('test')
   const { data, error } = yield fetchEndpoint('submitLogin', {
     username,
     password
@@ -47,6 +29,7 @@ function* flowSubmitLoginSaga() {
 
   if (error) {
     // TODO popup
+    console.log('Incorrect Credentials')
     yield put(userDataAction.failureFlowSubmitLogin())
     return
   }

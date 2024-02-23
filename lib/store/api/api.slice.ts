@@ -42,12 +42,27 @@ export const apiSlice = createApi({
           method: METHOD_TYPE,
         }),
       }),
+      createRecipe: builder.mutation({
+        query: ({ ...body }) => ({
+          body: JSON.stringify(body),
+          url: '/recipe/new',
+          method: METHOD_TYPE,
+        }),
+      }),
+      changePassword: builder.mutation({
+        query: ({ ...body }) => ({
+          body: JSON.stringify(body),
+          url: '/user/updatePassword',
+          method: METHOD_TYPE,
+        }),
+      }),
       // GET
+      // TODO APPLY filter options for recipes
       getRelatedRecipes: builder.query({
         query: ({ keyword }) => `recipe/search/titles?title=${keyword}`,
       }),
       getSearchedResults: builder.query({
-        query: ({ keyword }) => `/recipe/search?title=${keyword}&calories=&appliances=&tags=`,
+        query: ({ keyword }) => `/recipe/search?title=${keyword}`,
       }),
       getFilter: builder.query({
         query: () => `/recipe/search/filters`,

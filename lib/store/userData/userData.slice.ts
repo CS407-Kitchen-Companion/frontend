@@ -10,6 +10,9 @@ export interface IEmail {
 export interface IPassword {
   password: string
 }
+export interface IOldPwd{
+  oldpwd: string
+}
 export interface IToken {
   token: string
 }
@@ -21,8 +24,9 @@ export interface UserDataState {
   username: string,
   email: string,
   password: string,
+  oldpwd: string,
   token: string,
-  id: string
+  id: string,
 }
 
 const initialState = (): UserDataState => {
@@ -30,6 +34,7 @@ const initialState = (): UserDataState => {
     username: '',
     email: '',
     password: '',
+    oldpwd: '',
     token: '',
     id: '',
   }
@@ -52,6 +57,13 @@ const userDataSlice = createSlice({
     successFlowSubmitLogin: () => {},
     failureFlowSubmitLogin: () => {},
 
+    //update password flow
+
+    requestFlowUpdatePassword: () => {},
+    beginFlowUpdatePassword: () => {},
+    successFlowUpdatePassword: () => {},
+    failureFlowUpdatePassword: () => {},
+
     // setter
     setName: (state, action: PayloadAction<IName>) => {
       state.username = action.payload.name
@@ -61,6 +73,9 @@ const userDataSlice = createSlice({
     },
     setPassword: (state, action: PayloadAction<IPassword>) => {
       state.password = action.payload.password
+    },
+    setOldPwd: (state, action: PayloadAction<IOldPwd>) => {
+      state.oldpwd = action.payload.oldpwd
     },
     setToken: (state, action: PayloadAction<IToken>) => {
       state.token = action.payload.token
