@@ -37,7 +37,8 @@ function* flowSubmitRegisterSaga() {
     return
   }
 
-  const { result } = data
+  const { result } = data.data
+  console.log(result)
 
 
   // TODO success popup
