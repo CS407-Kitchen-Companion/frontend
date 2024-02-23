@@ -2,8 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '@lib/store/store'
 import { ISubmitRegisterParams, ISubmitRegisterResult } from '@lib/store/api/api.type'
 
-// TODO
-const baseUrl = 'SERVER URL'
+const baseUrl = 'https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/'
 
 const METHOD_TYPE = 'POST'
 
@@ -15,7 +14,7 @@ export const apiSlice = createApi({
     prepareHeaders: (headers, { getState }) => {
       const additionalHeaders = {
         accept: 'application/json',
-        'content-type': 'text/plain',
+        'content-type': 'application/json',
       }
 
       Object.entries(additionalHeaders).forEach(([key, value]) => {
@@ -29,15 +28,33 @@ export const apiSlice = createApi({
   }),
   endpoints(builder) {
     return {
-      submitRegister: builder.mutation<ISubmitRegisterParams, ISubmitRegisterResult>({
+      submitRegister: builder.mutation({
         query: ({ ...body }) => ({
           body: JSON.stringify(body),
-          url: '/specific-url',
+          url: '/user/new',
           method: METHOD_TYPE,
         }),
+      }),
+      submitLogin: builder.mutation({
+        query: ({ ...body }) => ({
+          body: JSON.stringify(body),
+          url: '/user/login',
+          method: METHOD_TYPE,
+        }),
+      }),
+      // GET
+      getRelatedRecipes: builder.query({
+        query: ({ keyword }) => `recipe/search/titles?title=${keyword}`,
+      }),
+      getSearchedResults: builder.query({
+        query: ({ keyword }) => `/recipe/search?title=${keyword}&calories=&appliances=&tags=`,
+      }),
+      getFilter: builder.query({
+        query: () => `/recipe/search/filters`,
       }),
     }
   },
 })
 
-export const { useSubmitRegisterMutation } = apiSlice
+export const { useSubmitRegisterMutation, useGetRelatedRecipesQuery, useGetSearchedResultsQuery, useGetFilterQuery } =
+  apiSlice

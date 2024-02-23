@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -9,6 +10,8 @@ import { PageImplView } from '@pagesImpl/__components__/PageImplView'
 import { Header } from '@pagesImpl/__components__/Header'
 
 import styles from '@pagesImpl/__components__/Button.module.css'
+import Rating from '@mui/material/Rating';
+import StarIcon from '@mui/icons-material/Star';
 import ShareIcon from '@mui/icons-material/Share';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -113,7 +116,16 @@ const Star = styled.span`
 `;
 
 
-/* img header for viewing posts*/
+/** img header for viewing posts **/
+const HeaderImage = ({ headerImageURL }) => {
+
+  return (
+    <CardPostImg>
+      <HeaderImageDiv ImageURL={headerImageURL}/>
+    </CardPostImg>
+    
+  );
+};
 const HeaderImageDiv = styled.div`
   width: 100%;
   height: 310px; 
@@ -131,13 +143,18 @@ const CardPostImg = styled.div`
   background-color: blue;
   overflow: "hidden";
 `
-const HeaderImage = ({ headerImageURL }) => {
 
+
+const StarRating = ({ rating }) => {
+  const StyledRating = styled(Rating)({
+    '& .MuiRating-iconFilled': {
+      color: '#FDDD83',
+    },
+  });
   return (
-    <CardPostImg>
-      <HeaderImageDiv ImageURL={headerImageURL}/>
-    </CardPostImg>
-    
+    <div>
+      <StyledRating name="read-only" value={rating} defaultValue={0} precision={0.5} readOnly size="large" emptyIcon={<StarIcon sx={{ fontSize: 30 }} style={{ opacity: 1 }} />} />
+    </div>
   );
 };
 
@@ -160,7 +177,20 @@ const AuthorProfileImage = () => {
 };
 
 /** direction step list**/
-const StepList = ({ steps }) => {
+  const StepList = ({ steps }) => {
+    const Container = styled.div`
+    margin-bottom: 20px;
+  `;
+  const Step = styled.div`
+    margin-bottom: 10px;
+  `;
+  const StepHeader = styled.h3`
+    margin-bottom: 5px;
+  `;
+  const StepInstructions = styled.p`
+    margin-bottom: 0;
+  `;
+
   return (
     <Container>
       {steps.map((step, index) => (
@@ -173,27 +203,28 @@ const StepList = ({ steps }) => {
   );
 };
 
-const TwoColumnStyledList = styled.ul`
-  list-style-type: disc;
-  padding: 0 0 0 1em;
-  //display: grid;
-  //grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adjust the column width as needed */
-  gap: 20px; /* Adjust the gap between columns */
-  
-  li {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.25rem;
-  }
 
-  @media (min-width: 700px) {
-    columns: 2;
-    column-gap: 20px;
-  }
-`;
-
-/* two column layout for bullet lists */
+/** two column layout for bullet lists **/
 const TwoStyledList = ({ items }) => {
+  const TwoColumnStyledList = styled.ul`
+    list-style-type: disc;
+    padding: 0 0 0 1em;
+    //display: grid;
+    //grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adjust the column width as needed */
+    gap: 20px; /* Adjust the gap between columns */
+    
+    li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.25rem;
+    }
+
+    @media (min-width: 700px) {
+      columns: 2;
+      column-gap: 20px;
+    }
+  `;
+
   return (
     <TwoColumnStyledList>
       {items.map((item, index) => (
@@ -202,6 +233,7 @@ const TwoStyledList = ({ items }) => {
     </TwoColumnStyledList>
   );
 };
+
 
 const Container = styled.div`
   margin-bottom: 20px;
@@ -218,9 +250,36 @@ const StepHeader = styled.h3`
   margin-bottom: 5px;
 `;
 
-const StepInstructions = styled.p`
-  margin-bottom: 0;
-`;
+
+/**  show tags as little baubles **/
+const Tags = ({ items }) => {
+  const TagDiv = styled.div`
+    display: flex;
+    margin: 1em 0 0 0;
+  `
+  const DivTemp = styled.div`
+    display: flex;
+    padding: 0 2.5em;
+    text-align: center;
+    border-radius: 50px;
+    margin: 0 1em 0 0;
+    background: #DCFAF8;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 15px;
+  `
+  return (
+    <TagDiv>
+      {items.map((items, index) => (
+        <DivTemp>
+          <p key={index}>{items}</p>
+        </DivTemp>
+      ))}
+    </TagDiv>
+  );
+};
+
+
 
 const SubmitButton = styled.button`
   background-color: #007bff;
@@ -236,44 +295,7 @@ const SubmitButton = styled.button`
 const CheckboxStyledList = ({ items }) => {
   const [checkedItems, setCheckedItems] = useState([]);
 
-  const handleCheckboxChange = (item) => {
-    if (checkedItems.includes(item)) {
-      setCheckedItems(checkedItems.filter((checkedItem) => checkedItem !== item));
-      console.log("DELETED ",(item))
-    } else {
-      setCheckedItems([...checkedItems, item]);
-      
-      console.log("ADDED ",(item))
-    }
-  };
-
-  return (
-    <div>
-      <List>
-        {items.map((item, index) => (
-          <li key={index}>
-            <input
-              type="checkbox"
-              id={`checkbox-${index}`}
-              checked={checkedItems.includes(item)}
-              onChange={() => handleCheckboxChange(item)}
-            />
-            <label htmlFor={`checkbox-${index}`}>{item}</label>
-          </li>
-        ))}
-      </List>
-      {/* 
-      <CheckedList>
-        {checkedItems.length > 0 && (
-          <p>Checked List: {checkedItems.join(', ')}</p>
-        )}
-      </CheckedList>
-       */}
-    </div>
-  );
-};
-
-const List = styled.ul`
+  const List = styled.ul`
   list-style-type: none;
   padding: 0 0 0 1em;
   font-family: 'Inter';
@@ -318,51 +340,63 @@ const List = styled.ul`
     column-gap: 10px;
   }
 `;
-
 const CheckedList = styled.div`
   margin-top: 1rem;
 `;
 
-
-
-
-/**saved button */
-const StyledSaveButton = styled.button`
-  text-align: center;
-  color: ${props => props.textColor || 'lightgrey'};
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  transition: color 0.3s ease; // Transition for color change
-  
-`;
-function SaveButton() {
-  const [isClicked, setIsClicked] = useState(false);
-  const handleClick = () => {
-    
-    setIsClicked(!isClicked); // Toggle the state
+  const handleCheckboxChange = (item) => {
+    if (checkedItems.includes(item)) {
+      setCheckedItems(checkedItems.filter((checkedItem) => checkedItem !== item));
+      console.log("DELETED ",(item))
+    } else {
+      setCheckedItems([...checkedItems, item]);
+      
+      console.log("ADDED ",(item))
+    }
   };
+
   return (
-    <StyledSaveButton onClick={handleClick} title="Save Recipe" textColor={isClicked ? 'red' : null }>
-      <BookmarkIcon sx={{ fontSize: 40 }} />
-    </StyledSaveButton>
+    <div>
+      <List>
+        {items.map((item, index) => (
+          <li key={index}>
+            <input
+              type="checkbox"
+              id={`checkbox-${index}`}
+              checked={checkedItems.includes(item)}
+              onChange={() => handleCheckboxChange(item)}
+            />
+            <label htmlFor={`checkbox-${index}`}>{item}</label>
+          </li>
+        ))}
+      </List>
+      {/* 
+      <CheckedList>
+        {checkedItems.length > 0 && (
+          <p>Checked List: {checkedItems.join(', ')}</p>
+        )}
+      </CheckedList>
+       */}
+    </div>
   );
-}
+};
+
+
 
 /**three dot more button**/
-const StyledMoreVertButton = styled.button`
-  padding: 10px 10px;
-  color: ${props => props.textColor || 'lightgrey'};
-  background-color: transparent;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-`;
 const MoreVertButton = () => {
   const [isClicked, setIsClicked] = useState(false);
   const handleClick = () => {
     setIsClicked(!isClicked); // Toggle the state
   };
+  const StyledMoreVertButton = styled.button`
+    padding: 10px 10px;
+    color: ${props => props.textColor || 'lightgrey'};
+    background-color: transparent;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  `;
   return (
     <AlignRight>
       <StyledMoreVertButton onClick={handleClick} textColor={isClicked ? 'black' : null}>
@@ -373,28 +407,184 @@ const MoreVertButton = () => {
   );
 };
 
+
+
+
+
+const DialogueBox = styled.div`
+  display: float;
+  height: 15rem;
+  width: 10rem;
+  background-color: #fff;
+  border-radius: 25px;
+  border: 3px solid #f5f7fa;
+  padding: 20px;
+
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+`;
+
+const SaveMsg = styled.div`
+  font-style: normal;
+  font-weight: 500;
+  font-size: 10px;
+  color: 'lightgrey'};
+`
+
+
+const OpenButton = styled.button`
+  text-align: center;
+  color: ${props => props.textColor || 'lightgrey'};
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease; // Transition for color change
+`;
+
+const InlineCenteredDiv = styled.div`
+  display: flex;
+  //justify-content: center;
+  align-items: center;
+`;
+
+/**saved button */
+const SaveButton = () => {
+  const [isOpen, setIsOpen] = useState(false);  //for dialogue box
+  const [isSaved, setIsSaved] = useState(false);  //for save button
+  const [showMessage, setShowMessage] = useState(false); //for saved or unsaved msg
+  const [msg, setMsg] = useState('');
+  const dialogRef = useRef(null);
+  const openButtonRef = useRef(null);
+
+
+  const clickSave = () => {
+    setIsSaved(!isSaved); // save and unsave
+    if (!isSaved)
+    { //save recipe
+      setMsg("Saved Recipe");
+      setShowMessage(true); //show saved message
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 5000);
+
+      //only show folder box if we want to save recipe
+      setIsOpen(!isOpen);
+    }
+    else
+    { //unsave recipe
+      setMsg("Unsaved Recipe");
+      setShowMessage(true); //show saved message
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 5000);
+
+      setIsOpen(false); //close dialogue
+    }
+  };
+
+  //position dilogue right under button
+  const positionDialogBox = () => {
+    if (openButtonRef.current) {
+      const buttonRect = openButtonRef.current.getBoundingClientRect();
+      const top = buttonRect.bottom + window.scrollY;
+      const left = buttonRect.left + window.scrollX;
+
+      return { top, left };
+    }
+    return { top: 0, left: 0 };
+  };
+  //checks if save button clicked --> opens card
+  const DialogueWrapper = styled.div`
+    display: ${props => (props.open ? 'block' : 'none')};
+
+    position: absolute;
+    top: ${positionDialogBox().top}px;
+    left: ${positionDialogBox().left}px;
+    transform: translateX(-50%); //Adjust for centering 
+    z-index: 999; //float on top of all other content
+  `;
+  useEffect(() => {
+    //close save folder if click off
+    const handleClickOutside = (event) => {
+      if (
+        dialogRef.current &&
+        !dialogRef.current.contains(event.target) &&
+        openButtonRef.current &&
+        !openButtonRef.current.contains(event.target) 
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    //event listeners if user clicks off dilogue box
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
+  //TODO: fetch save data
+  //TODO: check auth for save data
+  const [saveData, setSaveData] = useState(null);
+  useEffect(() => {
+    const fetchSaveData = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/folder/save');
+        if (!response.ok) {
+          throw new Error('Failed to fetch save data');
+        }
+        const responseData = await response.json();
+        setSaveData(responseData.data); // Extracting the data object from the response
+      } catch (error) {
+        console.error('Error fetching save data:', error);
+      }
+    };
+
+    fetchSaveData();
+  }, []);
+
+  return (
+    <>
+      <InlineCenteredDiv>
+        <OpenButton ref={openButtonRef} onClick={clickSave} title="Save Recipe" textColor={isSaved ? 'red' : null }>
+            <BookmarkIcon sx={{ fontSize: 40 }} />
+          </OpenButton>
+          {showMessage && (
+            <SaveMsg>{msg}</SaveMsg>
+          )}
+      </InlineCenteredDiv>
+      
+
+      <DialogueWrapper open={isOpen}>
+        <DialogueBox ref={dialogRef}>
+          <p>Save Recipe to a folder? </p>
+        </DialogueBox>
+      </DialogueWrapper>
+    </>
+  );
+};
+
+
 const ViewPostImpl = () => {
   const [isSticky, setIsSticky] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
 
   // temp string inputs
-  const headerImageURL = '/fish_post_dummy.jpg';
-  const groceryItems = ["Apples peeled", "Bananas", "Milk", "Bread", "Eggs", "Coffee", "a pinch of salt", "item1", "item2", "item3", "item4", "item5"];
-  const steps = [
-    'Preheat the oven to 400 degrees F (200 degrees C).',
-    'Arrange half the lemon slices in a single layer in a baking dish. Layer with 2 sprigs rosemary, and top with salmon fillets. Sprinkle salmon with salt, layer with remaining rosemary sprigs, and top with remaining lemon slices. Drizzle with olive oil.',
-    'Bake 20 minutes in the preheated oven, or until fish is easily flaked with a fork.',
-    'Do something else.',
-    'Enjoy!!'
-  ];
+  const headerImageURL = '/spaget.jpg';
 
-  const handleClick = () => {
+  const handleClick = () => { //for pin button on ingredients
     setIsClicked(!isClicked); // Toggle the state
     setIsSticky(!isSticky); 
   };
 
   const [recipeData, setRecipeData] = useState(null);
-
+  //fetch recipe data
   useEffect(() => {
     const fetchRecipeData = async () => {
       try {
@@ -413,7 +603,7 @@ const ViewPostImpl = () => {
   }, []);
 
   return (
-    <PageImplView children={undefined}>
+    <PageImplView>
       <MainBackgroundWrapper>
         <Header/>
         {recipeData && (
@@ -430,13 +620,16 @@ const ViewPostImpl = () => {
             <ViewPostSectionWrapper>
               <br/><br/>
               <div>
+
                 <DivFlex>
-                <TitleText>{recipeData.title} <SaveButton/> </TitleText>
+                  <DivFlexCenter>
+                    <TitleText>{recipeData.title} </TitleText>  
+                    <SaveButton/> 
+                  </DivFlexCenter>   
                 <Gap></Gap>
                 <StarRating/>
 
                 </DivFlex>
-                
                 
                 <DivFlex>
                   <AuthorAndDate> Author:  </AuthorAndDate>
@@ -495,6 +688,7 @@ const ViewPostImpl = () => {
           </ViewPostSectionWrapper>
           <ViewPostSectionWrapperNoBar> {/* tags */}
               <SectionTitles>Tags</SectionTitles>
+              <Tags items={recipeData.tags}/>
           </ViewPostSectionWrapperNoBar>
         </FloatingCardWrapper>
         </div>
@@ -543,6 +737,7 @@ const AuthorAndDate = styled.div`
   display: flex;
   align-items: center;
   margin-right: 5px;
+  margin-top: 5px;
   color: #343C6A;
 `
 const ServingCalorieTime = styled.div`
@@ -560,7 +755,6 @@ const ServingCalorieTime = styled.div`
 /* author */
 /* TODO: add author background img */
 /* TODO: re-due position after add heading */
- 
 const AuthorIcon = styled.div`
   position: absolute;
   top: 420px; left: 48%;
@@ -600,9 +794,6 @@ const ViewPostSectionWrapperNoBar = styled.div`
 
 /* title text */
 const TitleText = styled.div`
-/* Lemon Yummy Salmon */
-  width: 50%;
-
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 700;
@@ -614,13 +805,24 @@ const TitleText = styled.div`
 `
 
 
+const DivFlexCenter = styled.div`
+  display:flex;
+  align-items: center;
+  width: 80%;
+`
 const DivFlex = styled.div`
   display:flex;
+`
+const DivJustifyContents = styled.div`
+  justify-content: space-between;
 `
 const AlignRight = styled.div`
   align-items: right;
   text-align: right;
   float: right;
+`
+const DebuggingDiv = styled.div`
+  background: pink;
 `
 
 
