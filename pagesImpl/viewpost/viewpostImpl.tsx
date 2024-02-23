@@ -8,6 +8,8 @@ import { PageImplView } from '@pagesImpl/__components__/PageImplView'
 import { Header } from '@pagesImpl/__components__/Header'
 
 import styles from '@pagesImpl/__components__/Button.module.css'
+import Rating from '@mui/material/Rating';
+import StarIcon from '@mui/icons-material/Star';
 import ShareIcon from '@mui/icons-material/Share';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -18,7 +20,7 @@ import fish from 'public/fish_post_dummy.jpg';
 
 /**npm install @mui/icons-material */
 
-/* img header for viewing posts*/
+/** img header for viewing posts **/
 const HeaderImage = ({ headerImageURL }) => {
 
   return (
@@ -45,6 +47,20 @@ const CardPostImg = styled.div`
   background-color: blue;
   overflow: "hidden";
 `
+
+
+const StarRating = ({ rating }) => {
+  const StyledRating = styled(Rating)({
+    '& .MuiRating-iconFilled': {
+      color: '#FDDD83',
+    },
+  });
+  return (
+    <div>
+      <StyledRating name="read-only" value={rating} defaultValue={0} precision={0.5} readOnly size="large" emptyIcon={<StarIcon sx={{ fontSize: 30 }} style={{ opacity: 1 }} />} />
+    </div>
+  );
+};
 
 /** Author **/
 const authorImageStyle = {
@@ -92,7 +108,7 @@ const AuthorProfileImage = () => {
 };
 
 
-/* two column layout for bullet lists */
+/** two column layout for bullet lists **/
 const TwoStyledList = ({ items }) => {
   const TwoColumnStyledList = styled.ul`
     list-style-type: disc;
@@ -123,9 +139,8 @@ const TwoStyledList = ({ items }) => {
 };
 
 
-/* two column layout for bullet lists */
+/**  show tags as little baubles **/
 const Tags = ({ items }) => {
-
   const TagDiv = styled.div`
     display: flex;
     margin: 1em 0 0 0;
@@ -151,8 +166,6 @@ const Tags = ({ items }) => {
     </TagDiv>
   );
 };
-
-
 
 
 /** checkbox **/
@@ -483,10 +496,19 @@ const ViewPostImpl = () => {
             <ViewPostSectionWrapper>
               <br/><br/>
               <div>
-                <DivFlexCenter>
-                  <TitleText>{recipeData.title} </TitleText>  
-                  <SaveButton/> 
-                </DivFlexCenter>                
+                
+
+                <DivJustifyContents>
+                  <DivFlexCenter>
+                    <TitleText>{recipeData.title} </TitleText>  
+                    <SaveButton/> 
+                  </DivFlexCenter>  
+                  <DebuggingDiv>
+                    <StarRating rating={recipeData.calculatedRating} />
+                    <ServingCalorieTime>{recipeData.calculatedRating} ({recipeData.ratingCount})</ServingCalorieTime>
+                  </DebuggingDiv>    
+                </DivJustifyContents>
+                          
                 <DivFlex>
                   <AuthorAndDate> Author:  </AuthorAndDate>
                   {/*TODO: change link to author profile from id*/}
@@ -593,6 +615,7 @@ const AuthorAndDate = styled.div`
   display: flex;
   align-items: center;
   margin-right: 5px;
+  margin-top: 5px;
   color: #343C6A;
 `
 const ServingCalorieTime = styled.div`
@@ -610,7 +633,6 @@ const ServingCalorieTime = styled.div`
 /* author */
 /* TODO: add author background img */
 /* TODO: re-due position after add heading */
- 
 const AuthorIcon = styled.div`
   position: absolute;
   top: 420px; left: 48%;
@@ -664,14 +686,21 @@ const TitleText = styled.div`
 const DivFlexCenter = styled.div`
   display:flex;
   align-items: center;
+  width: 80%;
 `
 const DivFlex = styled.div`
   display:flex;
+`
+const DivJustifyContents = styled.div`
+  justify-content: space-between;
 `
 const AlignRight = styled.div`
   align-items: right;
   text-align: right;
   float: right;
+`
+const DebuggingDiv = styled.div`
+  background: pink;
 `
 
 
