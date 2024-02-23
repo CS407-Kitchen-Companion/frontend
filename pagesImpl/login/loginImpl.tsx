@@ -30,7 +30,7 @@ export default function LoginImpl() {
 
 
 const LoginForm = () => {
-  const [username, setUsername] = useState('');
+  const [name, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
   const storedPwd = useSelector(selectPassword);
@@ -39,14 +39,18 @@ const LoginForm = () => {
 
   const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
     event.preventDefault();
-    if(username === storedName
+    dispatch(userDataAction.setName({name}))
+    dispatch(userDataAction.setPassword({password}))
+    dispatch(userDataAction.requestFlowSubmitLogin())
+    /*
+    if(name === storedName
     && password === storedPwd){
       router.push("/main");
-      console.log('Submitted:', { username, password });
+      console.log('Submitted:', { name, password });
     } else {
       alert('Incorrect Credentials')
     }
-    
+    */
   };
 
   return (
@@ -71,7 +75,7 @@ const LoginForm = () => {
       
           id="username"
           placeholder='Username'
-          value={username}
+          value={name}
           onChange={(e) => setUsername(e.target.value)}
           required
         />

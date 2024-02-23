@@ -224,7 +224,7 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
        onChange={(e) => setTime(e.target.value)}
        placeholder= '30 minutes, 240 mintues'
        >
-       </StyledInput> <StyledDescription>minutes</StyledDescription>
+       </StyledInput>
 
        <StyledLabel>Servings</StyledLabel>
        <StyledDescription>How many servings does your recipe make

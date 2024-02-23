@@ -42,6 +42,13 @@ export const apiSlice = createApi({
           method: METHOD_TYPE,
         }),
       }),
+      createRecipe: builder.mutation({
+        query: ({ ...body }) => ({
+          body: JSON.stringify(body),
+          url: '/recipe/new',
+          method: METHOD_TYPE,
+        }),
+      }),
       // GET
       // TODO APPLY filter options for recipes
       getRelatedRecipes: builder.query({

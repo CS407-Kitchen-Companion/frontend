@@ -18,7 +18,6 @@ function* flowSubmitRegisterSaga() {
     })
   ) {
     // TODO: popup
-    console.log('register')
     yield put(userDataAction.failureFlowSubmitRegister())
     return
   }
@@ -37,12 +36,11 @@ function* flowSubmitRegisterSaga() {
     return
   }
 
-  const { result } = data.data
-  console.log(result)
+  const { result } = data
+  console.log(data)
 
 
   // TODO success popup
-  console.log(data)
   yield put(userDataAction.setId(result.id))
   yield put(userDataAction.successFlowSubmitRegister())
 }
