@@ -419,122 +419,148 @@ const InlineCenteredDiv = styled.div`
   align-items: center;
 `
 
-/**saved button */
+const DialogueWrapper = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+`;
+
+const FolderList = styled.ul`
+  list-style: none;
+  padding: 0;
+`;
+
+const FolderItem = styled.li`
+  cursor: pointer;
+  /* Your folder item styles */
+  padding: 5px 10px; /* Example padding */
+  &:hover {
+    background-color: #f0f0f0; /* Example background color on hover */
+  }
+`;
+
+
 const SaveButton = () => {
-  const [isOpen, setIsOpen] = useState(false) //for dialogue box
-  const [isSaved, setIsSaved] = useState(false) //for save button
-  const [showMessage, setShowMessage] = useState(false) //for saved or unsaved msg
-  const [msg, setMsg] = useState('')
-  const dialogRef = useRef(null)
-  const openButtonRef = useRef(null)
+  const [isOpen, setIsOpen] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
+  const [msg, setMsg] = useState('');
+  const [folders, setFolders] = useState([]);
+  const dialogRef = useRef(null);
+  const [isInFolder, setIsInFolder] = useState(false);
 
-  const clickSave = () => {
-    setIsSaved(!isSaved) // save and unsave
-    if (!isSaved) {
-      //save recipe
-      setMsg('Saved Recipe')
-      setShowMessage(true) //show saved message
-      setTimeout(() => {
-        setShowMessage(false)
-      }, 5000)
-
-      //only show folder box if we want to save recipe
-      setIsOpen(!isOpen)
-    } else {
-      //unsave recipe
-      setMsg('Unsaved Recipe')
-      setShowMessage(true) //show saved message
-      setTimeout(() => {
-        setShowMessage(false)
-      }, 5000)
-
-      setIsOpen(false) //close dialogue
-    }
-  }
-
-  //position dilogue right under button
-  const positionDialogBox = () => {
-    if (openButtonRef.current) {
-      const buttonRect = openButtonRef.current.getBoundingClientRect()
-      const top = buttonRect.bottom + window.scrollY
-      const left = buttonRect.left + window.scrollX
-
-      return { top, left }
-    }
-    return { top: 0, left: 0 }
-  }
-  //checks if save button clicked --> opens card
-  const DialogueWrapper = styled.div`
-    display: ${props => (props.open ? 'block' : 'none')};
-
-    position: absolute;
-    top: ${positionDialogBox().top}px;
-    left: ${positionDialogBox().left}px;
-    transform: translateX(-50%); //Adjust for centering
-    z-index: 999; //float on top of all other content
-  `
   useEffect(() => {
-    //close save folder if click off
-    const handleClickOutside = event => {
-      if (
-        dialogRef.current &&
-        !dialogRef.current.contains(event.target) &&
-        openButtonRef.current &&
-        !openButtonRef.current.contains(event.target)
-      ) {
-        setIsOpen(false)
-      }
-    }
-
-    //event listeners if user clicks off dilogue box
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isOpen])
-
-  //TODO: fetch save data
-  //TODO: check auth for save data
-  const [saveData, setSaveData] = useState(null)
-  useEffect(() => {
-    const fetchSaveData = async () => {
+    const checkRecipeInFolder = async () => {
       try {
-        const response = await fetch('http://localhost:8080/folder/save')
+        const response = await fetch(`https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/folder/2/recipe/1`);
         if (!response.ok) {
-          throw new Error('Failed to fetch save data')
+          throw new Error('Failed to check if recipe is in folder');
         }
-        const responseData = await response.json()
-        setSaveData(responseData.data) // Extracting the data object from the response
+        const data = await response.json();
+        console.log("check")
+        console.log(data.data)
+        console.log(data.data === 'True')
+        setIsInFolder(data.data === 'True');
       } catch (error) {
-        console.error('Error fetching save data:', error)
+        console.error('Error:', error);
       }
-    }
+    };
 
-    fetchSaveData()
-  }, [])
+    checkRecipeInFolder();
+  }, [2, 1]);
+  useEffect(() => {
+    const fetchFolders = async () => {
+      try {
+        const response = await fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/folder/2');
+        if (!response.ok) {
+          throw new Error('Failed to fetch folders');
+        }
+        const data = await response.json();
+        console.log(data.data)
+        setFolders(data.data);
+      } catch (error) {
+        console.error('Error fetching folders:', error);
+      }
+    };
+
+    fetchFolders();
+  }, []);
+  const handleClickOutside = (event) => {
+    if (dialogRef.current && !dialogRef.current.contains(event.target)) {
+      setIsOpen(false); // Close the pop-up when clicked outside
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [folders]);
+
+  const handleSaveToFolder = async (folderId, recipeId) => {
+    try {
+      const response = await fetch(`https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/folder/save`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          folder: 2,
+          recipe: 1
+        })
+      });
+        console.log(response)
+      if (!response.ok) {
+        throw new Error('Failed to save recipe to folder');
+      }
+  
+      const responseData = await response.json();
+  
+      setMsg('Saved Recipe');
+      setShowMessage(true);
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 5000);
+  
+      setIsOpen(false);
+    } catch (error) {
+      console.error('Error saving recipe to folder:', error);
+    }
+  };
+  
 
   return (
     <>
       <InlineCenteredDiv>
-        <OpenButton ref={openButtonRef} onClick={clickSave} title="Save Recipe" textColor={isSaved ? 'red' : null}>
-          <BookmarkIcon sx={{ fontSize: 40 }} />
-        </OpenButton>
+
+        <button onClick={() => setIsOpen(true)}>
+         <BookmarkIcon sx={{ fontSize: 40, color: isInFolder ? 'red' : 'black' }} />
+        </button>
         {showMessage && <SaveMsg>{msg}</SaveMsg>}
       </InlineCenteredDiv>
 
-      <DialogueWrapper open={isOpen}>
+      {isOpen && (
+        <DialogueWrapper>
         <DialogueBox ref={dialogRef}>
-          <p>Save Recipe to a folder? </p>
+          <p>Save Recipe to a folder?</p>
+          {folders ? (
+            <FolderList>
+              <FolderItem key={folders.id} onClick={() => handleSaveToFolder(folders.id)}>
+                {folders.title}
+              </FolderItem>
+            </FolderList>
+          ) : (
+            <p>Loading folders...</p>
+          )}
         </DialogueBox>
       </DialogueWrapper>
+      
+      )}
     </>
-  )
-}
+  );
+};
 
 const ViewPostImpl = () => {
   const [isSticky, setIsSticky] = useState(false)
