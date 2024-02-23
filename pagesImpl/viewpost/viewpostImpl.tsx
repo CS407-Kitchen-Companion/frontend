@@ -14,10 +14,10 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PushPinIcon from '@mui/icons-material/PushPin';
-
 import fish from 'public/fish_post_dummy.jpg';
 
 /**npm install @mui/icons-material */
+
 const StarRating = () => {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -96,17 +96,13 @@ const StarRating = () => {
     </div>
   );
 };
-
-
 const RatingContainer = styled.div`
   display: flex;
 `;
-
 const Star = styled.span`
   font-size: 50px;
   color: ${props => (props.filled ? "#ffc107" : "#e4e5e9")};
   transition: color 0.2s;
-
   &:hover {
     color: #ff5733;
   }
@@ -616,7 +612,6 @@ const ViewPostImpl = () => {
 
   return (
     <PageImplView>
-      <p>Post: {router.query.slug}</p>
       <MainBackgroundWrapper>
         <Header/>
         {recipeData && (

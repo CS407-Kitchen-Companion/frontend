@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic'
 import { LoadingPage } from '@pagesImpl/__components__/LoadingPage'
 import { useRouter } from 'next/router';
 
+
 const PostIdImplWithNoSSR = dynamic(() => import('@pagesImpl/viewpost/postIdImpl'), {
   ssr: false,
   loading: () => (
