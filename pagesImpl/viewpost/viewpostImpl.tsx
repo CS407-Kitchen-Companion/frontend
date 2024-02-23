@@ -1,7 +1,6 @@
 import styled from '@emotion/styled'
-
 import React, { useState, useEffect, useRef } from 'react';
-
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -10,8 +9,6 @@ import { PageImplView } from '@pagesImpl/__components__/PageImplView'
 import { Header } from '@pagesImpl/__components__/Header'
 
 import styles from '@pagesImpl/__components__/Button.module.css'
-import Rating from '@mui/material/Rating';
-import StarIcon from '@mui/icons-material/Star';
 import ShareIcon from '@mui/icons-material/Share';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -148,7 +145,7 @@ const CardPostImg = styled.div`
 /** Author **/
 const authorImageStyle = {
   borderRadius: '50%',
-  border: '1px solid #fff',
+  border: '3px solid #fff',
 }
 const AuthorProfileImage = () => {
   return (
@@ -398,51 +395,25 @@ const MoreVertButton = () => {
 
 
 
-const DialogueBox = styled.div`
-  display: float;
-  height: 15rem;
-  width: 10rem;
-  background-color: #fff;
-  border-radius: 25px;
-  border: 3px solid #f5f7fa;
-  padding: 20px;
-
-  font-style: normal;
-  font-weight: 500;
-  font-size: 20px;
-`;
-
-const SaveMsg = styled.div`
-  font-style: normal;
-  font-weight: 500;
-  font-size: 10px;
-  color: 'lightgrey'};
-`
 
 
-const OpenButton = styled.button`
-  text-align: center;
-  color: ${props => props.textColor || 'lightgrey'};
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  transition: color 0.3s ease; // Transition for color change
-`;
+
+
+
 
 const InlineCenteredDiv = styled.div`
   display: flex;
-  //justify-content: center;
   align-items: center;
 `;
 
 /**saved button */
-const SaveButton = () => {
+const SaveRecipe = () => {
   const [isOpen, setIsOpen] = useState(false);  //for dialogue box
   const [isSaved, setIsSaved] = useState(false);  //for save button
   const [showMessage, setShowMessage] = useState(false); //for saved or unsaved msg
   const [msg, setMsg] = useState('');
   const dialogRef = useRef(null);
-  const openButtonRef = useRef(null);
+  const SaveButtonRef = useRef(null);
 
 
   const clickSave = () => {
@@ -472,8 +443,8 @@ const SaveButton = () => {
 
   //position dilogue right under button
   const positionDialogBox = () => {
-    if (openButtonRef.current) {
-      const buttonRect = openButtonRef.current.getBoundingClientRect();
+    if (SaveButtonRef.current) {
+      const buttonRect = SaveButtonRef.current.getBoundingClientRect();
       const top = buttonRect.bottom + window.scrollY;
       const left = buttonRect.left + window.scrollX;
 
@@ -491,14 +462,52 @@ const SaveButton = () => {
     transform: translateX(-50%); //Adjust for centering 
     z-index: 999; //float on top of all other content
   `;
+  //save/unsaved msg
+  const SaveMsg = styled.div`
+    position: absolute;
+    //top: ${positionDialogBox().top - 20}px;
+    left: ${positionDialogBox().left + 80}px;
+    transform: translateX(-50%); //Adjust for centering 
+    z-index: 999; //float on top of all other content
+
+    font-style: normal;
+    font-weight: 500;
+    font-size: 10px;
+    color: 'lightgrey'};
+  `
+  const DialogueBox = styled.div`
+    display: float;
+    height: 15rem;
+    width: 10rem;
+    background-color: #fff;
+    border-radius: 25px;
+    border: 3px solid #f5f7fa;
+    padding: 20px;
+
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+  `;
+  const SaveButton = styled.button`
+    text-align: center;
+    color: ${props => props.textColor || 'lightgrey'};
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease; // Transition for color change
+  `;
+  const TempWrapper = styled.div`
+    display: inline-block;
+  `;
+
   useEffect(() => {
     //close save folder if click off
     const handleClickOutside = (event) => {
       if (
         dialogRef.current &&
         !dialogRef.current.contains(event.target) &&
-        openButtonRef.current &&
-        !openButtonRef.current.contains(event.target) 
+        SaveButtonRef.current &&
+        !SaveButtonRef.current.contains(event.target) 
       ) {
         setIsOpen(false);
       }
@@ -522,7 +531,7 @@ const SaveButton = () => {
   useEffect(() => {
     const fetchSaveData = async () => {
       try {
-        const response = await fetch('http://localhost:8080/folder/save');
+        const response = await fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/folder/saved');
         if (!response.ok) {
           throw new Error('Failed to fetch save data');
         }
@@ -537,28 +546,29 @@ const SaveButton = () => {
   }, []);
 
   return (
-    <>
+    <TempWrapper>
       <InlineCenteredDiv>
-        <OpenButton ref={openButtonRef} onClick={clickSave} title="Save Recipe" textColor={isSaved ? 'red' : null }>
+        <SaveButton ref={SaveButtonRef} onClick={clickSave} title="Save Recipe" textColor={isSaved ? 'red' : null }>
             <BookmarkIcon sx={{ fontSize: 40 }} />
-          </OpenButton>
+          </SaveButton>
           {showMessage && (
             <SaveMsg>{msg}</SaveMsg>
+            
           )}
       </InlineCenteredDiv>
-      
 
       <DialogueWrapper open={isOpen}>
         <DialogueBox ref={dialogRef}>
           <p>Save Recipe to a folder? </p>
         </DialogueBox>
       </DialogueWrapper>
-    </>
+    </TempWrapper>
   );
 };
 
 
 const ViewPostImpl = () => {
+  const router = useRouter();
   const [isSticky, setIsSticky] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
 
@@ -571,7 +581,7 @@ const ViewPostImpl = () => {
   };
 
   const [recipeData, setRecipeData] = useState(null);
-  //fetch recipe data
+  //TODI: fetch recipe data
   useEffect(() => {
     const fetchRecipeData = async () => {
       try {
@@ -591,6 +601,7 @@ const ViewPostImpl = () => {
 
   return (
     <PageImplView>
+      <p>Post: {router.query.slug}</p>
       <MainBackgroundWrapper>
         <Header/>
         {recipeData && (
@@ -610,8 +621,8 @@ const ViewPostImpl = () => {
 
                 <DivFlex>
                   <DivFlexCenter>
-                    <TitleText>{recipeData.title} </TitleText>  
-                    <SaveButton/> 
+                    <TitleText>{recipeData.title}</TitleText>  
+                    <SaveRecipe/>
                   </DivFlexCenter>   
                 <Gap></Gap>
                 <StarRating/>
@@ -747,8 +758,8 @@ const AuthorIcon = styled.div`
   top: 420px; left: 48%;
   width: 90px;
   height: 90px;
-  border-radius: 50%;
-  background: #FFE0EB;
+  //border-radius: 50%;
+  //background: #FFE0EB;
 `
 
 
@@ -781,6 +792,7 @@ const ViewPostSectionWrapperNoBar = styled.div`
 
 /* title text */
 const TitleText = styled.div`
+  display: inline-block;
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 700;
@@ -788,14 +800,13 @@ const TitleText = styled.div`
   display: inline;
   align-items: center;
   color: #343C6A;
-  display: block;
+  
 `
 
 
 const DivFlexCenter = styled.div`
-  display:flex;
+  display: inline-block;
   align-items: center;
-  width: 80%;
 `
 const DivFlex = styled.div`
   display:flex;
