@@ -38,7 +38,6 @@ function* flowSubmitLoginSaga() {
     yield put(userDataAction.failureFlowSubmitLogin())
     return
   }
-  alert('test')
   const { data, error } = yield fetchEndpoint('submitLogin', {
     username,
     password
@@ -47,6 +46,7 @@ function* flowSubmitLoginSaga() {
 
   if (error) {
     // TODO popup
+    alert('Incorrect Credentials')
     yield put(userDataAction.failureFlowSubmitLogin())
     return
   }
