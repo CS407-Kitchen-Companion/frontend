@@ -4,11 +4,15 @@ import { isUndefined } from 'lodash'
 import { useState } from 'react'
 import { CloseIcon } from '@pagesImpl/__components__/CloseIcon'
 import { useRouter } from 'next/navigation'
+import {  useSelector } from 'react-redux'
+import { userDataAction, selectUserName } from '@lib/store/userData/userData.slice'
 
 export const ProfileIcon: React.FC = () => {
   const router = useRouter()
   // TODO: FIX IT to show profile window when logined - IF NOT then show login button as youtube
   const [isProfileClicked, setIsProfileClicked] = useState(false)
+  const [username] = useState(useSelector(selectUserName));
+
   const onClickProfileImage = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
     setIsProfileClicked(!isProfileClicked)
@@ -41,6 +45,7 @@ export const ProfileIcon: React.FC = () => {
   const onClickLogout = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
     // TODO: LOG OUT
+    router.push('/login')
     console.log('LOG OUT')
   }
   return (
@@ -48,7 +53,7 @@ export const ProfileIcon: React.FC = () => {
       <ProfileImage onClick={onClickProfileImage} />
       <ProfileWindow isClicked={isProfileClicked}>
         <ProfileWrapper>
-          <ProfileName>Username2042u5 Purdue</ProfileName>
+          <ProfileName>{username}</ProfileName>
           <ProfileTaskList>
             <ProfileTaskListItem onClick={onClickMyPosts}>My Posts</ProfileTaskListItem>
             <ProfileTaskListItem paddingTop={17} onClick={onClickInteractions}>

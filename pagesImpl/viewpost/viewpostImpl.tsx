@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react'
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from"next/navigation";
 
 import { PageImplView } from '@pagesImpl/__components__/PageImplView'
 import { Header } from '@pagesImpl/__components__/Header'
@@ -334,7 +335,7 @@ const CheckboxStyledList = ({ items }) => {
   return (
     <div>
       <List>
-        {items.map((item, index) => (
+        {items.map((item: any, index : number) => (
           <li key={index}>
             <input
               type="checkbox"
@@ -360,8 +361,10 @@ const CheckboxStyledList = ({ items }) => {
 /**three dot more button**/
 const MoreVertButton = () => {
   const [isClicked, setIsClicked] = useState(false)
+  const router = useRouter()
   const handleClick = () => {
     setIsClicked(!isClicked) // Toggle the state
+    router.push("/viewpost/edit")
   }
   const StyledMoreVertButton = styled.button`
     padding: 10px 10px;

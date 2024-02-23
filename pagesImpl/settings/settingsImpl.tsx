@@ -21,7 +21,7 @@ export default function ForgotImpl() {
 const ForgotForm = () => {
   const [oldpwd, setOldPwd] = useState('');
   const [password, setNewPwd] = useState('');
-  const [id, setId] = useState('16');
+  const [id, setId] = useState('11');
   const router = useRouter();
   const dispatch = useDispatch();
 

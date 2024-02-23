@@ -29,7 +29,7 @@ function* flowSubmitLoginSaga() {
 
   if (error) {
     // TODO popup
-    alert('Incorrect Credentials')
+    console.log('Incorrect Credentials')
     yield put(userDataAction.failureFlowSubmitLogin())
     return
   }
