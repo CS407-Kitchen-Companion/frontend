@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Filter } from '@pagesImpl/__components__/Filter'
 import { Header } from '@pagesImpl/__components__/Header'
 import { PageImplView } from '@pagesImpl/__components__/PageImplView'
+import Custom404 from '@pages/404'; // Import your custom 404 page
 
 
 import styles from '@pagesImpl/__components__/Button.module.css'
@@ -23,6 +24,8 @@ interface PostIdImplProps { //make sure postId is a string
 const PostIdImpl: React.FC<PostIdImplProps> = ({ postId }) => { //main viewpostpage
   const router = useRouter();
   const [recipeData, setRecipeData] = useState(null);
+  const [error, setError] = useState(false);
+
 
   /** grab postId to view that recipe*/
   useEffect(() => {
@@ -38,6 +41,7 @@ const PostIdImpl: React.FC<PostIdImplProps> = ({ postId }) => { //main viewpostp
           setRecipeData(responseData.data); // Extracting the data object from the response
         } catch (error) {
           console.error('Error fetching recipe data:', error);
+          setError(true);
         }
       };
 
@@ -45,14 +49,16 @@ const PostIdImpl: React.FC<PostIdImplProps> = ({ postId }) => { //main viewpostp
     }
   }, [postId]) // Include postId as a dependency
 
+  if (error) { //if unknown recipe id, 404
+    return <Custom404 />;
+  }
   return (
     <>
       {recipeData && (
         <PageImplView>
         <Header />
-
-
         <MainBackgroundWrapper>
+          <h1>title: {recipeData.title}</h1>
          
         </MainBackgroundWrapper>
       </PageImplView>
