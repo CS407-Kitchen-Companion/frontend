@@ -103,6 +103,7 @@ export const selectIsKeywordNotEmpty = createSelector(searchData, state => state
 export const selectRelatedRecipes = createSelector(searchData, state => state.relatedRecipes)
 export const selectFilter = createSelector(searchData, state => state.filter)
 export const selectIsSubmitted = createSelector(searchData, state => state.isSubmitted)
+export const selectSearchedResults = createSelector(searchData, state => state.searchedResults)
 
 // root reducer
 export const searchDataReducer = combineReducers({

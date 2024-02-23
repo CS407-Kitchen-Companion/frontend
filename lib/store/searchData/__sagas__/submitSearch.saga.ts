@@ -24,7 +24,8 @@ function* flowSubmitSearchSaga() {
   }
 
   yield put(searchDataAction.successFlowSubmitSearch())
-  yield put(navActions.push({ url: 'viewpost' }))
+  // TODO: fix t
+  // yield put(navActions.push({ url: 'viewpost' }))
 }
 
 function* watchSubmitSearchSaga() {

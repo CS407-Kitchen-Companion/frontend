@@ -32,7 +32,7 @@ export const Filter: React.FC = () => {
 }
 
 const FilterWrapper = styled.div`
-  width: 270px;
+  min-width: 250px;
   max-height: 100%;
   overflow: scroll;
   box-sizing: border-box;
