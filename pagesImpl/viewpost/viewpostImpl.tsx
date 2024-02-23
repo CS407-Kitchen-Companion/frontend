@@ -453,7 +453,7 @@ const SaveButton = () => {
   useEffect(() => {
     const checkRecipeInFolder = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8080/folder/2/recipe/1`);
+        const response = await fetch(`https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/folder/2/recipe/1`);
         if (!response.ok) {
           throw new Error('Failed to check if recipe is in folder');
         }
