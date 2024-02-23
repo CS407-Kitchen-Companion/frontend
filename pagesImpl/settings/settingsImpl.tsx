@@ -3,6 +3,8 @@ import { useRouter } from"next/navigation";
 import { FormEvent } from 'react'
 import React, { useState } from 'react';
 import { PageImplView } from '@pagesImpl/__components__/PageImplView'
+import { useDispatch, useSelector } from 'react-redux'
+import { userDataAction, selectPassword } from '@lib/store/userData/userData.slice'
 
 export default function ForgotImpl() {
   return (
@@ -17,13 +19,19 @@ export default function ForgotImpl() {
 
 
 const ForgotForm = () => {
-  const [oldPwd, setOldPwd] = useState('');
-  const [newPwd, setNewPwd] = useState('');
+  const [oldpwd, setOldPwd] = useState('');
+  const [password, setNewPwd] = useState('');
+  const [id, setId] = useState('16');
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
     event.preventDefault();
-    
+      console.log(id)
+      dispatch(userDataAction.setOldPwd({oldpwd}))
+      dispatch(userDataAction.setPassword({password}))
+      dispatch(userDataAction.setId({id}))
+      dispatch(userDataAction.requestFlowUpdatePassword())
 
   };
 
@@ -34,7 +42,7 @@ const ForgotForm = () => {
         <input
           type="text"
           id="oldPwd"
-          value={oldPwd}
+          value={oldpwd}
           onChange={(e) => setOldPwd(e.target.value)}
           required
         />
@@ -43,7 +51,7 @@ const ForgotForm = () => {
         <input
           type="text"
           id="newPwd"
-          value={newPwd}
+          value={password}
           onChange={(e) => setNewPwd(e.target.value)}
           required
         />

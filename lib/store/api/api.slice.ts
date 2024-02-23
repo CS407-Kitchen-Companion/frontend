@@ -49,6 +49,13 @@ export const apiSlice = createApi({
           method: METHOD_TYPE,
         }),
       }),
+      changePassword: builder.mutation({
+        query: ({ ...body }) => ({
+          body: JSON.stringify(body),
+          url: '/user/updatePassword',
+          method: METHOD_TYPE,
+        }),
+      }),
       // GET
       // TODO APPLY filter options for recipes
       getRelatedRecipes: builder.query({
