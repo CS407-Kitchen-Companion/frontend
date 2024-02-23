@@ -36,7 +36,7 @@ const RegisterForm = () => {
       dispatch(userDataAction.setPassword({password}))
       dispatch(userDataAction.requestFlowSubmitRegister())
 
-      router.push("/login");
+      
       console.log('Submitted:', { name, email });
     }
   };

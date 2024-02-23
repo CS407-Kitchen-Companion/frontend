@@ -4,6 +4,7 @@ import { fetchEndpoint } from '@lib/store/helperSaga/fetchEndpoint'
 import { ISubmitRegisterResult, ResponseError } from '@lib/store/api/api.type'
 import { userDataAction, UserDataState, selectuserData } from '@lib/store/userData/userData.slice'
 import { checkLength, ComparisonType } from '@lib/utils/checkLength'
+import { navActions } from '@lib/store/nav/nav.slice'
 
 
 function* flowSubmitRegisterSaga() {
@@ -41,7 +42,7 @@ function* flowSubmitRegisterSaga() {
 
 
   // TODO success popup
-  yield put(userDataAction.setId(result.id))
+  yield put(navActions.push({ url: '/login' }))
   yield put(userDataAction.successFlowSubmitRegister())
 }
 
