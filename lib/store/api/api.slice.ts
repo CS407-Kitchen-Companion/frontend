@@ -14,7 +14,7 @@ export const apiSlice = createApi({
     prepareHeaders: (headers, { getState }) => {
       const additionalHeaders = {
         accept: 'application/json',
-        'content-type': 'text/plain',
+        'content-type': 'application/json',
       }
 
       Object.entries(additionalHeaders).forEach(([key, value]) => {
@@ -28,11 +28,17 @@ export const apiSlice = createApi({
   }),
   endpoints(builder) {
     return {
-      // POST
       submitRegister: builder.mutation({
         query: ({ ...body }) => ({
           body: JSON.stringify(body),
-          url: '/specific-url',
+          url: '/user/new',
+          method: METHOD_TYPE,
+        }),
+      }),
+      submitLogin: builder.mutation({
+        query: ({ ...body }) => ({
+          body: JSON.stringify(body),
+          url: '/user/login',
           method: METHOD_TYPE,
         }),
       }),
