@@ -214,6 +214,7 @@ const Star = styled.span`
   }
 `
 
+
 /* direction step list**/
 const StepList: React.FC<{ steps: string[] }> = ({ steps }) => {
   return (
