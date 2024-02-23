@@ -9,19 +9,19 @@ import { FoodIcon } from '@pagesImpl/__components__/FoodIcon'
 export const SearchBar: React.FC = () => {
   const dispatch = useDispatch()
   const isKeywordNotEmpty = useSelector(selectIsKeywordNotEmpty)
-  // const relatedRecipes = useSelector(selectRelatedRecipes)
-  const relatedRecipes = ['recipe 1', 'recipe 2', 'recipe 3', 'recipe 4']
+  const relatedRecipes = useSelector(selectRelatedRecipes)
+  // const relatedRecipes = useSelector()
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const keyword = event.target.value
     dispatch(searchDataAction.setKeyword({ keyword }))
-    dispatch(searchDataAction.beginFlowRelatedRecepies())
+    dispatch(searchDataAction.requestFlowRelatedRecepies())
     console.log('Input value:', event.target.value)
   }
 
   const handleInputSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    dispatch(searchDataAction.beginFlowSubmitSearch())
+    dispatch(searchDataAction.requestFlowSubmitSearch())
     console.log('submit')
   }
 
@@ -29,7 +29,7 @@ export const SearchBar: React.FC = () => {
     event.preventDefault()
     const keyword = event.currentTarget.textContent ?? ''
     dispatch(searchDataAction.setKeyword({ keyword }))
-    dispatch(searchDataAction.beginFlowSubmitSearch())
+    dispatch(searchDataAction.requestFlowSubmitSearch())
     console.log('click recipe')
   }
   return (
@@ -41,7 +41,7 @@ export const SearchBar: React.FC = () => {
         <Searchbar placeholder={'Find a recipe, get cooking!'} onChange={handleInputChange} />
         <RelatedRecipes isKeywordNotEmpty={isKeywordNotEmpty}>
           {relatedRecipes.map((item, i) => (
-            <RelatedRecipe isFirst={i == 0} onClick={handleRecipeClick}>
+            <RelatedRecipe key={i} isFirst={i == 0} onClick={handleRecipeClick}>
               <FoodIconWrapper isFirst={i == 0}>
                 <FoodIcon />
               </FoodIconWrapper>

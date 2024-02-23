@@ -2,6 +2,7 @@ import { put, take, takeLeading, select, fork, takeEvery } from '@redux-saga/cor
 import { PayloadAction } from '@reduxjs/toolkit'
 import { fetchEndpoint } from '@lib/store/helperSaga/fetchEndpoint'
 import { searchDataAction, SearchDataState, selectsearchData } from '@lib/store/searchData/searchData.slice'
+import isUndefined from 'lodash/isUndefined'
 
 function* flowSubmitSearchSaga() {
   yield put(searchDataAction.beginFlowSubmitSearch())
@@ -10,14 +11,13 @@ function* flowSubmitSearchSaga() {
   const { data, error } = yield fetchEndpoint('getSearchedResults', {
     keyword,
   })
+  const searchedResults = isUndefined(data) ? [] : data.data
 
   if (error) {
     // nav to 404
     yield put(searchDataAction.failureFlowSubmitSearch())
     return
   }
-
-  const { searchedResults } = data
 
   yield put(searchDataAction.setSearchedResults({ searchedResults }))
   yield put(searchDataAction.successFlowSubmitSearch())

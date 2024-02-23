@@ -10,13 +10,18 @@ export interface IRelatedRecipes {
 }
 
 export interface ISearchedResults {
-  searchedResults: string[] // TODO: change it to res obj type
+  searchedResults: []
+}
+
+export interface IFilter {
+  filter: {}
 }
 
 export interface SearchDataState {
   keyword: string
   relatedRecipes: string[]
-  searchedResults: string[] // TODO: change it to res obj type
+  searchedResults: []
+  filter: {}
 }
 
 const initialState = (): SearchDataState => {
@@ -24,6 +29,18 @@ const initialState = (): SearchDataState => {
     keyword: '',
     relatedRecipes: [],
     searchedResults: [],
+    filter: {
+      // TODO: FIX MOCK DATA to REAL
+      Cusine: {},
+      Difficulty: {},
+      Appliance: {},
+      MealType: {},
+      Diet: {},
+      'Calorie Count': {},
+      Servings: {},
+      Time: {},
+      Ingredients: {},
+    },
   }
 }
 
@@ -43,6 +60,12 @@ const searchDataSlice = createSlice({
     successFlowSubmitSearch: () => {},
     failureFlowSubmitSearch: () => {},
 
+    // submit flow
+    requestFlowGetFilter: () => {},
+    beginFlowGetFilter: () => {},
+    successFlowGetFilter: () => {},
+    failureFlowGetFilter: () => {},
+
     // setter
     setKeyword: (state, action: PayloadAction<IKeyword>) => {
       state.keyword = action.payload.keyword
@@ -52,6 +75,9 @@ const searchDataSlice = createSlice({
     },
     setSearchedResults: (state, action: PayloadAction<ISearchedResults>) => {
       state.searchedResults = action.payload.searchedResults
+    },
+    setFilter: (state, action: PayloadAction<IFilter>) => {
+      state.filter = action.payload.filter
     },
   },
 })
@@ -65,6 +91,7 @@ export const searchDataAction = searchDataSlice.actions
 export const selectsearchData = createSelector(searchData, state => state)
 export const selectIsKeywordNotEmpty = createSelector(searchData, state => state.keyword.length > 0)
 export const selectRelatedRecipes = createSelector(searchData, state => state.relatedRecipes)
+export const selectFilter = createSelector(searchData, state => state.filter)
 
 // root reducer
 export const searchDataReducer = combineReducers({
