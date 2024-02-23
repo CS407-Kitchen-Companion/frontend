@@ -5,10 +5,14 @@ import { RootState } from '@lib/store/store'
 import { apiSlice } from '@lib/store/api/api.slice'
 import { uiReducer } from '@lib/store/ui/ui.slice'
 import { userDataReducer } from '@lib/store/userData/userData.slice'
+import { recipeDataReducer } from './recipeData/recipeData.slice'
+import { searchDataReducer } from '@lib/store/searchData/searchData.slice'
 
 const combinedReducer = combineReducers({
   ui: uiReducer,
   userData: userDataReducer,
+  recipeData: recipeDataReducer,
+  searchData: searchDataReducer,
   [apiSlice.reducerPath]: apiSlice.reducer,
 })
 
