@@ -17,6 +17,7 @@ function* flowSearchRelatedRecipesSaga() {
   })
   const relatedRecipes = isUndefined(data) ? [] : data.data
   yield put(searchDataAction.setRelatedRecipes({ relatedRecipes }))
+  yield put(searchDataAction.setIsSubmitted({ isSubmitted: false }))
   console.log('relatedrecipes')
   console.log(relatedRecipes)
 

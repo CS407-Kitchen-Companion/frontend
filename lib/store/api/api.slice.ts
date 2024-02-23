@@ -43,11 +43,12 @@ export const apiSlice = createApi({
         }),
       }),
       // GET
+      // TODO APPLY filter options for recipes
       getRelatedRecipes: builder.query({
         query: ({ keyword }) => `recipe/search/titles?title=${keyword}`,
       }),
       getSearchedResults: builder.query({
-        query: ({ keyword }) => `/recipe/search?title=${keyword}&calories=&appliances=&tags=`,
+        query: ({ keyword }) => `/recipe/search?title=${keyword}`,
       }),
       getFilter: builder.query({
         query: () => `/recipe/search/filters`,
