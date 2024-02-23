@@ -16,6 +16,7 @@ function* flowSearchRelatedRecipesSaga() {
     keyword,
   })
   const relatedRecipes = isUndefined(data) ? [] : data.data
+  yield put(searchDataAction.setRelatedRecipes({ relatedRecipes }))
   console.log('relatedrecipes')
   console.log(relatedRecipes)
 
@@ -24,7 +25,6 @@ function* flowSearchRelatedRecipesSaga() {
     return
   }
 
-  yield put(searchDataAction.setRelatedRecipes({ relatedRecipes }))
   yield put(searchDataAction.successFlowRelatedRecepies())
 }
 

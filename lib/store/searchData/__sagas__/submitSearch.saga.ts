@@ -12,6 +12,7 @@ function* flowSubmitSearchSaga() {
     keyword,
   })
   const searchedResults = isUndefined(data) ? [] : data.data
+  yield put(searchDataAction.setSearchedResults({ searchedResults }))
 
   if (error) {
     // nav to 404
@@ -19,7 +20,6 @@ function* flowSubmitSearchSaga() {
     return
   }
 
-  yield put(searchDataAction.setSearchedResults({ searchedResults }))
   yield put(searchDataAction.successFlowSubmitSearch())
 }
 
