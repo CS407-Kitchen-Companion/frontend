@@ -32,14 +32,14 @@ export const apiSlice = createApi({
       submitRegister: builder.mutation({
         query: ({ ...body }) => ({
           body: JSON.stringify(body),
-          url: '/new',
+          url: '/user/new',
           method: METHOD_TYPE,
         }),
       }),
       submitLogin: builder.mutation({
         query: ({ ...body }) => ({
           body: JSON.stringify(body),
-          url: '/login',
+          url: '/user/login',
           method: METHOD_TYPE,
         }),
       }),

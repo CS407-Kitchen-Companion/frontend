@@ -3,6 +3,8 @@ import { useRouter } from"next/navigation";
 import { FormEvent } from 'react'
 import React, { useState } from 'react';
 import { PageImplView } from '@pagesImpl/__components__/PageImplView'
+import { useDispatch, useSelector } from 'react-redux'
+import { userDataAction, selectuserData } from '@lib/store/userData/userData.slice'
 
 export default function RegisterImpl() {
   return (
@@ -17,10 +19,11 @@ export default function RegisterImpl() {
 
 
 const RegisterForm = () => {
-  const [username, setUsername] = useState('');
+  const [name, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
     event.preventDefault();
@@ -28,8 +31,13 @@ const RegisterForm = () => {
     if(!email.includes('@')){
         alert('Invalid email');
     } else {
+      dispatch(userDataAction.setEmail({email}))
+      dispatch(userDataAction.setName({name}))
+      dispatch(userDataAction.setPassword({password}))
+      dispatch(userDataAction.beginFlowSubmitRegister())
+
       router.push("/login");
-      console.log('Submitted:', { username, email });
+      console.log('Submitted:', { name, email });
     }
   };
 
@@ -65,7 +73,7 @@ const RegisterForm = () => {
           type="text"
           placeholder='Username'
           id="username"
-          value={username}
+          value={name}
           onChange={(e) => setUsername(e.target.value)}
           required
         />

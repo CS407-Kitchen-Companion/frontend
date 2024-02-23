@@ -238,7 +238,7 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
        </StyledInput>
 
        <div>
-       <button type="submit">Submit</button>
+       <StyledAddButton type="submit">Submit</StyledAddButton>
        </div>
      </form>
      

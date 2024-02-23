@@ -13,11 +13,16 @@ export interface IPassword {
 export interface IToken {
   token: string
 }
+
+export interface Iid {
+  id: string
+}
 export interface UserDataState {
   username: string,
   email: string,
   password: string,
-  token: string
+  token: string,
+  id: string
 }
 
 const initialState = (): UserDataState => {
@@ -25,7 +30,8 @@ const initialState = (): UserDataState => {
     username: '',
     email: '',
     password: '',
-    token: ''
+    token: '',
+    id: '',
   }
 }
 
@@ -38,6 +44,13 @@ const userDataSlice = createSlice({
     beginFlowSubmitRegister: () => {},
     successFlowSubmitRegister: () => {},
     failureFlowSubmitRegister: () => {},
+
+    // login flow
+   
+    requestFlowSubmitLogin: () => {},
+    beginFlowSubmitLogin: () => {},
+    successFlowSubmitLogin: () => {},
+    failureFlowSubmitLogin: () => {},
 
     // setter
     setName: (state, action: PayloadAction<IName>) => {
@@ -52,6 +65,9 @@ const userDataSlice = createSlice({
     setToken: (state, action: PayloadAction<IToken>) => {
       state.token = action.payload.token
     },
+    setId: (state, action: PayloadAction<Iid>) => {
+      state.id = action.payload.id
+    },
   },
 })
 
@@ -64,6 +80,9 @@ export const userDataAction = userDataSlice.actions
 export const selectuserData = createSelector(userData, state => state)
 export const selectUserName = createSelector(userData, state => state.username)
 export const selectEmail = createSelector(userData, state => state.email)
+export const selectToken = createSelector(userData, state => state.token)
+export const selectPassword = createSelector(userData, state => state.password)
+export const selectId = createSelector(userData, state => state.id)
 
 // root reducer
 export const userDataReducer = combineReducers({

@@ -5,22 +5,6 @@ import { ISubmitRegisterResult, ResponseError } from '@lib/store/api/api.type'
 import { userDataAction, UserDataState, selectuserData } from '@lib/store/userData/userData.slice'
 import { checkLength, ComparisonType } from '@lib/utils/checkLength'
 
-function generateSubmitApplicationErrorNotifictionTexts(error: ResponseError) {
-  switch (error.status) {
-    case 400:
-      return {
-        mainTexts: ['Error', '400'],
-      }
-    case 401:
-      return {
-        mainTexts: ['Error', '401'],
-      }
-    default:
-      return {
-        mainTexts: ['Error', 'DEFAULT'],
-      }
-  }
-}
 
 function* flowSubmitRegisterSaga() {
   yield put(userDataAction.beginFlowSubmitRegister())
@@ -34,26 +18,31 @@ function* flowSubmitRegisterSaga() {
     })
   ) {
     // TODO: popup
+    console.log('register')
     yield put(userDataAction.failureFlowSubmitRegister())
     return
   }
 
   const { data, error } = yield fetchEndpoint('submitRegister', {
     username,
+    password,
     email,
-    password
+    
   })
-
+  console.log('register')
   if (error) {
     // TODO popup
+    console.log('register failed')
     yield put(userDataAction.failureFlowSubmitRegister())
     return
   }
 
   const { result } = data
 
-  // TODO success popup
 
+  // TODO success popup
+  console.log(data)
+  yield put(userDataAction.setId(result.id))
   yield put(userDataAction.successFlowSubmitRegister())
 }
 

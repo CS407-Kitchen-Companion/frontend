@@ -6,7 +6,8 @@ import { PageImplView } from '@pagesImpl/__components__/PageImplView';
 import Cookies from 'js-cookie';
 import bgimage from "../../public/fruitToast.avif";
 import Link from 'next/link'
-
+import { useDispatch, useSelector } from 'react-redux'
+import { userDataAction, selectUserName, selectPassword } from '@lib/store/userData/userData.slice'
 
 export default function LoginImpl() {
   return (
@@ -32,11 +33,20 @@ const LoginForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
+  const storedPwd = useSelector(selectPassword);
+  const storedName = useSelector(selectUserName);
+  const dispatch = useDispatch();
 
   const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
     event.preventDefault();
-    router.push("/");
-    console.log('Submitted:', { username, password });
+    if(username === storedName
+    && password === storedPwd){
+      router.push("/main");
+      console.log('Submitted:', { username, password });
+    } else {
+      alert('Incorrect Credentials')
+    }
+    
   };
 
   return (
