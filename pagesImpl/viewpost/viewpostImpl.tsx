@@ -65,7 +65,20 @@ const AuthorProfileImage = () => {
 };
 
 /** direction step list**/
-const StepList = ({ steps }) => {
+  const StepList = ({ steps }) => {
+    const Container = styled.div`
+    margin-bottom: 20px;
+  `;
+  const Step = styled.div`
+    margin-bottom: 10px;
+  `;
+  const StepHeader = styled.h3`
+    margin-bottom: 5px;
+  `;
+  const StepInstructions = styled.p`
+    margin-bottom: 0;
+  `;
+
   return (
     <Container>
       {steps.map((step, index) => (
@@ -81,6 +94,25 @@ const StepList = ({ steps }) => {
 
 /* two column layout for bullet lists */
 const TwoStyledList = ({ items }) => {
+  const TwoColumnStyledList = styled.ul`
+    list-style-type: disc;
+    padding: 0 0 0 1em;
+    //display: grid;
+    //grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adjust the column width as needed */
+    gap: 20px; /* Adjust the gap between columns */
+    
+    li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.25rem;
+    }
+
+    @media (min-width: 700px) {
+      columns: 2;
+      column-gap: 20px;
+    }
+  `;
+
   return (
     <TwoColumnStyledList>
       {items.map((item, index) => (
@@ -89,79 +121,45 @@ const TwoStyledList = ({ items }) => {
     </TwoColumnStyledList>
   );
 };
-const TwoColumnStyledList = styled.ul`
-  list-style-type: disc;
-  padding: 0 0 0 1em;
-  //display: grid;
-  //grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adjust the column width as needed */
-  gap: 20px; /* Adjust the gap between columns */
-  
-  li {
+
+
+/* two column layout for bullet lists */
+const Tags = ({ items }) => {
+
+  const TagDiv = styled.div`
     display: flex;
-    align-items: center;
-    margin-bottom: 0.25rem;
-  }
+    margin: 1em 0 0 0;
+  `
+  const DivTemp = styled.div`
+    display: flex;
+    padding: 0 2.5em;
+    text-align: center;
+    border-radius: 50px;
+    margin: 0 1em 0 0;
+    background: #DCFAF8;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 15px;
+  `
+  return (
+    <TagDiv>
+      {items.map((items, index) => (
+        <DivTemp>
+          <p key={index}>{items}</p>
+        </DivTemp>
+      ))}
+    </TagDiv>
+  );
+};
 
-  @media (min-width: 700px) {
-    columns: 2;
-    column-gap: 20px;
-  }
-`;
 
-const Container = styled.div`
-  margin-bottom: 20px;
-`;
-const Step = styled.div`
-  margin-bottom: 10px;
-`;
-const StepHeader = styled.h3`
-  margin-bottom: 5px;
-`;
-const StepInstructions = styled.p`
-  margin-bottom: 0;
-`;
+
 
 /** checkbox **/
 const CheckboxStyledList = ({ items }) => {
   const [checkedItems, setCheckedItems] = useState([]);
 
-  const handleCheckboxChange = (item) => {
-    if (checkedItems.includes(item)) {
-      setCheckedItems(checkedItems.filter((checkedItem) => checkedItem !== item));
-      console.log("DELETED ",(item))
-    } else {
-      setCheckedItems([...checkedItems, item]);
-      
-      console.log("ADDED ",(item))
-    }
-  };
-
-  return (
-    <div>
-      <List>
-        {items.map((item, index) => (
-          <li key={index}>
-            <input
-              type="checkbox"
-              id={`checkbox-${index}`}
-              checked={checkedItems.includes(item)}
-              onChange={() => handleCheckboxChange(item)}
-            />
-            <label htmlFor={`checkbox-${index}`}>{item}</label>
-          </li>
-        ))}
-      </List>
-      {/* 
-      <CheckedList>
-        {checkedItems.length > 0 && (
-          <p>Checked List: {checkedItems.join(', ')}</p>
-        )}
-      </CheckedList>
-       */}
-    </div>
-  );
-};
-const List = styled.ul`
+  const List = styled.ul`
   list-style-type: none;
   padding: 0 0 0 1em;
   font-family: 'Inter';
@@ -210,25 +208,59 @@ const CheckedList = styled.div`
   margin-top: 1rem;
 `;
 
+  const handleCheckboxChange = (item) => {
+    if (checkedItems.includes(item)) {
+      setCheckedItems(checkedItems.filter((checkedItem) => checkedItem !== item));
+      console.log("DELETED ",(item))
+    } else {
+      setCheckedItems([...checkedItems, item]);
+      
+      console.log("ADDED ",(item))
+    }
+  };
 
-
+  return (
+    <div>
+      <List>
+        {items.map((item, index) => (
+          <li key={index}>
+            <input
+              type="checkbox"
+              id={`checkbox-${index}`}
+              checked={checkedItems.includes(item)}
+              onChange={() => handleCheckboxChange(item)}
+            />
+            <label htmlFor={`checkbox-${index}`}>{item}</label>
+          </li>
+        ))}
+      </List>
+      {/* 
+      <CheckedList>
+        {checkedItems.length > 0 && (
+          <p>Checked List: {checkedItems.join(', ')}</p>
+        )}
+      </CheckedList>
+       */}
+    </div>
+  );
+};
 
 
 
 /**three dot more button**/
-const StyledMoreVertButton = styled.button`
-  padding: 10px 10px;
-  color: ${props => props.textColor || 'lightgrey'};
-  background-color: transparent;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-`;
 const MoreVertButton = () => {
   const [isClicked, setIsClicked] = useState(false);
   const handleClick = () => {
     setIsClicked(!isClicked); // Toggle the state
   };
+  const StyledMoreVertButton = styled.button`
+    padding: 10px 10px;
+    color: ${props => props.textColor || 'lightgrey'};
+    background-color: transparent;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  `;
   return (
     <AlignRight>
       <StyledMoreVertButton onClick={handleClick} textColor={isClicked ? 'black' : null}>
@@ -367,7 +399,7 @@ const SaveButton = () => {
   useEffect(() => {
     const fetchSaveData = async () => {
       try {
-        const response = await fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/recipe/1/saved');
+        const response = await fetch('http://localhost:8080/folder/save');
         if (!response.ok) {
           throw new Error('Failed to fetch save data');
         }
@@ -512,6 +544,7 @@ const ViewPostImpl = () => {
           </ViewPostSectionWrapper>
           <ViewPostSectionWrapperNoBar> {/* tags */}
               <SectionTitles>Tags</SectionTitles>
+              <Tags items={recipeData.tags}/>
           </ViewPostSectionWrapperNoBar>
         </FloatingCardWrapper>
         </div>
