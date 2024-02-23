@@ -15,7 +15,7 @@ export const apiSlice = createApi({
     prepareHeaders: (headers, { getState }) => {
       const additionalHeaders = {
         accept: 'application/json',
-        'content-type': 'text/plain',
+        'content-type': 'application/json',
       }
 
       Object.entries(additionalHeaders).forEach(([key, value]) => {
