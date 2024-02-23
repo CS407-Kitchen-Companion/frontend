@@ -1,8 +1,9 @@
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import { LoadingPage } from '@pagesImpl/__components__/LoadingPage'
+import { useRouter } from 'next/router';
 
-const PostIdImplWithNoSSR = dynamic(() => import('@pagesImpl/viewpost/[postId]/postIDImpl'), {
+const PostIdImplWithNoSSR = dynamic(() => import('@pagesImpl/viewpost/postIdImpl'), {
   ssr: false,
   loading: () => (
     <>
@@ -12,13 +13,16 @@ const PostIdImplWithNoSSR = dynamic(() => import('@pagesImpl/viewpost/[postId]/p
 })
 
 export default function Main() {
+  const router = useRouter();
+  const { postId } = router.query;
+
   return (
     <>
       <Head>
         <title>{'Kitchen Companion'}</title>
         <meta property="og:type" content="product" />
       </Head>
-      <PostIdImplWithNoSSR />
+      <PostIdImplWithNoSSR postId={postId} />
     </>
   )
 }

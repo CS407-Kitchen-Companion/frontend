@@ -579,6 +579,21 @@ const ViewPostImpl = () => {
     setIsClicked(!isClicked); // Toggle the state
     setIsSticky(!isSticky); 
   };
+  /** sticky ingredients pin */
+  const StyledPinButton = styled.button`
+  display: float;
+  border: none;
+  color: ${props => props.textColor || '#F5F7FA'};
+  background-color: transparent;
+  transition: color 0.3s ease; // Transition for color change
+  `;
+  const DivSticky = styled.div`
+  top: 0;
+  position: ${props => props.isSticky ? 'sticky' : 'static'};
+  background: white;
+  border-bottom: 3px solid #f5f7fa;
+
+  `;
 
   const [recipeData, setRecipeData] = useState(null);
   //TODI: fetch recipe data
@@ -697,21 +712,7 @@ const ViewPostImpl = () => {
 };
 export default ViewPostImpl;
 
-/** sticky ingredients pin */
-const StyledPinButton = styled.button`
-  display: float;
-  border: none;
-  color: ${props => props.textColor || '#F5F7FA'};
-  background-color: transparent;
-  transition: color 0.3s ease; // Transition for color change
-`;
-const DivSticky = styled.div`
-  top: 0;
-  position: ${props => props.isSticky ? 'sticky' : 'static'};
-  background: white;
-  border-bottom: 3px solid #f5f7fa;
 
-`;
 
 
 const SectionTitles = styled.div`
