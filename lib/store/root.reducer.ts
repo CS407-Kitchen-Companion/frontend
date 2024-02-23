@@ -7,12 +7,14 @@ import { uiReducer } from '@lib/store/ui/ui.slice'
 import { userDataReducer } from '@lib/store/userData/userData.slice'
 import { recipeDataReducer } from './recipeData/recipeData.slice'
 import { searchDataReducer } from '@lib/store/searchData/searchData.slice'
+import { navReducer } from '@lib/store/nav/nav.slice'
 
 const combinedReducer = combineReducers({
   ui: uiReducer,
   userData: userDataReducer,
   recipeData: recipeDataReducer,
   searchData: searchDataReducer,
+  nav: navReducer,
   [apiSlice.reducerPath]: apiSlice.reducer,
 })
 

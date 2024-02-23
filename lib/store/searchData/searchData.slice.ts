@@ -17,11 +17,16 @@ export interface IFilter {
   filter: {}
 }
 
+export interface IIsSubmitted {
+  isSubmitted: boolean
+}
+
 export interface SearchDataState {
   keyword: string
   relatedRecipes: string[]
   searchedResults: []
   filter: {}
+  isSubmitted: boolean
 }
 
 const initialState = (): SearchDataState => {
@@ -41,6 +46,7 @@ const initialState = (): SearchDataState => {
       Time: {},
       Ingredients: {},
     },
+    isSubmitted: false,
   }
 }
 
@@ -79,6 +85,9 @@ const searchDataSlice = createSlice({
     setFilter: (state, action: PayloadAction<IFilter>) => {
       state.filter = action.payload.filter
     },
+    setIsSubmitted: (state, action: PayloadAction<IIsSubmitted>) => {
+      state.isSubmitted = action.payload.isSubmitted
+    },
   },
 })
 
@@ -89,9 +98,11 @@ export const searchDataAction = searchDataSlice.actions
 
 // selector
 export const selectsearchData = createSelector(searchData, state => state)
+export const selectKeyword = createSelector(searchData, state => state.keyword)
 export const selectIsKeywordNotEmpty = createSelector(searchData, state => state.keyword.length > 0)
 export const selectRelatedRecipes = createSelector(searchData, state => state.relatedRecipes)
 export const selectFilter = createSelector(searchData, state => state.filter)
+export const selectIsSubmitted = createSelector(searchData, state => state.isSubmitted)
 
 // root reducer
 export const searchDataReducer = combineReducers({
