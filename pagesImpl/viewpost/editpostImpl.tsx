@@ -5,7 +5,7 @@ import { useRouter } from"next/navigation";
 import { FormEvent } from 'react'
 import React, { useState } from 'react';
 
-export default function CreateRecipeImpl() {
+export default function EditRecipeImpl() {
   return (
     <PageImplView>
       <Header />
@@ -101,7 +101,8 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
   event.preventDefault();
   console.log(title);
   console.log(ingredients);
-  router.push("/");      
+  router.push("/main");
+  alert('Recipe updated!')      
   };
 
   

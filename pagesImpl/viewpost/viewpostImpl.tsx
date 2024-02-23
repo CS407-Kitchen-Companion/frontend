@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Image from 'next/image'
-
+import { useRouter } from"next/navigation";
 
 import { PageImplView } from '@pagesImpl/__components__/PageImplView'
 import { Header } from '@pagesImpl/__components__/Header'
@@ -19,58 +19,58 @@ import fish from 'public/fish_post_dummy.jpg';
 /**npm install @mui/icons-material */
 
 const StarRating = () => {
-  const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
-  const [submitted, setSubmitted] = useState(false);
+  const [rating, setRating] = useState(0)
+  const [hoverRating, setHoverRating] = useState(0)
+  const [submitted, setSubmitted] = useState(false)
 
   useEffect(() => {
     fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/recipe/1')
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to fetch rating');
+          throw new Error('Failed to fetch rating')
         }
-        return response.json();
+        return response.json()
       })
       .then(data => {
         console.log(data)
-        setRating(data.data.calculatedRating);
+        setRating(data.data.calculatedRating)
       })
       .catch(error => {
-        console.error('Error fetching rating:', error);
-      });
-  }, []);
+        console.error('Error fetching rating:', error)
+      })
+  }, [])
 
-  const handleRatingClick = (ratingValue) => {
-    console.log('User rated:', ratingValue);
-    setRating(ratingValue);
-  
+  const handleRatingClick = ratingValue => {
+    console.log('User rated:', ratingValue)
+    setRating(ratingValue)
+
     if (!submitted) {
       fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/rating/new', {
         method: 'POST',
-        body: JSON.stringify({ "recipe_id": 1, "rating": ratingValue }),
+        body: JSON.stringify({ recipe_id: 1, rating: ratingValue }),
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       })
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        setSubmitted(true);
-      })
-      .catch(error => console.error('Error:', error));
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          setSubmitted(true)
+        })
+        .catch(error => console.error('Error:', error))
     }
-  };  
+  }
 
-  const handleMouseOver = (ratingValue) => {
-    setHoverRating(ratingValue);
-  };
+  const handleMouseOver = ratingValue => {
+    setHoverRating(ratingValue)
+  }
 
   const handleMouseLeave = () => {
-    setHoverRating(0);
-  };
+    setHoverRating(0)
+  }
 
   const renderStars = () => {
-    const stars = [];
+    const stars = []
     for (let i = 1; i <= 5; i++) {
       stars.push(
         <Star
@@ -82,17 +82,15 @@ const StarRating = () => {
         >
           &#9733;
         </Star>
-      );
+      )
     }
-    return stars;
-  };
+    return stars
+  }
 
   return (
     <div>
       {renderStars()}
-      {submitted && (
-        <SubmitButton onClick={() => setSubmitted(false)}>Confirm Rating</SubmitButton>
-      )}
+      {submitted && <SubmitButton onClick={() => setSubmitted(false)}>Confirm Rating</SubmitButton>}
     </div>
   );
 };
@@ -101,33 +99,30 @@ const RatingContainer = styled.div`
 `;
 const Star = styled.span`
   font-size: 50px;
-  color: ${props => (props.filled ? "#ffc107" : "#e4e5e9")};
+  color: ${props => (props.filled ? '#ffc107' : '#e4e5e9')};
   transition: color 0.2s;
   &:hover {
     color: #ff5733;
   }
-`;
-
+`
 
 /** img header for viewing posts **/
 const HeaderImage = ({ headerImageURL }) => {
-
   return (
     <CardPostImg>
-      <HeaderImageDiv ImageURL={headerImageURL}/>
+      <HeaderImageDiv ImageURL={headerImageURL} />
     </CardPostImg>
-    
-  );
-};
+  )
+}
 const HeaderImageDiv = styled.div`
   width: 100%;
-  height: 310px; 
+  height: 310px;
   background-image: url(${props => props.ImageURL});
   background-size: cover; /* This ensures the image covers the entire div */
-  background-position: center; 
-  overflow: "hidden";
+  background-position: center;
+  overflow: 'hidden';
   border-radius: 25px 25px 0px 0px;
-`;
+`
 const CardPostImg = styled.div`
   position: "relative"
   width: 100%;
@@ -137,7 +132,6 @@ const CardPostImg = styled.div`
   overflow: "hidden";
 `
 
-
 /** Author **/
 const authorImageStyle = {
   borderRadius: '50%',
@@ -146,30 +140,32 @@ const authorImageStyle = {
 const AuthorProfileImage = () => {
   return (
     <div>
-      <Image src={fish} 
-      width={90}
-      height={90}
-      placeholder = 'empty'
-      alt="Picture of the author"
-      style={authorImageStyle}/>
+      <Image
+        src={fish}
+        width={90}
+        height={90}
+        placeholder="empty"
+        alt="Picture of the author"
+        style={authorImageStyle}
+      />
     </div>
-  );
-};
+  )
+}
 
 /** direction step list**/
-  const StepList = ({ steps }) => {
-    const Container = styled.div`
+const StepList = ({ steps }) => {
+  const Container = styled.div`
     margin-bottom: 20px;
-  `;
+  `
   const Step = styled.div`
     margin-bottom: 10px;
-  `;
+  `
   const StepHeader = styled.h3`
     margin-bottom: 5px;
-  `;
+  `
   const StepInstructions = styled.p`
     margin-bottom: 0;
-  `;
+  `
 
   return (
     <Container>
@@ -180,9 +176,8 @@ const AuthorProfileImage = () => {
         </Step>
       ))}
     </Container>
-  );
-};
-
+  )
+}
 
 /** two column layout for bullet lists **/
 const TwoStyledList = ({ items }) => {
@@ -192,7 +187,7 @@ const TwoStyledList = ({ items }) => {
     //display: grid;
     //grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adjust the column width as needed */
     gap: 20px; /* Adjust the gap between columns */
-    
+
     li {
       display: flex;
       align-items: center;
@@ -203,7 +198,7 @@ const TwoStyledList = ({ items }) => {
       columns: 2;
       column-gap: 20px;
     }
-  `;
+  `
 
   return (
     <TwoColumnStyledList>
@@ -213,20 +208,22 @@ const TwoStyledList = ({ items }) => {
     </TwoColumnStyledList>
   );
 };
+
+
 const Container = styled.div`
   margin-bottom: 20px;
 `;
+
 const Step = styled.div`
   margin-bottom: 10px;
-`;
+`
 const Gap = styled.div`
   margin-left: 60px;
   margin-right: 60px;
-`;
+`
 const StepHeader = styled.h3`
   margin-bottom: 5px;
-`;
-
+`
 
 /**  show tags as little baubles **/
 const Tags = ({ items }) => {
@@ -240,7 +237,7 @@ const Tags = ({ items }) => {
     text-align: center;
     border-radius: 50px;
     margin: 0 1em 0 0;
-    background: #DCFAF8;
+    background: #dcfaf8;
     font-weight: 600;
     font-size: 12px;
     line-height: 15px;
@@ -253,10 +250,8 @@ const Tags = ({ items }) => {
         </DivTemp>
       ))}
     </TagDiv>
-  );
-};
-
-
+  )
+}
 
 const SubmitButton = styled.button`
   background-color: #007bff;
@@ -267,75 +262,75 @@ const SubmitButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
   margin-top: 10px;
-`;
+`
 /** checkbox **/
 const CheckboxStyledList = ({ items }) => {
-  const [checkedItems, setCheckedItems] = useState([]);
+  const [checkedItems, setCheckedItems] = useState([])
 
   const List = styled.ul`
-  list-style-type: none;
-  padding: 0 0 0 1em;
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
-  color: #343C6A;
+    list-style-type: none;
+    padding: 0 0 0 1em;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #343c6a;
 
-  li {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.25rem;
-  }
-
-  input[type='checkbox'] {
-    margin-right: 0.5rem;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    border-radius: 50%;
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    border: 2px solid #343C6A;
-    outline: none;
-    cursor: pointer;
-  }
-
-  input[type='checkbox']:checked {
-    background-color: #343C6A;
-    //border-color: #343C6A;
-  }
-
-  label {
-    cursor: pointer;
-  }
-
-  /* Responsive two-column layout */
-  @media (min-width: 700px) {
-    columns: 2;
-    column-gap: 10px;
-  }
-`;
-const CheckedList = styled.div`
-  margin-top: 1rem;
-`;
-
-  const handleCheckboxChange = (item) => {
-    if (checkedItems.includes(item)) {
-      setCheckedItems(checkedItems.filter((checkedItem) => checkedItem !== item));
-      console.log("DELETED ",(item))
-    } else {
-      setCheckedItems([...checkedItems, item]);
-      
-      console.log("ADDED ",(item))
+    li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.25rem;
     }
-  };
+
+    input[type='checkbox'] {
+      margin-right: 0.5rem;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      border-radius: 50%;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      border: 2px solid #343c6a;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type='checkbox']:checked {
+      background-color: #343c6a;
+      //border-color: #343C6A;
+    }
+
+    label {
+      cursor: pointer;
+    }
+
+    /* Responsive two-column layout */
+    @media (min-width: 700px) {
+      columns: 2;
+      column-gap: 10px;
+    }
+  `
+  const CheckedList = styled.div`
+    margin-top: 1rem;
+  `
+
+  const handleCheckboxChange = item => {
+    if (checkedItems.includes(item)) {
+      setCheckedItems(checkedItems.filter(checkedItem => checkedItem !== item))
+      console.log('DELETED ', item)
+    } else {
+      setCheckedItems([...checkedItems, item])
+
+      console.log('ADDED ', item)
+    }
+  }
 
   return (
     <div>
       <List>
-        {items.map((item, index) => (
+        {items.map((item: any, index : number) => (
           <li key={index}>
             <input
               type="checkbox"
@@ -355,17 +350,17 @@ const CheckedList = styled.div`
       </CheckedList>
        */}
     </div>
-  );
-};
-
-
+  )
+}
 
 /**three dot more button**/
 const MoreVertButton = () => {
-  const [isClicked, setIsClicked] = useState(false);
+  const [isClicked, setIsClicked] = useState(false)
+  const router = useRouter()
   const handleClick = () => {
-    setIsClicked(!isClicked); // Toggle the state
-  };
+    setIsClicked(!isClicked) // Toggle the state
+    router.push("/viewpost/edit")
+  }
   const StyledMoreVertButton = styled.button`
     padding: 10px 10px;
     color: ${props => props.textColor || 'lightgrey'};
@@ -373,78 +368,97 @@ const MoreVertButton = () => {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-  `;
+  `
   return (
     <AlignRight>
       <StyledMoreVertButton onClick={handleClick} textColor={isClicked ? 'black' : null}>
-        <MoreVertIcon sx={{ fontSize: 30 }}/>
+        <MoreVertIcon sx={{ fontSize: 30 }} />
       </StyledMoreVertButton>
     </AlignRight>
-    
-  );
-};
+  )
+}
+
+const DialogueBox = styled.div`
+  display: float;
+  height: 15rem;
+  width: 10rem;
+  background-color: #fff;
+  border-radius: 25px;
+  border: 3px solid #f5f7fa;
+  padding: 20px;
+
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+`;
+
+const SaveMsg = styled.div`
+  font-style: normal;
+  font-weight: 500;
+  font-size: 10px;
+  color: 'lightgrey'};
+`
 
 
-
-
-
-
-
-
-
-
+const OpenButton = styled.button`
+  text-align: center;
+  color: ${props => props.textColor || 'lightgrey'};
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease; // Transition for color change
+`;
 
 const InlineCenteredDiv = styled.div`
   display: flex;
   align-items: center;
-`;
+`
 
 /**saved button */
-const SaveRecipe = () => {
+const SaveButton = () => {
   const [isOpen, setIsOpen] = useState(false);  //for dialogue box
   const [isSaved, setIsSaved] = useState(false);  //for save button
   const [showMessage, setShowMessage] = useState(false); //for saved or unsaved msg
   const [msg, setMsg] = useState('');
   const dialogRef = useRef(null);
-  const SaveButtonRef = useRef(null);
+  const openButtonRef = useRef(null);
 
 
   const clickSave = () => {
-    setIsSaved(!isSaved); // save and unsave
-    if (!isSaved)
-    { //save recipe
-      setMsg("Saved Recipe");
-      setShowMessage(true); //show saved message
+    setIsSaved(!isSaved) // save and unsave
+    if (!isSaved) {
+      //save recipe
+      setMsg('Saved Recipe')
+      setShowMessage(true) //show saved message
       setTimeout(() => {
-        setShowMessage(false);
-      }, 5000);
+        setShowMessage(false)
+      }, 5000)
 
       //only show folder box if we want to save recipe
-      setIsOpen(!isOpen);
-    }
-    else
-    { //unsave recipe
-      setMsg("Unsaved Recipe");
-      setShowMessage(true); //show saved message
+      setIsOpen(!isOpen)
+    } else {
+      //unsave recipe
+      setMsg('Unsaved Recipe')
+      setShowMessage(true) //show saved message
       setTimeout(() => {
-        setShowMessage(false);
-      }, 5000);
+        setShowMessage(false)
+      }, 5000)
 
-      setIsOpen(false); //close dialogue
+      setIsOpen(false) //close dialogue
     }
-  };
+  }
 
   //position dilogue right under button
   const positionDialogBox = () => {
-    if (SaveButtonRef.current) {
-      const buttonRect = SaveButtonRef.current.getBoundingClientRect();
+    if (openButtonRef.current) {
+      const buttonRect = openButtonRef.current.getBoundingClientRect();
       const top = buttonRect.bottom + window.scrollY;
       const left = buttonRect.left + window.scrollX;
 
-      return { top, left };
+      return { top, left }
     }
-    return { top: 0, left: 0 };
-  };
+    return { top: 0, left: 0 }
+  }
   //checks if save button clicked --> opens card
   const DialogueWrapper = styled.div`
     display: ${props => (props.open ? 'block' : 'none')};
@@ -452,101 +466,62 @@ const SaveRecipe = () => {
     position: absolute;
     top: ${positionDialogBox().top}px;
     left: ${positionDialogBox().left}px;
-    transform: translateX(-50%); //Adjust for centering 
+    transform: translateX(-50%); //Adjust for centering
     z-index: 999; //float on top of all other content
   `;
-  //save/unsaved msg
-  const SaveMsg = styled.div`
-    position: absolute;
-    //top: ${positionDialogBox().top - 20}px;
-    left: ${positionDialogBox().left + 80}px;
-    transform: translateX(-50%); //Adjust for centering 
-    z-index: 999; //float on top of all other content
-
-    font-style: normal;
-    font-weight: 500;
-    font-size: 10px;
-    color: 'lightgrey'};
-  `
-  const DialogueBox = styled.div`
-    display: float;
-    height: 15rem;
-    width: 10rem;
-    background-color: #fff;
-    border-radius: 25px;
-    border: 3px solid #f5f7fa;
-    padding: 20px;
-
-    font-style: normal;
-    font-weight: 500;
-    font-size: 20px;
-  `;
-  const SaveButton = styled.button`
-    text-align: center;
-    color: ${props => props.textColor || 'lightgrey'};
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    transition: color 0.3s ease; // Transition for color change
-  `;
-  const TempWrapper = styled.div`
-    display: inline-block;
-  `;
-
   useEffect(() => {
     //close save folder if click off
-    const handleClickOutside = (event) => {
+    const handleClickOutside = event => {
       if (
         dialogRef.current &&
         !dialogRef.current.contains(event.target) &&
-        SaveButtonRef.current &&
-        !SaveButtonRef.current.contains(event.target) 
+        openButtonRef.current &&
+        !openButtonRef.current.contains(event.target) 
       ) {
-        setIsOpen(false);
+        setIsOpen(false)
       }
-    };
+    }
 
     //event listeners if user clicks off dilogue box
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('mousedown', handleClickOutside)
     } else {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside)
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen]);
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isOpen])
 
   //TODO: fetch save data
   //TODO: check auth for save data
-  const [saveData, setSaveData] = useState(null);
+  const [saveData, setSaveData] = useState(null)
   useEffect(() => {
     const fetchSaveData = async () => {
       try {
-        const response = await fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/folder/saved');
+        const response = await fetch('http://localhost:8080/folder/save');
         if (!response.ok) {
-          throw new Error('Failed to fetch save data');
+          throw new Error('Failed to fetch save data')
         }
-        const responseData = await response.json();
-        setSaveData(responseData.data); // Extracting the data object from the response
+        const responseData = await response.json()
+        setSaveData(responseData.data) // Extracting the data object from the response
       } catch (error) {
-        console.error('Error fetching save data:', error);
+        console.error('Error fetching save data:', error)
       }
-    };
+    }
 
-    fetchSaveData();
-  }, []);
+    fetchSaveData()
+  }, [])
 
   return (
     <TempWrapper>
       <InlineCenteredDiv>
-        <SaveButton ref={SaveButtonRef} onClick={clickSave} title="Save Recipe" textColor={isSaved ? 'red' : null }>
+        <OpenButton ref={openButtonRef} onClick={clickSave} title="Save Recipe" textColor={isSaved ? 'red' : null }>
             <BookmarkIcon sx={{ fontSize: 40 }} />
-          </SaveButton>
+          </OpenButton>
           {showMessage && (
             <SaveMsg>{msg}</SaveMsg>
-            
           )}
       </InlineCenteredDiv>
 
@@ -555,193 +530,55 @@ const SaveRecipe = () => {
           <p>Save Recipe to a folder? </p>
         </DialogueBox>
       </DialogueWrapper>
-    </TempWrapper>
-  );
-};
-
-
-const TimerComponent: React.FC = () => {
-  const [createTimer, setCreateTimer] = useState(false);
-  const [timerOn, setTimerOn] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const [notificationShown, setNotificationShown] = useState(false);
-  const [intervalId, setIntervalId] = useState<number>(-1); // Initialize intervalId with -1
-
-  const hoursRef = useRef(null);
-  const minutesRef = useRef(null);
-  const secondsRef = useRef(null);
-
-  useEffect(() => {
-    let intervalId: number;
-  
-    if (timeLeft <= 0 && timerOn) {
-      setNotificationShown(true);
-      setTimerOn(false);
-      alert("Time is up!");
-      setTimeLeft(0);
-      setIsPaused(false);
-    } else if (timerOn && timeLeft > 0 && !isPaused) {
-      intervalId = window.setInterval(() => {
-        setTimeLeft(prevTime => prevTime - 1);
-      }, 1000);
-    }
-  
-    return () => clearInterval(intervalId); // Clear the interval when component unmounts or conditions change
-  }, [timerOn, timeLeft, isPaused]);
-
-  const handleStart = () => {
-    const hoursInput = parseInt(hoursRef.current.value) || 0;
-    const minutesInput = parseInt(minutesRef.current.value) || 0;
-    const secondsInput = parseInt(secondsRef.current.value) || 0;
-  
-    const totalSeconds = hoursInput * 3600 + minutesInput * 60 + secondsInput;
-  
-    setTimeLeft(totalSeconds);
-    setTimerOn(true);
-    setIsPaused(false);
-    setNotificationShown(false);
-  };
-
-  const handlePause = () => { //pause
-    setIsPaused(!isPaused);
-  };
-
-  const handleStop = () => { //stop
-    setTimerOn(false);
-    setTimeLeft(0);
-    setIsPaused(false); // Ensure timer stops and resets when stopped
-    setNotificationShown(false);
-  };
-
-  const handleCreateTimer = () => { //stop
-    setCreateTimer(!createTimer);
-
-  };
-
-  return (
-    <div style={{ display: 'inline-block' }}>
-      
-  
-      <button onClick={handleCreateTimer}>Timer?</button>
-      { createTimer && !timerOn && (
-        <>
-          <div style={{ display: 'inline-block', marginRight: '10px' }}>
-        <span>Hours:</span>
-        <select ref={hoursRef}>
-          {[...Array(10).keys()].map((hour) => (
-            <option key={hour} value={hour}>{hour}</option>
-          ))}
-        </select>
-        
-      </div>
-  
-      <div style={{ display: 'inline-block', marginRight: '10px' }}>
-        <span>Minutes:</span>
-        <select ref={minutesRef} defaultValue="10"> {/* TODO: fix Set defaultValue to 10 */}
-          {[...Array(59).keys()].map((minute) => (
-            <option key={minute} value={minute}>{minute}</option>
-          ))}
-        </select>
-      </div>
-      
-      <div style={{ display: 'inline-block' }}>
-        <span>Seconds:</span>
-        <select ref={secondsRef} >
-          {[...Array(59).keys()].map((sec) => (
-            <option key={sec} value={sec}>{sec}</option>
-          ))}
-        </select>
-      </div>
-      <button onClick={handleStart}>Set Timer</button>
-        </>
-      )}
-      
-      
-      {timerOn && (
-        <>
-          <button onClick={handlePause}>{isPaused ? 'Resume Timer' : 'Pause Timer'}</button>
-          <button onClick={handleStop}>Stop Timer</button>
-          <p style={{ display: 'inline-block', marginLeft: '10px' }}>Time left: {timeLeft} seconds</p>
-        </>
-      )}
-      
-      {notificationShown && <span style={{ display: 'inline-block', marginLeft: '10px' }}>Time is up!</span>}
-    </div>
+    </>
   );
 };
 
 
 const ViewPostImpl = () => {
-  const router = useRouter();
   const [isSticky, setIsSticky] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
 
   // temp string inputs
-  const headerImageURL = '/spaget.jpg';
+  const headerImageURL = '/spaget.jpg'
 
   const handleClick = () => { //for pin button on ingredients
     setIsClicked(!isClicked); // Toggle the state
     setIsSticky(!isSticky); 
   };
-  /** sticky ingredients pin */
-  const StyledPinButton = styled.button`
-  display: float;
-  border: none;
-  color: ${props => props.textColor || '#F5F7FA'};
-  background-color: transparent;
-  transition: color 0.3s ease; // Transition for color change
-  `;
-  const DivSticky = styled.div`
-  top: 0;
-  position: ${props => props.isSticky ? 'sticky' : 'static'};
-  background: white;
-  border-bottom: 3px solid #f5f7fa;
-
-  `;
 
   const [recipeData, setRecipeData] = useState(null);
-  //TODI: fetch recipe data
+  //fetch recipe data
   useEffect(() => {
     const fetchRecipeData = async () => {
       try {
-        const response = await fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/recipe/1');
+        const response = await fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/recipe/1')
         if (!response.ok) {
-          throw new Error('Failed to fetch recipe data');
+          throw new Error('Failed to fetch recipe data')
         }
-        const responseData = await response.json();
-        setRecipeData(responseData.data); // Extracting the data object from the response
+        const responseData = await response.json()
+        setRecipeData(responseData.data) // Extracting the data object from the response
       } catch (error) {
-        console.error('Error fetching recipe data:', error);
+        console.error('Error fetching recipe data:', error)
       }
-    };
+    }
 
-    fetchRecipeData();
-  }, []);
+    fetchRecipeData()
+  }, [])
 
   return (
     <PageImplView>
       <MainBackgroundWrapper>
-        <Header/>
+        <Header />
         {recipeData && (
-        <div>
-          <FloatingCardWrapper>
-          <div> {/* title */}
-          <HeaderImage headerImageURL={headerImageURL} ></HeaderImage>
-           
-            <AuthorIcon>
-              <AuthorProfileImage/>
-            </AuthorIcon>
-            
-            <MoreVertButton/>
-            <ViewPostSectionWrapper>
-              <br/><br/>
+          <div>
+            <FloatingCardWrapper>
               <div>
 
                 <DivFlex>
                   <DivFlexCenter>
-                    <TitleText>{recipeData.title}</TitleText>  
-                    <SaveRecipe/>
+                    <TitleText>{recipeData.title} </TitleText>  
+                    <SaveButton/> 
                   </DivFlexCenter>   
                 <Gap></Gap>
                 <StarRating/>
@@ -792,9 +629,6 @@ const ViewPostImpl = () => {
           </ViewPostSectionWrapper>
           <ViewPostSectionWrapper> {/* directions */}
               <SectionTitles>Directions</SectionTitles>
-              <div style={{ position: 'relative', top: '17em', left: '5em' }}>
-                <TimerComponent/>
-                </div>
               <StepList steps={recipeData.content}/>
           </ViewPostSectionWrapper>
           <ViewPostSectionWrapper> {/* buttons */}
@@ -816,10 +650,24 @@ const ViewPostImpl = () => {
       </MainBackgroundWrapper>
     </PageImplView>
   )
-};
-export default ViewPostImpl;
+}
+export default ViewPostImpl
 
+/** sticky ingredients pin */
+const StyledPinButton = styled.button`
+  display: float;
+  border: none;
+  color: ${props => props.textColor || '#F5F7FA'};
+  background-color: transparent;
+  transition: color 0.3s ease; // Transition for color change
+`;
+const DivSticky = styled.div`
+  top: 0;
+  position: ${props => props.isSticky ? 'sticky' : 'static'};
+  background: white;
+  border-bottom: 3px solid #f5f7fa;
 
+`;
 
 
 const SectionTitles = styled.div`
@@ -831,7 +679,7 @@ const SectionTitles = styled.div`
   display: flex;
   align-items: center;
 
-  color: #343C6A;
+  color: #343c6a;
 `
 
 const AuthorAndDate = styled.div`
@@ -844,7 +692,7 @@ const AuthorAndDate = styled.div`
   align-items: center;
   margin-right: 5px;
   margin-top: 5px;
-  color: #343C6A;
+  color: #343c6a;
 `
 const ServingCalorieTime = styled.div`
   font-family: 'Inter';
@@ -854,8 +702,8 @@ const ServingCalorieTime = styled.div`
   display: flex;
   align-items: center;
   margin-right: 25px;
-  margin-top:10px;
-  color: #B1B1B1;
+  margin-top: 10px;
+  color: #b1b1b1;
 `
 
 /* author */
@@ -863,18 +711,18 @@ const ServingCalorieTime = styled.div`
 /* TODO: re-due position after add heading */
 const AuthorIcon = styled.div`
   position: absolute;
-  top: 420px; left: 48%;
+  top: 420px;
+  left: 48%;
   width: 90px;
   height: 90px;
-  //border-radius: 50%;
-  //background: #FFE0EB;
+  border-radius: 50%;
+  background: #FFE0EB;
 `
-
 
 /*grey background */
 const MainBackgroundWrapper = styled.div`
   background: #f5f7fa;
-  padding-bottom: 1em;   
+  padding-bottom: 1em;
   font-family: Inter;
   align: center;
 `
@@ -891,11 +739,11 @@ const FloatingCardWrapper = styled.div`
 /* sections within the floating card for viewing posts */
 const ViewPostSectionWrapper = styled.div`
   border-bottom: 3px solid #f5f7fa;
-  padding: 2em 1em 1em 2em;   
+  padding: 2em 1em 1em 2em;
 `
 /* section tailored to ingredients and tags*/
 const ViewPostSectionWrapperNoBar = styled.div`
-  padding: 2em 1em 1em 2em;   
+  padding: 2em 1em 1em 2em;
 `
 
 /* title text */
@@ -908,16 +756,15 @@ const TitleText = styled.div`
   display: inline;
   align-items: center;
   color: #343C6A;
-  
+  display: block;
 `
 
-
 const DivFlexCenter = styled.div`
-  display: inline-block;
+  display:flex;
   align-items: center;
 `
 const DivFlex = styled.div`
-  display:flex;
+  display: flex;
 `
 const DivJustifyContents = styled.div`
   justify-content: space-between;
@@ -930,5 +777,3 @@ const AlignRight = styled.div`
 const DebuggingDiv = styled.div`
   background: pink;
 `
-
-
