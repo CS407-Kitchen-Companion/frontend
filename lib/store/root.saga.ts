@@ -3,8 +3,9 @@ import popUpSaga from '@lib/store/ui/popUp/popUp.saga'
 import userDataSaga from '@lib/store/userData/userData.saga'
 import recipeDataSaga from '@lib/store/recipeData/recipeData.saga'
 import searchDataSaga from '@lib/store/searchData/searchData.saga'
+import navSaga from '@lib/store/nav/nav.saga'
 
-const allSagas = [...popUpSaga, ...userDataSaga, ...searchDataSaga]
+const allSagas = [...popUpSaga, ...userDataSaga, ...searchDataSaga, ...recipeDataSaga, ...navSaga]
 
 export default function* root() {
   yield all(allSagas.map(call))
