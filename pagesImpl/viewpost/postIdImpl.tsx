@@ -35,7 +35,8 @@ interface Recipe {
   appliances: string[];
   content: string[];
   tags: string[];
-
+  ratingCount: number;
+  calculatedRating: number;
 
   // Add other properties if needed
 }
