@@ -565,6 +565,7 @@ const SaveButton = () => {
 const ViewPostImpl = () => {
   const [isSticky, setIsSticky] = useState(false)
   const [isClicked, setIsClicked] = useState(false)
+  const [recipeData, setRecipeData] = useState(null)
 
   // temp string inputs
   const headerImageURL = '/spaget.jpg'
@@ -575,7 +576,6 @@ const ViewPostImpl = () => {
     setIsSticky(!isSticky)
   }
 
-  const [recipeData, setRecipeData] = useState(null)
   //fetch recipe data
   useEffect(() => {
     const fetchRecipeData = async () => {
