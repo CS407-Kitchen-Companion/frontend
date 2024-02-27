@@ -8,7 +8,7 @@ export interface RecipeDataState {
   time: number,
   tags: string[],
   appliances: string[],
-  ingredients: string[]
+  ingredients: string[],
 }
 
 const initialState = (): RecipeDataState => {
@@ -32,7 +32,6 @@ const recipeDataSlice = createSlice({
     beginFlowCreateRecipe: () => {},
     successFlowCreateRecipe: () => {},
     failureFlowCreateRecipe: () => {},
-
 
 
     // setter

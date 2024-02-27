@@ -32,13 +32,13 @@ function* flowSubmitRegisterSaga() {
   console.log('register')
   if (error) {
     // TODO popup
-    console.log('register failed')
+    alert('invalid credentials')
     yield put(userDataAction.failureFlowSubmitRegister())
     return
   }
 
+ 
   const { result } = data
-  console.log(data)
 
 
   // TODO success popup

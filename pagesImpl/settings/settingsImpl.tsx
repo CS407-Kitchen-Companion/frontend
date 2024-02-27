@@ -22,7 +22,7 @@ const ForgotForm = () => {
   const [oldpwd, setOldPwd] = useState('');
   const [password, setPass] = useState('');
   const[newPwd, setNewPwd]= useState('');
-  const [id, setId] = useState('11');
+  const [id, setId] = useState('30');
   const router = useRouter();
   const dispatch = useDispatch();
 

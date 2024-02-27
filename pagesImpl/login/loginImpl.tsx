@@ -43,6 +43,8 @@ const LoginForm = () => {
     dispatch(userDataAction.setPassword({password}))
     dispatch(userDataAction.requestFlowSubmitLogin())
     
+    
+    console.log('Incorrect Credentials')
 
     /*
     if(name === storedName
