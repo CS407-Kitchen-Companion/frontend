@@ -9,7 +9,7 @@ function* flowCreateRecipeSaga() {
   const { title }: RecipeDataState = yield select(selectrecipeData)
   // noti that request user to check the form
 
-  const { data, error } = yield fetchEndpoint('submitRegister', {
+  const { data, error } = yield fetchEndpoint('createRecipe', {
     title
     
   })
