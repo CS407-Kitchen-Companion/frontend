@@ -5,6 +5,7 @@ import { ISubmitRegisterResult, ResponseError } from '@lib/store/api/api.type'
 import { userDataAction, UserDataState, selectuserData } from '@lib/store/userData/userData.slice'
 import { checkLength, ComparisonType } from '@lib/utils/checkLength'
 import { navActions } from '@lib/store/nav/nav.slice'
+import { isUndefined } from 'lodash'
 
 
 function* flowSubmitRegisterSaga() {
@@ -23,13 +24,16 @@ function* flowSubmitRegisterSaga() {
     return
   }
 
-  const { data, error } = yield fetchEndpoint('submitRegister', {
-    username,
+  const { 
+    data,
+    error
+  } = yield fetchEndpoint('submitRegister', {
+    username, 
     password,
     email,
-    
   })
   console.log('register')
+  
   if (error) {
     // TODO popup
     alert('invalid credentials')
@@ -37,8 +41,9 @@ function* flowSubmitRegisterSaga() {
     return
   }
 
- 
-  const { result } = data
+  const registerResult = isUndefined(data) ? [] : data.data
+  userDataAction.setId(registerResult.id)
+  userDataAction.emptyPassword()
 
 
   // TODO success popup

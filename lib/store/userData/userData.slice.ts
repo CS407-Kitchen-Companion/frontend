@@ -91,6 +91,9 @@ const userDataSlice = createSlice({
     setId: (state, action: PayloadAction<Iid>) => {
       state.userId = action.payload.id
     },
+    emptyPassword: (state) => {
+      state.password = ''
+    },
   },
 })
 
