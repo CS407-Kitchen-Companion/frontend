@@ -5,6 +5,7 @@ import { ISubmitRegisterResult, ResponseError } from '@lib/store/api/api.type'
 import { userDataAction, UserDataState, selectuserData } from '@lib/store/userData/userData.slice'
 import { checkLength, ComparisonType } from '@lib/utils/checkLength'
 import { navActions } from '@lib/store/nav/nav.slice'
+import { isUndefined } from 'lodash'
 
 
 
@@ -29,14 +30,19 @@ function* flowSubmitLoginSaga() {
     
   })
 
-  if (error) {
+  if (error ) {
     // TODO popup
     
     yield put(userDataAction.failureFlowSubmitLogin())
     return
   }
-
-  const { result } = data
+  if(data){
+    const loginResult =  data.token
+    console.log(loginResult)
+  } else {
+    console.log("incorrect credentials")
+  }
+  
 
   // TODO success popup
   yield put(navActions.push({ url: '/main' }))

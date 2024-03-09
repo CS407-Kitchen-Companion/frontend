@@ -24,10 +24,7 @@ function* flowSubmitRegisterSaga() {
     return
   }
 
-  const { 
-    data,
-    error
-  } = yield fetchEndpoint('submitRegister', {
+  const {data, error} = yield fetchEndpoint('submitRegister', {
     username, 
     password,
     email,
