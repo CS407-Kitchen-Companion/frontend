@@ -29,7 +29,7 @@ const ForgotForm = () => {
   const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
     event.preventDefault();
       console.log(id)
-      setPass(newPwd) 
+      setPass(newPwd)
       dispatch(userDataAction.setOldPwd({oldpwd}))
       dispatch(userDataAction.setNewPwd({newPwd}))
       dispatch(userDataAction.setPassword({password}))

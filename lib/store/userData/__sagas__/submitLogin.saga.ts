@@ -6,7 +6,7 @@ import { userDataAction, UserDataState, selectuserData } from '@lib/store/userDa
 import { checkLength, ComparisonType } from '@lib/utils/checkLength'
 import { navActions } from '@lib/store/nav/nav.slice'
 import { isUndefined } from 'lodash'
-
+import Cookies from 'js-cookie';
 
 
 function* flowSubmitLoginSaga() {
@@ -38,15 +38,19 @@ function* flowSubmitLoginSaga() {
   }
   if(data){
     const loginResult =  data.token
-    console.log(loginResult)
+    userDataAction.setToken(loginResult)
+    Cookies.set('token', loginResult, { expires: 7, secure: true });
+
+    yield put(navActions.push({ url: '/main' }))
+    yield put(userDataAction.successFlowSubmitLogin())
   } else {
     console.log("incorrect credentials")
+    yield put(userDataAction.failureFlowSubmitLogin())
   }
   
 
   // TODO success popup
-  yield put(navActions.push({ url: '/main' }))
-  yield put(userDataAction.successFlowSubmitLogin())
+ 
 }
 
 function* watchSubmitLoginSaga() {

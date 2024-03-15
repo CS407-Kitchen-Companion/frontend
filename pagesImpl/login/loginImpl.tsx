@@ -32,9 +32,6 @@ export default function LoginImpl() {
 const LoginForm = () => {
   const [name, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter();
-  const storedPwd = useSelector(selectPassword);
-  const storedName = useSelector(selectUserName);
   const dispatch = useDispatch();
 
   const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {

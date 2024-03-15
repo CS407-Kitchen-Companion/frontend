@@ -235,8 +235,8 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
        </StyledDescription>
        <StyledInput
        type="text"
-       value={time}
-       onChange={(e) => setTime(e.target.value)}
+       value={servings}
+       onChange={(e) => setServings(e.target.value)}
        placeholder= '2 servings, 5 servings'
        >
        </StyledInput>
