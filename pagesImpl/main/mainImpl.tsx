@@ -13,7 +13,7 @@ export default function MainImpl() {
   const handleListItemClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
     // TODO: fix the url later
-    router.push('/viewpost')
+    router.push('/viewpost/1')
     console.log('click listitem')
   }
 
