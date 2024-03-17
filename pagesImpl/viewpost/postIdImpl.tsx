@@ -1,43 +1,24 @@
 import styled from '@emotion/styled'
 import { useRouter } from 'next/router'
 import { Header } from '@pagesImpl/__components__/Header'
-import { StarRating } from '@pagesImpl/__components__/StarRating'
-import { MoreVertButton } from '@pagesImpl/__components__/MoreVertButton'
-import { Tags } from '@pagesImpl/__components__/Tags'
 import { ViewPostRecipe } from '@pagesImpl/__components__/ViewPostRecipe'
-
-
 
 
 import { PageImplView } from '@pagesImpl/__components__/PageImplView'
 import { useDispatch, useSelector } from 'react-redux'
 import { userDataAction, selectUserName, selectPassword } from '@lib/store/userData/userData.slice'
 import { 
-  recipeDataAction, 
-  setPostID,
-  selectRecipeData,
+  recipeDataAction,
   selectPostID,
   selectIsPostIDNotEmpty, 
   selectRecipeDataVar, 
   selectIsRecipeDataVarValid,
   selectIsSubmitted,
-  recipeDataReducer,
-  IRecipeDataVar,
 } from '@lib/store/recipeData/recipeData.slice'
 
 
 import React, { useState, useEffect, useRef } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
 import Custom404 from '@pages/404'; // Import your custom 404 page
-
-
-import styles from '@pagesImpl/__components__/Button.module.css'
-import ShareIcon from '@mui/icons-material/Share';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import PushPinIcon from '@mui/icons-material/PushPin';
-import fish from 'public/fish_post_dummy.jpg';
 
 
 interface PostIdImplProps { //make sure postId is a string
@@ -47,6 +28,7 @@ interface PostIdImplProps { //make sure postId is a string
 export interface IRData {
   title: string,
   createdAt: string,
+  createdBy: number,
   edited: boolean,
   updatedAt: string,
   ratings: number[],

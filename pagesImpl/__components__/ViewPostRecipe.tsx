@@ -1,9 +1,21 @@
 import styled from '@emotion/styled'
 import React, { useState, useEffect, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+
 import { StarRating } from '@pagesImpl/__components__/StarRating'
 import { MoreVertButton } from '@pagesImpl/__components__/MoreVertButton'
 import { Tags } from '@pagesImpl/__components__/Tags'
 import { IRData } from '@pagesImpl/viewpost/postIdImpl'
+import { 
+  userDataAction,
+  selectUserData,
+  selectUserName,
+  selectId, 
+  UserDataState,
+  IName,
+  selectIsSubmitted,
+  selectIsUsernameValid
+} from '@lib/store/userData/userData.slice'
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -37,11 +49,46 @@ export const ViewPostRecipe = ({ rDataTemp }: { rDataTemp: IRData }) => {
 
 /* RECIPE HEADER */
 const RecipePostHeader = ({ rDataTemp }: { rDataTemp: IRData }) => {
+  //TODO: update image 
+  const headerImageURL = '/spaget.jpg'  
+  
   // Create a new object recipeDataVar by copying the properties of recipeDataTemp
   const recipeDataVar: IRData = { ...rDataTemp }
 
-  //TODO: update image 
-  const headerImageURL = '/spaget.jpg'  
+  const dispatch = useDispatch()
+  const isSubmitted = useSelector(selectIsSubmitted)
+  const authorId = recipeDataVar.createdBy
+  const [authorUsername, setAuthorUsername] = useState<String>('temp')
+  const userDataVar = useSelector(selectUserData)
+  const isUsernameValid = useSelector(selectIsUsernameValid)
+
+  //TODO: fix author username pull
+
+  useEffect(() => {
+    if (authorId < 0) {
+      console.error('userId is not a valid number')
+    } 
+    else {
+      console.log('authorId:', authorId)
+      dispatch(userDataAction.setId({ id: authorId }))
+      dispatch(userDataAction.requestFlowGetUserById())  
+    }
+  }, [authorId]);
+
+  const [author, setAuthor] = useState<UserDataState>(userDataVar);
+  useEffect(() => {
+    console.log('check submitted auth')
+    if (isSubmitted && isUsernameValid) {
+      setAuthor(userDataVar)
+      //setAuthorUsername(author.username)
+  
+      console.log('author', author)
+      //console.log('author username', authorUsername)
+    }
+  }, [isSubmitted, isUsernameValid]);
+
+  
+  
 
   return (
     <>
@@ -67,11 +114,15 @@ const RecipePostHeader = ({ rDataTemp }: { rDataTemp: IRData }) => {
           <DivFlex>
             <AuthorAndDate> Author: </AuthorAndDate>
             <AuthorAndDate>
-              <Link href="/main"> {recipeDataVar.createdBy} </Link>
+              {(isSubmitted) ? (
+                <Link href="/main"> user number FOUND </Link>
+              ) : (
+                <Link href="/main"> user number {recipeDataVar.createdBy} </Link>
+              )}
             </AuthorAndDate>
             <AuthorAndDate> | </AuthorAndDate>
             <div>
-              {recipeDataVar.edited ? (
+              {(isSubmitted && isUsernameValid) ? (
                 <div>
                   <AuthorAndDate>Updated {recipeDataVar.updatedAt}</AuthorAndDate>
                 </div>

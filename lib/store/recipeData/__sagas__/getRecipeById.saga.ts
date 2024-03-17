@@ -5,8 +5,6 @@ import { RecipeDataState, recipeDataAction, selectRecipeDataVar, selectPostID, s
 import isUndefined from 'lodash/isUndefined'
 
 function* flowGetRecipeByIdSaga() {
-  console.log('IN flowGetRecipeByIdSaga...')
-
   yield put(recipeDataAction.beginFlowGetRecipeById())
   const { postID }: RecipeDataState = yield select(selectRecipeData)
 

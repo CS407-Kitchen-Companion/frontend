@@ -9,6 +9,7 @@ export interface IRecipeDataVar {
   recipeDataVar: {
     title: string,
     createdAt: string,
+    createdBy: number,
     edited: boolean,
     updatedAt: string,
     ratings: number[],
@@ -34,6 +35,7 @@ export interface RecipeDataState {
   recipeDataVar: {
     title: string,
     createdAt: string,
+    createdBy: number,
     edited: boolean,
     updatedAt: string,
     ratings: number[],
@@ -57,6 +59,7 @@ const initialState = (): RecipeDataState => {
     recipeDataVar: {
       title: '',
       createdAt: '',
+      createdBy: 0,
       edited: false,
       updatedAt: '',
       ratings: [],
