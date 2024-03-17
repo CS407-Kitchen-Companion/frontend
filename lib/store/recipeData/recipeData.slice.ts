@@ -1,25 +1,77 @@
 import { combineReducers, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '@lib/store/store'
 
+export interface IPostID {
+  postID: number
+}
+
+export interface IRecipeDataVar {
+  recipeDataVar: {
+    title: string,
+    createdAt: string,
+    edited: boolean,
+    updatedAt: string,
+    ratings: number[],
+    ratingCount: number,
+    calculatedRating: number,
+    calories: number,
+    servings: number,
+    content: string[],
+    time: number,
+    tags: string[],
+    appliances: string[],
+    ingredients: string[],
+    comments: string[],
+  }
+}
+
+export interface IIsSubmitted {
+  isSubmitted: boolean
+}
+
 export interface RecipeDataState {
-  title: string,
-  content: string[],
-  servings: number,
-  time: number,
-  tags: string[],
-  appliances: string[],
-  ingredients: string[],
+  postID: number
+  recipeDataVar: {
+    title: string,
+    createdAt: string,
+    edited: boolean,
+    updatedAt: string,
+    ratings: number[],
+    ratingCount: number,
+    calculatedRating: number,
+    calories: number,
+    servings: number,
+    content: string[],
+    time: number,
+    tags: string[],
+    appliances: string[],
+    ingredients: string[],
+    comments: string[],
+  }
+  isSubmitted: boolean
 }
 
 const initialState = (): RecipeDataState => {
   return {
-    title: '',
-    content: [],
-    servings: 0,
-    time: 0,
-    tags: [],
-    appliances: [],
-    ingredients: []
+    postID: 0,
+    recipeDataVar: {
+      title: '',
+      createdAt: '',
+      edited: false,
+      updatedAt: '',
+      ratings: [],
+      ratingCount: 0,
+      calculatedRating: 0,
+      calories: 0,
+      servings: 0,
+      content: [],
+      time: 0,
+      tags: [],
+      appliances: [],
+      ingredients: [],
+      comments: [],
+    },
+    isSubmitted: false,
   }
 }
 
@@ -33,16 +85,21 @@ const recipeDataSlice = createSlice({
     successFlowCreateRecipe: () => {},
     failureFlowCreateRecipe: () => {},
 
+    // get recipe flow
+    requestFlowGetRecipeById: () => {},
+    beginFlowGetRecipeById: () => {},
+    successFlowGetRecipeById: () => {},
+    failureFlowGetRecipeById: () => {},
 
-    // setter
-    setRecipe: (state, action: PayloadAction<RecipeDataState>) => {
-      state.title = action.payload.title
-      state.content = action.payload.content
-      state.servings = action.payload.servings
-      state.time = action.payload.time
-      state.tags = action.payload.tags
-      state.appliances = action.payload.appliances
-      state.ingredients = action.payload.ingredients
+    // setter 
+    setPostID: (state, action: PayloadAction<IPostID>) => {
+      state.postID = action.payload.postID
+    },
+    setRecipeDataVar: (state, action: PayloadAction<IRecipeDataVar>) => {
+      state.recipeDataVar = action.payload.recipeDataVar
+    },
+    setIsSubmitted: (state, action: PayloadAction<IIsSubmitted>) => {
+      state.isSubmitted = action.payload.isSubmitted
     },
     
   },
@@ -54,7 +111,12 @@ const recipeData = (state: RootState): RecipeDataState => state.recipeData.root
 export const recipeDataAction = recipeDataSlice.actions
 
 // selector
-export const selectrecipeData = createSelector(recipeData, state => state)
+export const selectRecipeData = createSelector(recipeData, state => state)
+export const selectPostID = createSelector(recipeData, state => state.postID)
+export const selectIsPostIDNotEmpty = createSelector(recipeData, state => state.postID > 0)
+export const selectRecipeDataVar = createSelector(recipeData, state => state.recipeDataVar)
+export const selectIsSubmitted = createSelector(recipeData, state => state.isSubmitted)
+
 
 
 // root reducer

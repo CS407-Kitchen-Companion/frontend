@@ -1,11 +1,27 @@
 import styled from '@emotion/styled'
 import { useRouter } from 'next/router'
-import React, { useState, useEffect, useRef } from 'react';
-import Link from 'next/link'
-import Image from 'next/image'
+import { css } from '@emotion/react'
+import { selectSearchedResults } from '@lib/store/searchData/searchData.slice'
 import { Filter } from '@pagesImpl/__components__/Filter'
 import { Header } from '@pagesImpl/__components__/Header'
 import { PageImplView } from '@pagesImpl/__components__/PageImplView'
+import { useDispatch, useSelector } from 'react-redux'
+import { userDataAction, selectUserName, selectPassword } from '@lib/store/userData/userData.slice'
+import { 
+  recipeDataAction, 
+  setPostID,
+  selectRecipeData,
+  selectPostID,
+  selectIsPostIDNotEmpty, 
+  selectRecipeDataVar, 
+  selectIsSubmitted,
+  recipeDataReducer,
+} from '@lib/store/recipeData/recipeData.slice'
+
+
+import React, { useState, useEffect, useRef } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
 import Custom404 from '@pages/404'; // Import your custom 404 page
 
 
@@ -18,10 +34,11 @@ import PushPinIcon from '@mui/icons-material/PushPin';
 import fish from 'public/fish_post_dummy.jpg';
 
 interface PostIdImplProps { //make sure postId is a string
-  postId: string | string[] | undefined;
+  postId: string | undefined;
 }
 
 interface Recipe {
+  id: number;
   title: string;
   createdAt: string;
   updatedAt: string;
@@ -42,7 +59,16 @@ interface Recipe {
 }
 
 const PostIdImpl: React.FC<PostIdImplProps> = ({ postId }) => { //main viewpostpage
-  const router = useRouter();
+  const dispatch = useDispatch()
+  const isPostIDNotEmpty = useSelector(selectIsPostIDNotEmpty) //bool if pos postID
+  const postID = useSelector(selectPostID)
+  const recipeDataVar = useSelector(selectRecipeDataVar)
+  const isSubmitted = useSelector(selectIsSubmitted)
+  
+  
+  
+
+
   const [recipeData, setRecipeData] = useState<Recipe | null>(null);
   const [error, setError] = useState(false);
   const [isClicked, setIsClicked] = useState(false)
@@ -58,8 +84,25 @@ const PostIdImpl: React.FC<PostIdImplProps> = ({ postId }) => { //main viewpostp
 
   /** grab postId to view that recipe*/
   useEffect(() => {
+
     // Check if postId exists before making the fetch request
     if (postId) {
+
+      //set postID
+      const postIDValue = parseInt(postId ?? '', 10);
+      console.log('postIDValue:', postIDValue)
+      dispatch(recipeDataAction.setPostID({ postID: postIDValue }))
+      console.log('postID:', postID)
+      if (postIDValue > 0)
+      { 
+        //positive postID
+        console.log('sent dispatch for recipe data')
+        dispatch(recipeDataAction.requestFlowGetRecipeById())
+        console.log('recipeDataVar outside', recipeDataVar)
+      }
+
+
+
       const fetchRecipeData = async () => {
         try {
           const response = await fetch(`https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/recipe/${postId}`);
@@ -76,13 +119,25 @@ const PostIdImpl: React.FC<PostIdImplProps> = ({ postId }) => { //main viewpostp
 
       fetchRecipeData();
     }
+
+
   }, [postId]) // Include postId as a dependency
 
+
+
+  
   if (error) { //if unknown recipe id, 404
     return <Custom404 />;
   }
   return (
     <>
+    {isSubmitted && (
+      <div>
+        <h1>hello world</h1>
+        <h2>{recipeDataVar.title}</h2>
+      </div>
+    )}
+
       {recipeData && (
         <PageImplView>
         <Header />
@@ -205,7 +260,20 @@ const PostIdImpl: React.FC<PostIdImplProps> = ({ postId }) => { //main viewpostp
 };
 export default PostIdImpl;
 
+const RecipeDataVar = styled.div<{ isVisible: boolean }>`
+  ${({ isVisible }) => css`
+    ${isVisible
+      ? css`
+          visibility: visible;
+          opacity: 1;
+        `
+      : css`
+          visibility: hidden;
+          opacity: 0;
+        `}
 
+  `}
+`
 const MainBackgroundWrapper = styled.div`
   display: flex;
   flex-flow: row;
@@ -392,7 +460,7 @@ const StarRating = () => {
         return response.json();
       })
       .then(data => {
-        console.log(data)
+        console.log('star rating data', data)
         setRating(data.data.calculatedRating);
       })
       .catch(error => {
@@ -414,7 +482,7 @@ const StarRating = () => {
       })
       .then(response => response.json())
       .then(data => {
-        console.log(data);
+        console.log('changed star rating',data);
         setSubmitted(true);
       })
       .catch(error => console.error('Error:', error));
@@ -699,9 +767,7 @@ const SaveButton = () => {
           throw new Error('Failed to check if recipe is in folder');
         }
         const data = await response.json();
-        console.log("check")
-        console.log(data.data)
-        console.log(data.data === 'True')
+        console.log("checking save button", data.data, data.data === 'True');
         setIsInFolder(data.data === 'True');
       } catch (error) {
         console.error('Error:', error);

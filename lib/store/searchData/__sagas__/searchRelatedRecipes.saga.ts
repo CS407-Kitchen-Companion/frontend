@@ -15,11 +15,12 @@ function* flowSearchRelatedRecipesSaga() {
   const { data, error } = yield fetchEndpoint('getRelatedRecipes', {
     keyword,
   })
+
   const relatedRecipes = isUndefined(data) ? [] : data.data
   yield put(searchDataAction.setRelatedRecipes({ relatedRecipes }))
   yield put(searchDataAction.setIsSubmitted({ isSubmitted: false }))
-  console.log('relatedrecipes')
-  console.log(relatedRecipes)
+  
+  console.log('relatedrecipes', relatedRecipes)
 
   if (error) {
     yield put(searchDataAction.failureFlowRelatedRecepies())
