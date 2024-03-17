@@ -12,6 +12,7 @@ function* flowGetFilterSaga() {
     error,
   } = yield fetchEndpoint('getFilter', {})
   const filter = isUndefined(data) ? [] : data.data
+  
   console.log(filter)
 
   if (error) {

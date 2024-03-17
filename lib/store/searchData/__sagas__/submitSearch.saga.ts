@@ -12,16 +12,20 @@ function* flowSubmitSearchSaga() {
   const { data, error } = yield fetchEndpoint('getSearchedResults', {
     keyword,
   })
+  
   const searchedResults = isUndefined(data) ? [] : data.data
   yield put(searchDataAction.setSearchedResults({ searchedResults }))
   yield put(searchDataAction.setIsSubmitted({ isSubmitted: true }))
 
+ 
   if (error) {
     // nav to 404
     yield put(searchDataAction.failureFlowSubmitSearch())
     // yield call(navActions.push())
     return
   }
+
+  console.log("submit search", keyword, data )
 
   yield put(searchDataAction.successFlowSubmitSearch())
   // TODO: fix t

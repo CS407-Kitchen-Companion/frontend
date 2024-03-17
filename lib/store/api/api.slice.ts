@@ -67,9 +67,15 @@ export const apiSlice = createApi({
       getFilter: builder.query({
         query: () => `/recipe/search/filters`,
       }),
+      getRecipeById: builder.query({
+        query: ({ postID }) => `recipe/${postID}`,
+      }),
+      getUserById: builder.query({
+        query: ({ id }) => `user/${id}`,
+      }),
     }
   },
 })
 
-export const { useSubmitRegisterMutation, useGetRelatedRecipesQuery, useGetSearchedResultsQuery, useGetFilterQuery } =
+export const { useSubmitRegisterMutation, useGetRelatedRecipesQuery, useGetSearchedResultsQuery, useGetFilterQuery, useGetRecipeById, useGetUserById} =
   apiSlice
