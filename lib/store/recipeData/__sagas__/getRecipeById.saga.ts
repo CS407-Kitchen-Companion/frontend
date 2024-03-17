@@ -19,8 +19,6 @@ function* flowGetRecipeByIdSaga() {
   yield put(recipeDataAction.setIsSubmitted({ isSubmitted: true }))
 
   console.log('recipeDataVar', recipeDataVar)
-  console.log('selectRecipeDataVar', selectRecipeDataVar)
-  console.log('selectIsSubmitted', selectIsSubmitted)
   
 
   if (error) {

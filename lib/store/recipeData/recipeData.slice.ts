@@ -15,7 +15,7 @@ export interface IRecipeDataVar {
     ratingCount: number,
     calculatedRating: number,
     calories: number,
-    servings: number,
+    serves: number,
     content: string[],
     time: number,
     tags: string[],
@@ -40,7 +40,7 @@ export interface RecipeDataState {
     ratingCount: number,
     calculatedRating: number,
     calories: number,
-    servings: number,
+    serves: number,
     content: string[],
     time: number,
     tags: string[],
@@ -63,7 +63,7 @@ const initialState = (): RecipeDataState => {
       ratingCount: 0,
       calculatedRating: 0,
       calories: 0,
-      servings: 0,
+      serves: 0,
       content: [],
       time: 0,
       tags: [],
@@ -115,6 +115,7 @@ export const selectRecipeData = createSelector(recipeData, state => state)
 export const selectPostID = createSelector(recipeData, state => state.postID)
 export const selectIsPostIDNotEmpty = createSelector(recipeData, state => state.postID > 0)
 export const selectRecipeDataVar = createSelector(recipeData, state => state.recipeDataVar)
+export const selectIsRecipeDataVarValid = createSelector(recipeData, state => state.recipeDataVar.title !== '')
 export const selectIsSubmitted = createSelector(recipeData, state => state.isSubmitted)
 
 
