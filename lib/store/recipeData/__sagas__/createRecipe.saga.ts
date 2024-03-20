@@ -6,17 +6,40 @@ import { recipeDataAction, selectrecipeData, RecipeDataState } from '../recipeDa
 
 function* flowCreateRecipeSaga() {
   yield put(recipeDataAction.beginFlowCreateRecipe())
-  const { title }: RecipeDataState = yield select(selectrecipeData)
+  
+  const { 
+    title,
+    content,
+    serves,
+    calories,
+    time,
+    tags,
+    appliances,
+    ingredients 
+  }: RecipeDataState = yield select(selectrecipeData)
   // noti that request user to check the form
-
+  console.log({title,
+    content,
+    serves,
+    time,
+    calories,
+    tags,
+    appliances,
+    ingredients })
   const { data, error } = yield fetchEndpoint('createRecipe', {
-    title
-    
+    title,
+    content,
+    serves,
+    time,
+    calories,
+    tags,
+    appliances,
+    ingredients 
   })
-  console.log('register')
+  
   if (error) {
     // TODO popup
-    console.log('register failed')
+    console.log(error)
     yield put(recipeDataAction.failureFlowCreateRecipe())
     return
   }

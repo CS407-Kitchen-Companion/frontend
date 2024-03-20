@@ -6,6 +6,7 @@ import { FormEvent } from 'react'
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux'
 import { recipeDataAction } from '@lib/store/recipeData/recipeData.slice'
+import { forEach } from 'lodash';
 
 
 export default function CreateRecipeImpl() {
@@ -37,13 +38,13 @@ const RecipeForm = () => {
   const dispatch = useDispatch()
   
   //Ingredient handling
-  const [ingredients, setIngredients] = useState([{ value: '' }]);
+  const [ingredients, setIngredients] = useState([{ name: '', amount: 0 }]);
   const handleAddIngredient = () => {
-    setIngredients([...ingredients, { value: '' }]);
+    setIngredients([...ingredients, { name: '', amount: 0 }]);
   };
-  const handleChangeIngredient = (index: any, e: any) => {
+  const handleChangeIngredientName = (index: any, e: any) => {
     const newIngredients = [...ingredients];
-    newIngredients[index].value = e.target.value;
+    newIngredients[index].name = e.target.value;
     setIngredients(newIngredients);
   };
   const handleDeleteIngredient = (index: any) => {
@@ -103,9 +104,41 @@ const handleDeleteTag= (index: any) => {
     
 const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
   event.preventDefault();
-  console.log(title);
-  console.log(ingredients);
-  router.push("/");      
+  
+  dispatch(recipeDataAction.setTitle({title}))
+
+  let content: Array<string> = ['']
+  directions.forEach((element: any, index: number) => {
+    content[index] = element.value
+  });
+  dispatch(recipeDataAction.setContent({content}))
+  
+  var serving = parseInt(servings)
+  dispatch(recipeDataAction.setServings({serving}))
+
+  var timer = parseInt(time)
+  dispatch(recipeDataAction.setTime({timer}))
+
+  let tag: Array<string> = ['']
+  tags.forEach((element: any, index: number) => {
+    tag[index] = element.value
+  });
+  dispatch(recipeDataAction.setTags({tag}))
+
+  let appls: Array<string> = ['']
+  appliances.forEach((element: any, index: number) => {
+    appls[index] = element.value
+  });
+  dispatch(recipeDataAction.setAppls({appls}))
+
+  let ingr: Array<string> = ['']
+  ingredients.forEach((element: any, index: number) => {
+    ingr[index] = element.value
+  });
+  dispatch(recipeDataAction.setIngr({ingr}))
+  dispatch(recipeDataAction.requestFlowCreateRecipe())
+  
+  //router.push("/");
   };
 
   
@@ -135,8 +168,8 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
          <div key={index}>
            <StyledInput
              type="text"
-             value={ingredient.value}
-             onChange={(e) => handleChangeIngredient(index, e)}
+             value={ingredient.name}
+             onChange={(e) => handleChangeIngredientName(index, e)}
              placeholder={`Ingredient ${index + 1}`}
            />
            <StyledDeleteButton type="button" onClick={() => handleDeleteIngredient(index)}>
