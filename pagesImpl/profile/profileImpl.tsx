@@ -6,6 +6,7 @@ import { Header } from '@pagesImpl/__components__/Header'
 import { PageImplView } from '@pagesImpl/__components__/PageImplView'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import fishPic from '../../public/fish_post_dummy.jpg'
 
 export default function MainImpl() {
   const router = useRouter()
@@ -18,7 +19,7 @@ export default function MainImpl() {
         <Filter />
         <MainWrapper>
             <ProfileInfoWrapper>
-                PROFILE
+                <ProfileDetails/>
             </ProfileInfoWrapper>
         </MainWrapper>
       </MainBackgroundWrapper>
@@ -40,14 +41,51 @@ const MainWrapper = styled.div`
 const ProfileInfoWrapper = styled.div`
   
   border-radius: 50px;
-  text-align: center;
   height: 30vh;
   width: 50vw;
   background: linear-gradient(180deg, #702963 40%, #fff 40%);
 `
 const ProfileDetails = () => {
-    const [username, setUsername] = useState('')
-    const [bio, setBio] = useState('')
-    const [profielPic, setProfilePic] = useState('')
+  const [username, setUsername] = useState('username')
+  const [bio, setBio] = useState('bio')
+  const [profielPic, setProfilePic] = useState('')
+
+  return(
+    <div
+    style={{
+      padding: '2% 5% 5% 5%',
+    
+    }}>
+      <button
+      style={{
+        width: '100px',
+        height: '40px',
+        border: '1px solid #ccc',
+        borderRadius: '10px',
+        marginLeft: '90%'
+      }}>
+        Edit
+      </button>
+      <img src= {fishPic.src}
+      style={{
+        float: 'left',
+        width: '100px',
+        height: '100px',
+        border: '1px solid #ccc',
+        borderRadius: '50%',
+        
+      }}></img>
+      
+      <h2
+      style={{
+        paddingTop: '10%'
+      }}>
+        {username}
+      </h2>
+      <p>
+        {bio}
+      </p>
+    </div>
+  )
 
 }
