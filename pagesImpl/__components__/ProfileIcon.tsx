@@ -24,7 +24,7 @@ export const ProfileIcon: React.FC = () => {
 
   const onClickMyPosts = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
-    router.push('/myposts')
+    router.push('/profile')
   }
 
   const onClickInteractions = (event: React.MouseEvent<HTMLDivElement>) => {
