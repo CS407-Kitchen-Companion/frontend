@@ -6,6 +6,8 @@ import { StarRating } from '@pagesImpl/__components__/StarRating'
 import { MoreVertButton } from '@pagesImpl/__components__/MoreVertButton'
 import { Tags } from '@pagesImpl/__components__/Tags'
 import { IRData } from '@pagesImpl/viewpost/postIdImpl'
+import { CommentSection, ICommentSection, IComment, IReply } from '@pagesImpl/__components__/CommentSection'
+
 import { 
   userDataAction,
   selectUserData,
@@ -41,11 +43,10 @@ export const ViewPostRecipe = ({ rDataTemp }: { rDataTemp: IRData }) => {
       <RecipePostButtons rDataTemp={recipeDataTemp}/>
       <RecipePostNutrition rDataTemp={recipeDataTemp}/>
       <RecipePostTags rDataTemp={recipeDataTemp}/>
+      <RecipePostComments rDataTemp={recipeDataTemp}/>
     </>
   );
 }
-
-
 
 /* RECIPE HEADER */
 const RecipePostHeader = ({ rDataTemp }: { rDataTemp: IRData }) => {
@@ -665,11 +666,71 @@ const RecipePostTags = ({ rDataTemp }: { rDataTemp: IRData }) => {
         <SectionTitles>Tags</SectionTitles>
         <Tags items={recipeDataVar.tags} />
       </ViewPostSectionWrapper>
+      <StyledLine/>
     </>
   );
 }
 
+/* RECIPE COMMENTS */
+const RecipePostComments = ({ rDataTemp }: { rDataTemp: IRData }) => {
+  // Create a new object recipeDataVar by copying the properties of recipeDataTemp
+  const recipeDataVar: IRData = { ...rDataTemp }
 
+  //TODO: add comment data from backend - make CommentSection take in arg
+  //TODO: fix numberOf to isBoolean and read length of array for num
+  
+  // Temporary dummy data for replies
+
+  const dummyReplies: IReply[] = [
+    { userId: 101, content: 'Reply 1 content' },
+    { userId: 102, content: 'Reply 2 content. th sisf gsf gs gs sReply 2 content. th sisf gsf gs gs ssdg s fa dfa f sfafbajsf adfg sd fgs fgfa fa f sdfjbaksjfnasfa sf asf af asf a fa f af gs f sfa fsdfgsf asg sa radgsdfhsr a fgs s f a fafgsfgdfgsetgsd f sg s gs gssdg s fa dfa f sfafbajsf adfg sd fgs fgfa fa f sdfjbaksjfnasfa sf asf af asf a fa f af gs  f sfa fsdfgsf asg sa radgsdfhsr a fgs s f a fafgsfgdfgsetgsd f sg s gs gs ' },
+    { userId: 103, content: 'Reply 3 content' },
+  ];
+
+  // Temporary dummy data for comments
+  const dummyComments: IComment[] = [
+    {
+      userId: 1,
+      content: 'Comment 1 content',
+      numberOfImages: 0,
+      //images: ['image1.jpg', 'image2.jpg'],
+      images: [],
+      numberOfReplies: 2,
+      replies: dummyReplies.slice(0, 2), // Using only the first two replies for this comment
+    },
+    {
+      userId: 2,
+      content: 'Comment 2 content',
+      numberOfImages: 0,
+      images: [],
+      numberOfReplies: 3,
+      replies: dummyReplies.slice(0, 3), // Using only the first two replies for this comment
+    },
+    {
+      userId: 3,
+      content: 'Comment 3 content',
+      numberOfImages: 0,
+      images: [],
+      numberOfReplies: 0,
+      replies: [],
+    },
+  ];
+
+// Temporary dummy data for the comment section
+const tempData: ICommentSection = {
+  commentSection: dummyComments,
+};
+
+  return (
+    <>
+     <ViewPostSectionWrapper>
+        <SectionTitles>Comments</SectionTitles>
+        <CommentSection commentSection={tempData}/>
+
+      </ViewPostSectionWrapper>
+    </>
+  );
+}
 
 
 const StyledLine = styled.hr`
