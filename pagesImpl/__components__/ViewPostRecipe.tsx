@@ -40,7 +40,6 @@ export const ViewPostRecipe = ({ rDataTemp }: { rDataTemp: IRData }) => {
       <RecipePostIngredients rDataTemp={recipeDataTemp}/>
       <RecipePostAppliances rDataTemp={recipeDataTemp}/>
       <RecipePostDirections rDataTemp={recipeDataTemp}/>
-      <RecipePostButtons rDataTemp={recipeDataTemp}/>
       <RecipePostNutrition rDataTemp={recipeDataTemp}/>
       <RecipePostTags rDataTemp={recipeDataTemp}/>
       <RecipePostComments rDataTemp={recipeDataTemp}/>
@@ -619,27 +618,6 @@ const StepInstructions = styled.p`
 `
 
 
-/* RECIPE BUTTONS */
-const RecipePostButtons = ({ rDataTemp }: { rDataTemp: IRData }) => {
-  // Create a new object recipeDataVar by copying the properties of recipeDataTemp
-  const recipeDataVar: IRData = { ...rDataTemp }
-
-  return (
-    <>
-      <ViewPostSectionWrapper>
-      <button type="button" className={styles.main_black}>
-          {' '}
-          I made this!{' '}
-        </button>
-        <button type="button" className={styles.circle_grey}>
-          <ShareIcon sx={{ color: '#C5C5CF' }} fontSize="medium" />
-        </button>
-      </ViewPostSectionWrapper>
-      <StyledLine/>
-    </>
-  );
-}
-
 /* RECIPE NUTRITION FACTS */
 const RecipePostNutrition = ({ rDataTemp }: { rDataTemp: IRData }) => {
   // Create a new object recipeDataVar by copying the properties of recipeDataTemp
@@ -692,26 +670,27 @@ const RecipePostComments = ({ rDataTemp }: { rDataTemp: IRData }) => {
     {
       userId: 1,
       content: 'Comment 1 content',
-      numberOfImages: 0,
-      //images: ['image1.jpg', 'image2.jpg'],
-      images: [],
-      numberOfReplies: 2,
+      //hasImages: false,
+      hasImages: true,
+      images: ['image1.jpg', 'image2.jpg', 'image3.jpg', 'image4.jpg'],
+      //images: [],
+      hasReplies: true,
       replies: dummyReplies.slice(0, 2), // Using only the first two replies for this comment
     },
     {
       userId: 2,
       content: 'Comment 2 content',
-      numberOfImages: 0,
+      hasImages: false,
       images: [],
-      numberOfReplies: 3,
+      hasReplies: true,
       replies: dummyReplies.slice(0, 3), // Using only the first two replies for this comment
     },
     {
       userId: 3,
       content: 'Comment 3 content',
-      numberOfImages: 0,
+      hasImages: false,
       images: [],
-      numberOfReplies: 0,
+      hasReplies: false,
       replies: [],
     },
   ];
@@ -726,7 +705,6 @@ const tempData: ICommentSection = {
      <ViewPostSectionWrapper>
         <SectionTitles>Comments</SectionTitles>
         <CommentSection commentSection={tempData}/>
-
       </ViewPostSectionWrapper>
     </>
   );
@@ -758,6 +736,7 @@ const DivFlexCenter = styled.div`
 const DivFlex = styled.div`
   display: flex;
 `
+
 const AlignRight = styled.div`
   align-items: right;
   text-align: right;

@@ -16,9 +16,9 @@ export interface ICommentSection {
 export interface IComment {
   userId: number,
   content: string,
-  numberOfImages: number,
+  hasImages: boolean,
   images: string[],
-  numberOfReplies: number,
+  hasReplies: boolean,
   replies: IReply[],
 }
 
@@ -32,30 +32,28 @@ export interface IReply {
 // Display comment section for viewing a recipe
 export const CommentSection = ({ commentSection }: { commentSection: ICommentSection }) => {
   const commentData: ICommentSection = { ...commentSection }
+  
   console.log("commentData", commentData)
 
   return (
     <>
       <br/>
       <CreateComment/>
+      <br/>
       <OneMarginWrapper>
-        {commentData.commentSection.map((comment: IComment, index: number) => (
-          <div key={index} className="comment">
+        {commentData.commentSection.map((cmt: IComment, index: number) => (
+          <div key={index} className="cmt">
             {/** TODO: use function to grab all user data */}
             <Comment
             key={index}
-            username={`User ID: ${comment.userId}`} // Use userId as temporary username
-            content={comment.content}
-          />
-            {/** TODO: images
-            <p>Number of Images: {comment.numberOfImages}</p>
-            {comment.images.map((image: string, imageIndex: number) => (
-              <img key={imageIndex} src={image} alt={`Image ${imageIndex + 1}`} />
-            ))}
-            */}
-
-            {comment.numberOfReplies > 0 && (
-              <Replies replies={comment.replies}></Replies>
+            username={`User ID: ${cmt.userId}`} // Use userId as temporary username
+            content={cmt.content}
+            hasImages={cmt.hasImages}
+            images={cmt.images}
+            />
+            {/** comment replies */} 
+            {cmt.hasReplies && (
+              <ReplySection replies={cmt.replies}></ReplySection>
             )}
           </div>
         ))}      
@@ -66,23 +64,56 @@ export const CommentSection = ({ commentSection }: { commentSection: ICommentSec
   );
 };
 
-// Comment component using the styled components
-const Comment = ({ username, content }: { username: string; content: string }) => {
+//base comment structure with user data, string content, and possible images 
+const Comment = ({ username, content, hasImages, images}: { username: string; content: string, hasImages: boolean, images: string[]}) => {
+
   return (
-    <CommentWrapper>
-      <CircleAvatar />
-      <CommentContentWrapper>
-        <Username>@{username}</Username>
-        <Content>{content}</Content>
-        <ReplyButton>Reply</ReplyButton>
-      </CommentContentWrapper>
-    </CommentWrapper>
+    <>
+      <CommentWrapper>
+        <CircleAvatar />
+        <CommentContentWrapper>
+          <Username>@{username}</Username>
+          <Content>
+            <div> {content} </div>
+            {hasImages && (
+              <DivFlex>
+                {images.map((img: string, imgIndex: number) => (
+                  <div key={imgIndex} className="img"> 
+                    <CommentImgBox key={imgIndex}> {img}</CommentImgBox>
+                  </div>
+                ))}
+              </DivFlex>
+            )}
+          </Content>
+          <CreateReply/>
+        </CommentContentWrapper>
+      </CommentWrapper>
+    </>
+  )
+}
+
+// basic reply structure with no images, user data, and string content
+const Reply = ({ username, content}: { username: string; content: string }) => {
+  return (
+    <>
+      <CommentWrapper>
+        <CircleAvatar />
+        <CommentContentWrapper>
+          <Username>@{username}</Username>
+          <Content>
+            <div> {content} </div>
+          </Content>
+          <CreateReply/>
+        </CommentContentWrapper>
+      </CommentWrapper>
+    </>
   )
 }
 
 //view reply section
-const Replies = ({ replies }: {replies: IReply[]})  => {
+const ReplySection = ({ replies }: {replies: IReply[]})  => {
   const [isVisible, setIsVisible] = useState(false)
+
   const upTriangle = "▴"
   const downTriangle = "▾"
   const [whatTri, setTri] = useState(downTriangle)
@@ -95,7 +126,6 @@ const Replies = ({ replies }: {replies: IReply[]})  => {
       setTri(downTriangle)
     else
       setTri(upTriangle)
-
   }
 
   return (
@@ -107,7 +137,7 @@ const Replies = ({ replies }: {replies: IReply[]})  => {
           <OneMarginWrapper>
             {replies.map((reply: IReply, replyIndex: number) => (
               <div key={replyIndex} className="reply">
-                <Comment
+                <Reply
                   key={replyIndex}
                   username={`User ID: ${reply.userId}`} // Use userId as temporary username
                   content={reply.content}
@@ -116,7 +146,6 @@ const Replies = ({ replies }: {replies: IReply[]})  => {
             ))}
           </OneMarginWrapper>
         )}
-          
         </ReplyWrapper>
       </div>
     </>
@@ -135,7 +164,6 @@ const CreateComment = () => {
 
   //cancel button
   const handleCancel = () => {
-    console.log('cancel comment')
     setInputValue('')
     setActive(false)
   }
@@ -158,29 +186,88 @@ const CreateComment = () => {
 
   return (
     <>
-    <CommentForm onSubmit={handleInputSubmit}>
-      <AvatarCreateCommentWrapper>
-        <CircleAvatar/>
-      </AvatarCreateCommentWrapper>
-      <CommentStringInput
-        type="text"
-        value={inputValue}
-        onChange={handleChange}
-        onFocus={handleFocus} 
-        placeholder="Add a Comment..."
-      />
-      {isActive && (
-      <> 
-      <br/>
-      <br/>
-      <SubButton onClick={handleCancel}> Cancel </SubButton>
-      <BlueButton type="submit" >Submit</BlueButton>
-      </>
-    )}
-    </CommentForm>
-    
+      <CommentForm onSubmit={handleInputSubmit}>
+        <AvatarCreateCommentWrapper>
+          <CircleAvatar/>
+        </AvatarCreateCommentWrapper>
+        <CommentStringInput
+          type="text"
+          value={inputValue}
+          onChange={handleChange}
+          onFocus={handleFocus} 
+          placeholder="Add a Comment..."
+        />
+        {isActive && (
+        <> 
+        <br/>
+        <br/>
+        <SubButton onClick={handleCancel}> Cancel </SubButton>
+        <BlueButton type="submit" >Submit</BlueButton>
+        </>
+      )}
+      </CommentForm>
+    </>
+  )
+}
 
-      <p>You entered: {inputValue}</p>
+//input text reply
+const CreateReply = () => {
+  //TODO: connect to backend
+
+  const [inputValue, setInputValue] = useState('')
+  const [isActive, setActive] = useState(false)
+
+  //create reply
+  const handleReply = () => {
+    setActive(true)
+  }
+
+  //cancel button
+  const handleCancel = () => {
+    setInputValue('')
+    setActive(false)
+  }
+
+  //input reply text
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value)
+  }
+
+  //submit reply
+  const handleInputSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (inputValue != ''){
+      console.log('submit reply', inputValue)
+      setInputValue('')
+      setActive(false)
+    }
+    else {
+      console.log('cannot submit empty string')
+    }
+  }
+
+  return (
+    <>
+      <ReplyButton onClick={handleReply}>Reply</ReplyButton>
+
+      {isActive && (
+        <CommentForm onSubmit={handleInputSubmit}>
+
+          <AvatarCreateCommentWrapper>
+            <CircleAvatar/>
+          </AvatarCreateCommentWrapper>
+          <CommentStringInput
+            type="text"
+            value={inputValue}
+            onChange={handleChange}
+            placeholder="Add a Reply..."
+          />
+
+          <br/><br/>
+          <SubButton onClick={handleCancel}> Cancel </SubButton>
+          <BlueButton type="submit" >Submit</BlueButton>
+        </CommentForm>
+    )}
     </>
   )
 }
@@ -271,15 +358,30 @@ const ReplyWrapper = styled.div`
 const OneMarginWrapper = styled.div`
   margin-left: 0.5em;
 `
-const ReplyButton = styled.div`
+const ReplyButton = styled.button`
+  display: inline-block; 
+  padding: 5px 10px;
+  border-radius: 25px;
   font-family: inherit;
-  font-style: normal;
-  font-weight: 600;
   font-size: 12px;
-  line-height: 25px;
+  font-style: inherit;
+  font-weight: 600;
+  line-height: inherit;
+
   color: #B1B1B1;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+
+  &:hover {
+    background-color: #e4e9f2; /* Background color on hover */
+  }
+  &:active {
+    background-color: #d3dce9; /* Background color when clicked */
+  }
 `
-const ViewReplyButton = styled.div`
+const ViewReplyButton = styled.button`
   display: inline-block; 
   padding: 10px 20px;
   border-radius: 25px;
@@ -290,6 +392,7 @@ const ViewReplyButton = styled.div`
   line-height: inherit;
   color: #396aff; /* Text color */
   background-color: transparent;
+  border: none;
   cursor: pointer;
   transition: background-color 0.1s ease;
 
@@ -340,12 +443,27 @@ const Username = styled.h3`
 `;
 
 // Define the Content styled component for the string content
-const Content = styled.p`
+const Content = styled.div`
   margin: 0;
+  display: inline-block;
   font-family: inherit;
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
   line-height: 25px;
-`;
+`
+
+//rounded box for image thumbnails in base comments
+const CommentImgBox = styled.div`
+  width: 18em;
+  height: 10em;
+  padding: 1em; //TODO: add img so no pad later
+  margin: 0.1em;
+  background: #817FF7;
+  border-radius: 20px;
+`
+const DivFlex = styled.div`
+  display: flex;
+  flex-wrap: wrap; /* Allows flex items to wrap onto the next line if needed */
+`
 
