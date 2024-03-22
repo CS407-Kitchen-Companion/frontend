@@ -10,7 +10,9 @@ export const MoreVertButton: React.FC = () => {
 
   const handleClick = () => {
     setIsClicked(!isClicked) 
-    router.push("/viewpost/edit")
+    //TODO: /viewpost/edit/1
+    //make this handeling into viewpostImp
+    router.push("/viewpost/edit/1")
   }
 
   return (

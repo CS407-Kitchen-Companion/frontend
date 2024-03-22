@@ -688,8 +688,8 @@ const RecipePostComments = ({ rDataTemp }: { rDataTemp: IRData }) => {
     {
       userId: 3,
       content: 'Comment 3 content',
-      hasImages: false,
-      images: [],
+      hasImages: true,
+      images: ['image1.jpg', 'image2.jpg'],
       hasReplies: false,
       replies: [],
     },

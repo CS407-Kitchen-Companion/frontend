@@ -2,7 +2,8 @@ import styled from '@emotion/styled'
 import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { IRData } from '@pagesImpl/viewpost/postIdImpl'
-
+import { CommentImgPopUp } from '@pagesImpl/__components__/CommentImgPopUp'
+import { CircleAvatar } from '@pagesImpl/__components__/CircleAvatar'
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -45,11 +46,11 @@ export const CommentSection = ({ commentSection }: { commentSection: ICommentSec
           <div key={index} className="cmt">
             {/** TODO: use function to grab all user data */}
             <Comment
-            key={index}
-            username={`User ID: ${cmt.userId}`} // Use userId as temporary username
-            content={cmt.content}
-            hasImages={cmt.hasImages}
-            images={cmt.images}
+              key={index}
+              username={`User ID: ${cmt.userId}`} // Use userId as temporary username
+              content={cmt.content}
+              hasImages={cmt.hasImages}
+              images={cmt.images}
             />
             {/** comment replies */} 
             {cmt.hasReplies && (
@@ -57,12 +58,10 @@ export const CommentSection = ({ commentSection }: { commentSection: ICommentSec
             )}
           </div>
         ))}      
-      
       </OneMarginWrapper>
-      
     </>
-  );
-};
+  )
+}
 
 //base comment structure with user data, string content, and possible images 
 const Comment = ({ username, content, hasImages, images}: { username: string; content: string, hasImages: boolean, images: string[]}) => {
@@ -76,13 +75,11 @@ const Comment = ({ username, content, hasImages, images}: { username: string; co
           <Content>
             <div> {content} </div>
             {hasImages && (
-              <DivFlex>
-                {images.map((img: string, imgIndex: number) => (
-                  <div key={imgIndex} className="img"> 
-                    <CommentImgBox key={imgIndex}> {img}</CommentImgBox>
-                  </div>
-                ))}
-              </DivFlex>
+              <CommentImgPopUp 
+              username={username}
+              content={content}
+              images={images} 
+              />
             )}
           </Content>
           <CreateReply/>
@@ -411,14 +408,7 @@ const CommentWrapper = styled.div`
   margin-top: 0.5em;
 `;
 
-// Define the CircleAvatar styled component for the circle on the left
-const CircleAvatar = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #ccc;
-  margin-right: 15px;
-`;
+
 
 const AvatarCreateCommentWrapper = styled.div`
   position: absolute;
@@ -445,7 +435,7 @@ const Username = styled.h3`
 // Define the Content styled component for the string content
 const Content = styled.div`
   margin: 0;
-  display: inline-block;
+  display: block;
   font-family: inherit;
   font-style: normal;
   font-weight: 400;
@@ -453,17 +443,5 @@ const Content = styled.div`
   line-height: 25px;
 `
 
-//rounded box for image thumbnails in base comments
-const CommentImgBox = styled.div`
-  width: 18em;
-  height: 10em;
-  padding: 1em; //TODO: add img so no pad later
-  margin: 0.1em;
-  background: #817FF7;
-  border-radius: 20px;
-`
-const DivFlex = styled.div`
-  display: flex;
-  flex-wrap: wrap; /* Allows flex items to wrap onto the next line if needed */
-`
+
 
