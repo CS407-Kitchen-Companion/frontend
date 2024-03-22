@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 import { Header } from '@pagesImpl/__components__/Header'
 import { ViewPostRecipe } from '@pagesImpl/__components__/ViewPostRecipe'
 
-
 import { PageImplView } from '@pagesImpl/__components__/PageImplView'
 import { useDispatch, useSelector } from 'react-redux'
 import { userDataAction, selectUserName, selectPassword } from '@lib/store/userData/userData.slice'
@@ -55,14 +54,14 @@ const PostIdImpl: React.FC<PostIdImplProps> = ({ postId }) => { //main viewpostp
   // Check if postId exists before making the fetch request
   useEffect(() => {
     //set postID
-    const postIDValue = Number(postId);
+    const postIDValue = Number(postId)
     if (isNaN(postIDValue)) {
       //non int postID
-      console.error('postId is not a valid number');
+      console.error('postId is not a valid number')
     } 
     else {
       //possible valid int postID
-      console.log('postIdValue:', postIDValue);
+      console.log('postIdValue:', postIDValue)
       dispatch(recipeDataAction.setPostID({ postID: postIDValue }))
       console.log('postID:', postID)
       if (postIDValue > 0) //positive postID
@@ -77,7 +76,7 @@ const PostIdImpl: React.FC<PostIdImplProps> = ({ postId }) => { //main viewpostp
   const [recipeDataTemp, setRecipeDataTemp] = useState<IRData>(recipeDataVar);
   useEffect(() => {
     if (isSubmitted && isRecipeDataVarValid) {
-      setRecipeDataTemp(recipeDataVar);
+      setRecipeDataTemp(recipeDataVar)
       console.log('Updated Recipe Data')
     }
   }, [isSubmitted, isRecipeDataVarValid]);
@@ -106,29 +105,10 @@ export default PostIdImpl;
 
 
 
-
-
-
-
-
-
-
 const MainBackgroundWrapper = styled.div`
   display: flex;
   flex-flow: row;
   background: #f5f7fa;
-`
-const StyledLine = styled.hr`
-  border: none;
-  height: 3px;
-  background-color: #f5f7fa; /* Change 'red' to any color you want */
-`
-const SectionTitles = styled.div`
-  font-weight: 600;
-  font-size: 32px;
-  line-height: 39px;
-  display: flex;
-  align-items: center;
 `
 const FloatingCardWrapper = styled.div`
   border-radius: 25px;
@@ -142,26 +122,5 @@ const FloatingCardWrapper = styled.div`
   font-style: normal;
   font-size: 16px;
   color: #343c6a;
-`
-/* sections within the floating card for viewing posts */
-const ViewPostSectionWrapper = styled.div`
-  padding: 1em 2em 0.5em 2em;
-`
-const DivFlexCenter = styled.div`
-  display: flex;
-  align-items: center;
-  width: 80%;
-`
-const DivFlex = styled.div`
-  display: flex;
-`
-const AlignRight = styled.div`
-  align-items: right;
-  text-align: right;
-  float: right;
-`
-const Gap = styled.div`
-  margin-left: 60px;
-  margin-right: 60px;
 `
 
