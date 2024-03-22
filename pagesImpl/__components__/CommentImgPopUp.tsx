@@ -8,7 +8,7 @@ import { CloseIcon } from '@pagesImpl/__components__/CloseIcon'
 //popup to see larger full sized img from comments
 //assumed to have nonempty images array
 export const CommentImgPopUp = ({ username, content, images }: { username: string; content: string, images: string[] }) => {
-  const [wantPopUp, setWantPopUp] = useState(true);
+  const [wantPopUp, setWantPopUp] = useState(false);
   const [selectedImg, setselectedImg] = useState(0) //keeps selected img key number
   
   //activate popup window and grab what img was selected
