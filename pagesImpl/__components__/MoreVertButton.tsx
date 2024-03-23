@@ -23,6 +23,17 @@ export const MoreVertButton: React.FC = () => {
     </AlignRight>
   )
 }
+
+//simple icon three vertical dot
+export const MoreVertButtonIcon = () => {
+  return(
+    <>
+      <StyledMoreVertButtonIcon>
+        <MoreVertIcon sx={{ fontSize: 30 }} />
+      </StyledMoreVertButtonIcon>
+    </>
+  )
+}
 const StyledMoreVertButton = styled.button`
   padding: 10px 10px;
   color: ${props => props.textColor || 'lightgrey'};
@@ -36,3 +47,16 @@ const AlignRight = styled.div`
   text-align: right;
   float: right;
 `
+const StyledMoreVertButtonIcon = styled.button`
+  padding: 10px 10px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+  color: #E4E9F2;
+
+  &:active {
+    color: #d3dce9;
+  }
+`
+

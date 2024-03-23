@@ -13,18 +13,18 @@ export const CommentImgPopUp = ({ username, content, images }: { username: strin
   
   //activate popup window and grab what img was selected
   const handlePopUp = (img: string, key: number) => {
-    console.log(`Clicked on img: ${img}, key: ${key}`)
+    console.log(`Clicked on img`)
     setselectedImg(key) 
     setWantPopUp(true)
   }
   //close popup
   const handleExit = () => {
-    console.log('exit popup')
+    //console.log('exit popup')
     setWantPopUp(false)
   }
   //change selected img to look at in popup window
   const handleSelectThumbnail = (img: string, key: number) => {
-    console.log('selected img: ${img} key: ${key}')
+    //console.log('changed selected img')
     setselectedImg(key) 
   }
 
@@ -154,6 +154,7 @@ const ExitButton = styled.div`
   margin: 1.5em;
   width: 30px;
   height: 30px;
+  cursor: pointer;
 `
 
 /* comment highlight */

@@ -518,7 +518,8 @@ const StyledPinButton = styled.button<{textColor?: string}>`
   border: none;
   color: ${props => props.textColor || '#F5F7FA'};
   background-color: transparent;
-  transition: color 0.3s ease; // Transition for color change
+  transition: color 0.1s ease;
+  cursor: pointer;
 `
 const DivSticky = styled.div<{isSticky?: boolean}>`
   top: 0;

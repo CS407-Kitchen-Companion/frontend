@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { IRData } from '@pagesImpl/viewpost/postIdImpl'
 import { CommentImgPopUp } from '@pagesImpl/__components__/CommentImgPopUp'
 import { CircleAvatar } from '@pagesImpl/__components__/CircleAvatar'
+import { MoreVertButtonIcon } from '@pagesImpl/__components__/MoreVertButton'
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -84,6 +85,7 @@ const Comment = ({ username, content, hasImages, images}: { username: string; co
           </Content>
           <CreateReply/>
         </CommentContentWrapper>
+        <ShowWhenHover className="show-when-hover"> <MoreVertButtonIcon/> </ShowWhenHover>
       </CommentWrapper>
     </>
   )
@@ -102,6 +104,7 @@ const Reply = ({ username, content}: { username: string; content: string }) => {
           </Content>
           <CreateReply/>
         </CommentContentWrapper>
+        <ShowWhenHover className="show-when-hover"> <MoreVertButtonIcon/> </ShowWhenHover>
       </CommentWrapper>
     </>
   )
@@ -246,7 +249,6 @@ const CreateReply = () => {
   return (
     <>
       <ReplyButton onClick={handleReply}>Reply</ReplyButton>
-
       {isActive && (
         <CommentForm onSubmit={handleInputSubmit}>
 
@@ -273,7 +275,7 @@ const CreateReply = () => {
 const CommentForm = styled.form`
   display: block;
   position: relative;
-`
+`;
 
 //styled comment input text box
 const CommentStringInput = styled.input`
@@ -298,7 +300,7 @@ const CommentStringInput = styled.input`
     font-weight: inherit;
     line-height: inherit;
   }
-`
+`;
 const SubButton = styled.button`
   display: inline-block; 
   padding: 10px 20px;
@@ -322,7 +324,7 @@ const SubButton = styled.button`
   &:active {
     background-color: #d3dce9; /* Background color when clicked */
   }
-`
+`;
 const BlueButton = styled.button`
   display: inline-block; 
   padding: 10px 20px;
@@ -346,15 +348,15 @@ const BlueButton = styled.button`
   &:active {
     background-color: #0c09b1; /* Background color when clicked */
   }
-`
+`;
 
 //indent replies
 const ReplyWrapper = styled.div`
   margin-left: 3em;
-`
+`;
 const OneMarginWrapper = styled.div`
   margin-left: 0.5em;
-`
+`;
 const ReplyButton = styled.button`
   display: inline-block; 
   padding: 5px 10px;
@@ -377,7 +379,7 @@ const ReplyButton = styled.button`
   &:active {
     background-color: #d3dce9; /* Background color when clicked */
   }
-`
+`;
 const ViewReplyButton = styled.button`
   display: inline-block; 
   padding: 10px 20px;
@@ -399,22 +401,33 @@ const ViewReplyButton = styled.button`
   &:active {
     background-color: #d3dce9; /* Background color when clicked */
   }
-`
-
-// Define the CommentWrapper styled component
-const CommentWrapper = styled.div`
-  display: flex;
-  align-items: flex-start;
-  margin-top: 0.5em;
 `;
-
 
 
 const AvatarCreateCommentWrapper = styled.div`
   position: absolute;
   top: 0.5em;
   left: 0.5em;
-`
+`;
+
+const ShowWhenHover = styled.div`
+  background-color: #ff0000;
+  opacity: 0; 
+  transition: opacity 0.3s ease; 
+`;
+
+// Define the CommentWrapper styled component
+const CommentWrapper = styled.div`
+  display: flex;
+  align-items: flex-start;
+  margin-top: 0.5em;
+
+
+  //show icon nested in ShowWhenHover only shows when hover here
+  &:hover .show-when-hover {
+    opacity: 1;
+  }
+`;
 
 // Define the CommentContentWrapper styled component for the username and content on the right
 const CommentContentWrapper = styled.div`
@@ -441,7 +454,7 @@ const Content = styled.div`
   font-weight: 400;
   font-size: 16px;
   line-height: 25px;
-`
+`;
 
 
 
