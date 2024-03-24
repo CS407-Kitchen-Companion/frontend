@@ -2,7 +2,7 @@ import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import { LoadingPage } from '@pagesImpl/__components__/LoadingPage'
 
-const MainImplWithNoSSR = dynamic(() => import('@pagesImpl/viewpost/editpostImpl'), {
+const ProfileImplWithNoSSR = dynamic(() => import('@pagesImpl/profile/profileImpl'), {
   ssr: false,
   loading: () => (
     <>
@@ -18,7 +18,7 @@ export default function Main() {
         <title>{'Kitchen Companion'}</title>
         <meta property="og:type" content="product" />
       </Head>
-      <MainImplWithNoSSR />
+      <ProfileImplWithNoSSR />
     </>
   )
 }

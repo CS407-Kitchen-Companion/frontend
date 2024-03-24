@@ -102,6 +102,9 @@ const userDataSlice = createSlice({
     setId: (state, action: PayloadAction<IId>) => {
       state.id = action.payload.id
     },
+    emptyPassword: (state) => {
+      state.password = ''
+    },
     setIsSubmitted: (state, action: PayloadAction<IIsSubmitted>) => {
       state.isSubmitted = action.payload.isSubmitted
     },

@@ -1,5 +1,6 @@
 import { combineReducers, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '@lib/store/store'
+import { Icon } from 'next/dist/lib/metadata/types/metadata-types'
 
 export interface IPostID {
   postID: number
@@ -53,6 +54,29 @@ export interface RecipeDataState {
   isSubmitted: boolean
 }
 
+export interface ITitle {
+  title: string
+}
+export interface IContent {
+  content: string[]
+}
+export interface IServings {
+  serving: number
+}
+export interface ITime {
+  timer: number
+}
+export interface ITags {
+  tag: string[]
+}
+export interface IAppls {
+  appls: string[]
+}
+export interface IIngr {
+  ingr: string[]
+}
+
+
 const initialState = (): RecipeDataState => {
   return {
     postID: 0,
@@ -104,6 +128,28 @@ const recipeDataSlice = createSlice({
     setIsSubmitted: (state, action: PayloadAction<IIsSubmitted>) => {
       state.isSubmitted = action.payload.isSubmitted
     },
+    setTitle: (state, action: PayloadAction<ITitle>) => {
+      state.recipeDataVar.title = action.payload.title
+    },
+    setContent: (state, action: PayloadAction<IContent>) => {
+      state.recipeDataVar.content = action.payload.content
+    },
+    setServings: (state, action: PayloadAction<IServings>) => {
+      state.recipeDataVar.serves = action.payload.serving
+    },
+    setTime: (state, action: PayloadAction<ITime>) => {
+      state.recipeDataVar.time = action.payload.timer
+    },
+    setTags: (state, action: PayloadAction<ITags>) => {
+      state.recipeDataVar.tags = action.payload.tag
+    },
+    setAppls: (state, action: PayloadAction<IAppls>) => {
+      state.recipeDataVar.appliances = action.payload.appls
+    },
+    setIngr: (state, action: PayloadAction<IIngr>) => {
+      state.recipeDataVar.ingredients = action.payload.ingr
+    },
+
     
   },
 })

@@ -4,8 +4,14 @@ import { PageImplView } from '@pagesImpl/__components__/PageImplView'
 import { useRouter } from"next/navigation";
 import { FormEvent } from 'react'
 import React, { useState } from 'react';
+import { selectrecipeData } from '@lib/store/recipeData/recipeData.slice';
+import { select } from 'redux-saga/effects';
 
-export default function EditRecipeImpl() {
+interface PostIdImplProps { //make sure postId is a string
+  postId: string | string[] | undefined;
+}
+
+const EditRecipeImpl: React.FC<PostIdImplProps> = ({ postId }) => {
   return (
     <PageImplView>
       <Header />
@@ -18,16 +24,18 @@ export default function EditRecipeImpl() {
                   }}> 
                 Edit Recipe 
                 </h1>
-                <RecipeForm></RecipeForm>
+                <RecipeForm postId={postId}></RecipeForm>
             </FormWrapper>
         </FormBackgroundWrapper>
       </MainBackgroundWrapper>
     </PageImplView>
   )
 }
+export default EditRecipeImpl;
 
-const RecipeForm = () => {
-  const [title, setTitle] = useState("");
+const RecipeForm : React.FC<PostIdImplProps> = ({ postId }) => {
+  const cachedRecipe = select(selectrecipeData)
+  const [title, setTitle] = useState(cachedRecipe.title);
   const [time, setTime] = useState('');
   const [servings, setServings] = useState('');
   const router = useRouter();
@@ -232,8 +240,8 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
        </StyledDescription>
        <StyledInput
        type="text"
-       value={time}
-       onChange={(e) => setTime(e.target.value)}
+       value={servings}
+       onChange={(e) => setServings(e.target.value)}
        placeholder= '2 servings, 5 servings'
        >
        </StyledInput>

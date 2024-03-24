@@ -5,7 +5,8 @@ import { ISubmitRegisterResult, ResponseError } from '@lib/store/api/api.type'
 import { userDataAction, UserDataState, selectuserData } from '@lib/store/userData/userData.slice'
 import { checkLength, ComparisonType } from '@lib/utils/checkLength'
 import { navActions } from '@lib/store/nav/nav.slice'
-
+import { isUndefined } from 'lodash'
+import Cookies from 'js-cookie';
 
 
 function* flowSubmitLoginSaga() {
@@ -29,18 +30,28 @@ function* flowSubmitLoginSaga() {
     
   })
 
-  if (error) {
+  if (error ) {
     // TODO popup
     
     yield put(userDataAction.failureFlowSubmitLogin())
     return
   }
+  if(data){
+    console.log(data)
+    const loginResult =  data.token
+    userDataAction.setToken(loginResult)
+    Cookies.set('token', loginResult, { expires: 7, secure: true });
 
-  const { result } = data
+    yield put(navActions.push({ url: '/main' }))
+    yield put(userDataAction.successFlowSubmitLogin())
+  } else {
+    console.log("incorrect credentials")
+    yield put(userDataAction.failureFlowSubmitLogin())
+  }
+  
 
   // TODO success popup
-  yield put(navActions.push({ url: '/main' }))
-  yield put(userDataAction.successFlowSubmitLogin())
+ 
 }
 
 function* watchSubmitLoginSaga() {

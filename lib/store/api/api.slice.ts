@@ -77,5 +77,5 @@ export const apiSlice = createApi({
   },
 })
 
-export const { useSubmitRegisterMutation, useGetRelatedRecipesQuery, useGetSearchedResultsQuery, useGetFilterQuery, useGetRecipeById, useGetUserById} =
+export const { useSubmitRegisterMutation, useGetRelatedRecipesQuery, useGetSearchedResultsQuery, useGetFilterQuery, useGetRecipeByIdQuery, useGetUserByIdQuery} =
   apiSlice
