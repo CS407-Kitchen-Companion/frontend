@@ -662,7 +662,7 @@ const MoreVertButton = () => {
 
   const handleClick = () => {
     setIsClicked(!isClicked) // Toggle the state
-    router.push("/viewpost/edit")
+    router.push("/viewpost/edit/1")
   }
 
   const StyledMoreVertButton = styled.button`

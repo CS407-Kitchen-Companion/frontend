@@ -36,6 +36,7 @@ const LoginForm = () => {
 
   const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
     event.preventDefault();
+    console.log(name + password)
     dispatch(userDataAction.setName({name}))
     dispatch(userDataAction.setPassword({password}))
     dispatch(userDataAction.requestFlowSubmitLogin())

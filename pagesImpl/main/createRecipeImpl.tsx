@@ -38,13 +38,18 @@ const RecipeForm = () => {
   const dispatch = useDispatch()
   
   //Ingredient handling
-  const [ingredients, setIngredients] = useState([{ name: '', amount: 0 }]);
+  const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: '' }]);
   const handleAddIngredient = () => {
-    setIngredients([...ingredients, { name: '', amount: 0 }]);
+    setIngredients([...ingredients, { name: '', amount: '', unit: '' }]);
   };
   const handleChangeIngredientName = (index: any, e: any) => {
     const newIngredients = [...ingredients];
     newIngredients[index].name = e.target.value;
+    setIngredients(newIngredients);
+  };
+  const handleChangeIngredientAmount = (index: any, e: any) => {
+    const newIngredients = [...ingredients];
+    newIngredients[index].amount = e.target.value;
     setIngredients(newIngredients);
   };
   const handleDeleteIngredient = (index: any) => {
@@ -73,7 +78,7 @@ const handleDeleteDirection = (index: any) => {
 const [appliances, setAppliances] = useState([{ value: '' }]);
 const handleAddAppliance = () => {
   setAppliances([...appliances, { value: '' }]);
-};
+};  
 const handleChangeAppliance = (index: any, e: any) => {
   const newAppliances = [...appliances];
   newAppliances[index].value = e.target.value;
@@ -99,6 +104,15 @@ const handleDeleteTag= (index: any) => {
   const newTags = [...tags];
   newTags.splice(index, 1);
   setTags(newTags);
+};
+
+//Visibility
+const [visibility, setVisibility] = useState('public');
+
+const handleChangeVisibility = (e: any) => {
+
+  setVisibility(e.target.value);
+
 };
     
     
@@ -166,11 +180,17 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
         </StyledDescription>
        {ingredients.map((ingredient, index) => (
          <div key={index}>
-           <StyledInput
+           <StyledIngredientName
              type="text"
              value={ingredient.name}
              onChange={(e) => handleChangeIngredientName(index, e)}
              placeholder={`Ingredient ${index + 1}`}
+           />
+           <StyledIngredientAmount
+             type="text"
+             value={ingredient.amount}
+             onChange={(e) => handleChangeIngredientAmount(index, e)}
+             placeholder={`Quantity (Ex. 2 Tbsp)`}
            />
            <StyledDeleteButton type="button" onClick={() => handleDeleteIngredient(index)}>
              Remove
@@ -251,6 +271,7 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
        </StyledAddButton>
        </IngredientWrapper>
 
+        <IngredientWrapper>
        <StyledLabel>Time</StyledLabel>
        <StyledDescription>How long does your recipe take to make from 
         start to finish in minutes
@@ -262,7 +283,9 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
        placeholder= '30 minutes, 240 mintues'
        >
        </StyledInput>
+       </IngredientWrapper>
 
+       <IngredientWrapper>
        <StyledLabel>Servings</StyledLabel>
        <StyledDescription>How many servings does your recipe make
        </StyledDescription>
@@ -273,10 +296,21 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
        placeholder= '2 servings, 5 servings'
        >
        </StyledInput>
+       </IngredientWrapper>
 
-       <div>
+       
+       <StyledLabel>Visibility</StyledLabel>
+       <StyledDescription>Can your recipe be viewed publicly?
+       </StyledDescription>
+        <StyledDropdown value={visibility} onChange={handleChangeVisibility}>
+          <option value="public">Public</option>
+          <option value="private">Private</option>
+        </StyledDropdown>
+       
+
+       <IngredientWrapper>
        <StyledAddButton type="submit">Submit</StyledAddButton>
-       </div>
+       </IngredientWrapper>
      </form>
      
      
@@ -335,8 +369,26 @@ border: 1px solid #f5f7fa;
 margin: 5px;
 margin-left: 0px;
 `
+const StyledIngredientName = styled.input`
+background: #f5f7fa;
+width: 400px;
+height: 50px;
+border-radius: 10px;
+border: 1px solid #f5f7fa;
+margin: 5px;
+margin-left: 0px;
+`
+const StyledIngredientAmount = styled.input`
+background: #f5f7fa;
+width: 200px;
+height: 50px;
+border-radius: 10px;
+border: 1px solid #f5f7fa;
+margin: 5px;
+margin-left: 0px;
+`
 const IngredientWrapper = styled.div`
-margin-top: 10%;
+margin-top: 5%;
 `
 const StyledDescription = styled.p`
 border: 0;
@@ -358,4 +410,12 @@ width: 250px;
 height: 50px;
 border-radius:  30px ;
 border: 1px solid #2D3566;
+`
+
+const StyledDropdown = styled.select`
+margin: 1vh;
+width: 100px;
+height: 30px;
+background: #f5f7fa;
+border-radius: 5px;
 `

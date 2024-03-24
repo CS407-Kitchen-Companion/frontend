@@ -37,6 +37,7 @@ function* flowSubmitLoginSaga() {
     return
   }
   if(data){
+    console.log(data)
     const loginResult =  data.token
     userDataAction.setToken(loginResult)
     Cookies.set('token', loginResult, { expires: 7, secure: true });
