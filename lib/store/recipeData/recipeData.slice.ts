@@ -2,15 +2,56 @@ import { combineReducers, createSelector, createSlice, PayloadAction } from '@re
 import { RootState } from '@lib/store/store'
 import { Icon } from 'next/dist/lib/metadata/types/metadata-types'
 
+export interface IPostID {
+  postID: number
+}
+
+export interface IRecipeDataVar {
+  recipeDataVar: {
+    title: string,
+    createdAt: string,
+    createdBy: number,
+    edited: boolean,
+    updatedAt: string,
+    ratings: number[],
+    ratingCount: number,
+    calculatedRating: number,
+    calories: number,
+    serves: number,
+    content: string[],
+    time: number,
+    tags: string[],
+    appliances: string[],
+    ingredients: string[],
+    comments: string[],
+  }
+}
+
+export interface IIsSubmitted {
+  isSubmitted: boolean
+}
+
 export interface RecipeDataState {
-  title: string,
-  content: string[],
-  serves: number,
-  calories: number,
-  time: number,
-  tags: string[],
-  appliances: string[],
-  ingredients: string[],
+  postID: number
+  recipeDataVar: {
+    title: string,
+    createdAt: string,
+    createdBy: number,
+    edited: boolean,
+    updatedAt: string,
+    ratings: number[],
+    ratingCount: number,
+    calculatedRating: number,
+    calories: number,
+    serves: number,
+    content: string[],
+    time: number,
+    tags: string[],
+    appliances: string[],
+    ingredients: string[],
+    comments: string[],
+  }
+  isSubmitted: boolean
 }
 
 export interface ITitle {
@@ -38,14 +79,26 @@ export interface IIngr {
 
 const initialState = (): RecipeDataState => {
   return {
-    title: '',
-    content: [],
-    serves: 0,
-    calories: 0,
-    time: 0,
-    tags: [],
-    appliances: [],
-    ingredients: []
+    postID: 0,
+    recipeDataVar: {
+      title: '',
+      createdAt: '',
+      createdBy: 0,
+      edited: false,
+      updatedAt: '',
+      ratings: [],
+      ratingCount: 0,
+      calculatedRating: 0,
+      calories: 0,
+      serves: 0,
+      content: [],
+      time: 0,
+      tags: [],
+      appliances: [],
+      ingredients: [],
+      comments: [],
+    },
+    isSubmitted: false,
   }
 }
 
@@ -59,37 +112,42 @@ const recipeDataSlice = createSlice({
     successFlowCreateRecipe: () => {},
     failureFlowCreateRecipe: () => {},
 
+    // get recipe flow
+    requestFlowGetRecipeById: () => {},
+    beginFlowGetRecipeById: () => {},
+    successFlowGetRecipeById: () => {},
+    failureFlowGetRecipeById: () => {},
 
-    // setter
-    setRecipe: (state, action: PayloadAction<RecipeDataState>) => {
-      state.title = action.payload.title
-      state.content = action.payload.content
-      state.serves = action.payload.serves
-      state.time = action.payload.time
-      state.tags = action.payload.tags
-      state.appliances = action.payload.appliances
-      state.ingredients = action.payload.ingredients
+    // setter 
+    setPostID: (state, action: PayloadAction<IPostID>) => {
+      state.postID = action.payload.postID
+    },
+    setRecipeDataVar: (state, action: PayloadAction<IRecipeDataVar>) => {
+      state.recipeDataVar = action.payload.recipeDataVar
+    },
+    setIsSubmitted: (state, action: PayloadAction<IIsSubmitted>) => {
+      state.isSubmitted = action.payload.isSubmitted
     },
     setTitle: (state, action: PayloadAction<ITitle>) => {
-      state.title = action.payload.title
+      state.recipeDataVar.title = action.payload.title
     },
     setContent: (state, action: PayloadAction<IContent>) => {
-      state.content = action.payload.content
+      state.recipeDataVar.content = action.payload.content
     },
     setServings: (state, action: PayloadAction<IServings>) => {
-      state.serves = action.payload.serving
+      state.recipeDataVar.serves = action.payload.serving
     },
     setTime: (state, action: PayloadAction<ITime>) => {
-      state.time = action.payload.timer
+      state.recipeDataVar.time = action.payload.timer
     },
     setTags: (state, action: PayloadAction<ITags>) => {
-      state.tags = action.payload.tag
+      state.recipeDataVar.tags = action.payload.tag
     },
     setAppls: (state, action: PayloadAction<IAppls>) => {
-      state.appliances = action.payload.appls
+      state.recipeDataVar.appliances = action.payload.appls
     },
     setIngr: (state, action: PayloadAction<IIngr>) => {
-      state.ingredients = action.payload.ingr
+      state.recipeDataVar.ingredients = action.payload.ingr
     },
 
     
@@ -102,7 +160,13 @@ const recipeData = (state: RootState): RecipeDataState => state.recipeData.root
 export const recipeDataAction = recipeDataSlice.actions
 
 // selector
-export const selectrecipeData = createSelector(recipeData, state => state)
+export const selectRecipeData = createSelector(recipeData, state => state)
+export const selectPostID = createSelector(recipeData, state => state.postID)
+export const selectIsPostIDNotEmpty = createSelector(recipeData, state => state.postID > 0)
+export const selectRecipeDataVar = createSelector(recipeData, state => state.recipeDataVar)
+export const selectIsRecipeDataVarValid = createSelector(recipeData, state => state.recipeDataVar.title !== '')
+export const selectIsSubmitted = createSelector(recipeData, state => state.isSubmitted)
+
 
 
 // root reducer

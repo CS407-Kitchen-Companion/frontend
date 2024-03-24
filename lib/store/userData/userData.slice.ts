@@ -20,9 +20,14 @@ export interface IToken {
   token: string
 }
 
-export interface Iid {
-  id: string
+export interface IId {
+  id: number
 }
+
+export interface IIsSubmitted {
+  isSubmitted: boolean
+}
+
 export interface UserDataState {
   username: string,
   email: string,
@@ -30,7 +35,8 @@ export interface UserDataState {
   newPassword: string,
   oldPassword: string,
   token: string,
-  userId: string,
+  id: number,
+  isSubmitted: boolean,
 }
 
 const initialState = (): UserDataState => {
@@ -41,7 +47,8 @@ const initialState = (): UserDataState => {
     newPassword: '',
     oldPassword: '',
     token: '',
-    userId: '',
+    id: 0,
+    isSubmitted: false,
   }
 }
 
@@ -56,18 +63,22 @@ const userDataSlice = createSlice({
     failureFlowSubmitRegister: () => {},
 
     // login flow
-   
     requestFlowSubmitLogin: () => {},
     beginFlowSubmitLogin: () => {},
     successFlowSubmitLogin: () => {},
     failureFlowSubmitLogin: () => {},
 
     //update password flow
-
     requestFlowUpdatePassword: () => {},
     beginFlowUpdatePassword: () => {},
     successFlowUpdatePassword: () => {},
     failureFlowUpdatePassword: () => {},
+
+    //get user flow
+    requestFlowGetUserById: () => {},
+    beginFlowGetUserById: () => {},
+    successFlowGetUserById: () => {},
+    failureFlowGetUserById: () => {},
 
     // setter
     setName: (state, action: PayloadAction<IName>) => {
@@ -88,12 +99,16 @@ const userDataSlice = createSlice({
     setToken: (state, action: PayloadAction<IToken>) => {
       state.token = action.payload.token
     },
-    setId: (state, action: PayloadAction<Iid>) => {
-      state.userId = action.payload.id
+    setId: (state, action: PayloadAction<IId>) => {
+      state.id = action.payload.id
     },
     emptyPassword: (state) => {
       state.password = ''
     },
+    setIsSubmitted: (state, action: PayloadAction<IIsSubmitted>) => {
+      state.isSubmitted = action.payload.isSubmitted
+    },
+
   },
 })
 
@@ -103,12 +118,15 @@ const userData = (state: RootState): UserDataState => state.userData.root
 export const userDataAction = userDataSlice.actions
 
 // selector
-export const selectuserData = createSelector(userData, state => state)
+export const selectUserData = createSelector(userData, state => state)
 export const selectUserName = createSelector(userData, state => state.username)
 export const selectEmail = createSelector(userData, state => state.email)
 export const selectToken = createSelector(userData, state => state.token)
 export const selectPassword = createSelector(userData, state => state.password)
-export const selectId = createSelector(userData, state => state.userId)
+export const selectId = createSelector(userData, state => state.id)
+export const selectIsUsernameValid = createSelector(userData, state => state.username !== "")
+export const selectIsSubmitted = createSelector(userData, state => state.isSubmitted)
+
 
 // root reducer
 export const userDataReducer = combineReducers({
