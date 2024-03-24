@@ -92,8 +92,6 @@ const RecipePostHeader = ({ rDataTemp }: { rDataTemp: IRData }) => {
 
   return (
     <>
-
-    <SimplePopup></SimplePopup>
       <HeaderImage headerImageURL={headerImageURL}></HeaderImage>
       <AuthorIcon>
         <AuthorProfileImage />
@@ -424,11 +422,13 @@ const RecipePostIngredients = ({ rDataTemp }: { rDataTemp: IRData }) => {
           </StyledPinButton>
         </AlignRight>
         <SectionTitles>Ingredients</SectionTitles>
+        {recipeDataVar.ingredients && (
         <CheckboxStyledList
           items={Object.entries(recipeDataVar.ingredients).map(
             ([ingredientName, ingredientAmount]) => `${ingredientAmount} of ${ingredientName}`
           )}
         />
+      )}
       </ViewPostSectionWrapper>
       </DivSticky>
     </>

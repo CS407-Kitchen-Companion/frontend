@@ -7,15 +7,16 @@ export const Tags: React.FC<{ items: string[] }> = ({ items }) => {
   return (
     <>
       <TagDiv>
-        {items.map((items, index) => (
-          <DivTemp>
-            <p key={index}>{items}</p>
+        {items.map((item, index) => (
+          <DivTemp key={index}>
+            <p>{item}</p>
           </DivTemp>
         ))}
       </TagDiv>
     </>
-  )
-}
+  );
+};
+
 
 const TagDiv = styled.div`
   display: flex;

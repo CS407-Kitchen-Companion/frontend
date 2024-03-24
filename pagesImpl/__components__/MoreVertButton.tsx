@@ -53,7 +53,6 @@ export const SimplePopup = () => {
   return (
     <div>
       <ShowWhenHover className="show-when-hover" onClick={handleClick}> <MoreVertButtonIcon/> </ShowWhenHover>
-
       <BasePopup id={id} open={open} anchor={anchor} placement="bottom-start">
         <PopupBody>The content of the Popup.</PopupBody>
       </BasePopup>
