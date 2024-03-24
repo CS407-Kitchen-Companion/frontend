@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { StarRating } from '@pagesImpl/__components__/StarRating'
-import { MoreVertButton } from '@pagesImpl/__components__/MoreVertButton'
+import { MoreVertButton, SimplePopup } from '@pagesImpl/__components__/MoreVertButton'
 import { Tags } from '@pagesImpl/__components__/Tags'
 import { IRData } from '@pagesImpl/viewpost/postIdImpl'
 import { CommentSection, ICommentSection, IComment, IReply } from '@pagesImpl/__components__/CommentSection'
@@ -422,11 +422,13 @@ const RecipePostIngredients = ({ rDataTemp }: { rDataTemp: IRData }) => {
           </StyledPinButton>
         </AlignRight>
         <SectionTitles>Ingredients</SectionTitles>
+        {recipeDataVar.ingredients && (
         <CheckboxStyledList
           items={Object.entries(recipeDataVar.ingredients).map(
             ([ingredientName, ingredientAmount]) => `${ingredientAmount} of ${ingredientName}`
           )}
         />
+      )}
       </ViewPostSectionWrapper>
       </DivSticky>
     </>
@@ -518,7 +520,8 @@ const StyledPinButton = styled.button<{textColor?: string}>`
   border: none;
   color: ${props => props.textColor || '#F5F7FA'};
   background-color: transparent;
-  transition: color 0.3s ease; // Transition for color change
+  transition: color 0.1s ease;
+  cursor: pointer;
 `
 const DivSticky = styled.div<{isSticky?: boolean}>`
   top: 0;
