@@ -4,7 +4,7 @@ import { FormEvent } from 'react'
 import React, { useState } from 'react';
 import { PageImplView } from '@pagesImpl/__components__/PageImplView'
 import { useDispatch, useSelector } from 'react-redux'
-import { userDataAction, selectuserData } from '@lib/store/userData/userData.slice'
+import { userDataAction } from '@lib/store/userData/userData.slice'
 
 export default function RegisterImpl() {
   return (

@@ -2,7 +2,7 @@ import { put, take, takeLeading, select, fork, takeEvery } from '@redux-saga/cor
 import { PayloadAction } from '@reduxjs/toolkit'
 import { fetchEndpoint } from '@lib/store/helperSaga/fetchEndpoint'
 import { ISubmitRegisterResult, ResponseError } from '@lib/store/api/api.type'
-import { userDataAction, UserDataState, selectuserData } from '@lib/store/userData/userData.slice'
+import { userDataAction, UserDataState, selectUserData } from '@lib/store/userData/userData.slice'
 import { checkLength, ComparisonType } from '@lib/utils/checkLength'
 import { navActions } from '@lib/store/nav/nav.slice'
 import { isUndefined } from 'lodash'
@@ -10,7 +10,7 @@ import { isUndefined } from 'lodash'
 
 function* flowSubmitRegisterSaga() {
   yield put(userDataAction.beginFlowSubmitRegister())
-  const { username, email, password }: UserDataState = yield select(selectuserData)
+  const { username, email, password }: UserDataState = yield select(selectUserData)
   // noti that request user to check the form
   if (
     !checkLength({
