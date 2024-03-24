@@ -24,7 +24,7 @@ export const ProfileIcon: React.FC = () => {
 
   const onClickMyPosts = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
-    router.push('/myposts')
+    router.push('/profile')
   }
 
   const onClickInteractions = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -53,7 +53,7 @@ export const ProfileIcon: React.FC = () => {
       <ProfileImage onClick={onClickProfileImage} />
       <ProfileWindow isClicked={isProfileClicked}>
         <ProfileWrapper>
-          <ProfileName>sprintDemoUser</ProfileName>
+          <ProfileName>{username}</ProfileName>
           <ProfileTaskList>
             <ProfileTaskListItem onClick={onClickMyPosts}>My Posts</ProfileTaskListItem>
             <ProfileTaskListItem paddingTop={17} onClick={onClickInteractions}>
