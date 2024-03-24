@@ -654,65 +654,35 @@ const RecipePostTags = ({ rDataTemp }: { rDataTemp: IRData }) => {
 
 /* RECIPE COMMENTS */
 const RecipePostComments = ({ rDataTemp }: { rDataTemp: IRData }) => {
-  // Create a new object recipeDataVar by copying the properties of recipeDataTemp
-  const recipeDataVar: IRData = { ...rDataTemp }
+  const [comments, setComments] = useState<IComment[]>([]);
 
-  //TODO: add comment data from backend - make CommentSection take in arg
-  //TODO: fix numberOf to isBoolean and read length of array for num
-  
-  // Temporary dummy data for replies
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:8080/api/comments/recipe/1`); // Adjust the URL as needed
+        if (!response.ok) {
+          throw new Error('Failed to fetch comments');
+        }
+        const data = await response.json();
+        setComments(data); // Assuming the response structure matches your IComment interface
+      } catch (error) {
+        console.error('Error fetching comments:', error);
+      }
+    };
 
-  const dummyReplies: IReply[] = [
-    { userId: 101, content: 'Reply 1 content' },
-    { userId: 102, content: 'Reply 2 content. th sisf gsf gs gs sReply 2 content. th sisf gsf gs gs ssdg s fa dfa f sfafbajsf adfg sd fgs fgfa fa f sdfjbaksjfnasfa sf asf af asf a fa f af gs f sfa fsdfgsf asg sa radgsdfhsr a fgs s f a fafgsfgdfgsetgsd f sg s gs gssdg s fa dfa f sfafbajsf adfg sd fgs fgfa fa f sdfjbaksjfnasfa sf asf af asf a fa f af gs  f sfa fsdfgsf asg sa radgsdfhsr a fgs s f a fafgsfgdfgsetgsd f sg s gs gs ' },
-    { userId: 103, content: 'Reply 3 content' },
-  ];
+    fetchComments();
+  }, [rDataTemp.id]);
 
-  // Temporary dummy data for comments
-  const dummyComments: IComment[] = [
-    {
-      userId: 1,
-      content: 'Comment 1 content',
-      //hasImages: false,
-      hasImages: true,
-      images: ['image1.jpg', 'image2.jpg', 'image3.jpg', 'image4.jpg'],
-      //images: [],
-      hasReplies: true,
-      replies: dummyReplies.slice(0, 2), // Using only the first two replies for this comment
-    },
-    {
-      userId: 2,
-      content: 'Comment 2 content',
-      hasImages: false,
-      images: [],
-      hasReplies: true,
-      replies: dummyReplies.slice(0, 3), // Using only the first two replies for this comment
-    },
-    {
-      userId: 3,
-      content: 'Comment 3 content',
-      hasImages: true,
-      images: ['image1.jpg', 'image2.jpg'],
-      hasReplies: false,
-      replies: [],
-    },
-  ];
-
-// Temporary dummy data for the comment section
-const tempData: ICommentSection = {
-  commentSection: dummyComments,
-};
-
+  // Assuming the CommentSection component can directly accept the comments array
   return (
     <>
-     <ViewPostSectionWrapper>
+      <ViewPostSectionWrapper>
         <SectionTitles>Comments</SectionTitles>
-        <CommentSection commentSection={tempData}/>
+        <CommentSection commentSection={comments}/>
       </ViewPostSectionWrapper>
     </>
   );
-}
-
+};
 
 const StyledLine = styled.hr`
   border: none;

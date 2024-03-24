@@ -16,56 +16,97 @@ export interface ICommentSection {
 
 //comments can have string content, images, an replies
 export interface IComment {
-  userId: number,
-  content: string,
-  hasImages: boolean,
-  images: string[],
-  hasReplies: boolean,
-  replies: IReply[],
+  id: number;
+  userId: number;
+  authorUsername: string;
+  content: string;
+  hasImages: boolean;
+  images: string[];
+  hasReplies: boolean;
+  replies: IReply[];
+  parentCommentId?: number | null;
 }
 
 //replies can have just string content
 export interface IReply {
-  userId: number,
+  id: number;
+  authorUsername: string,
   content: string,
 }
 
 
 // Display comment section for viewing a recipe
-export const CommentSection = ({ commentSection }: { commentSection: ICommentSection }) => {
-  const commentData: ICommentSection = { ...commentSection }
-  
-  console.log("commentData", commentData)
+export const CommentSection = ({ recipeId }: { recipeId: number }) => {
+  const [comments, setComments] = useState<IComment[]>([]);
 
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await fetch(`https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/api/comments/recipe/1`);
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const data: { data: IComment[] } = await response.json();
+        const processedComments = processComments(data.data);
+        console.log(processedComments);
+        setComments(processedComments);
+      } catch (error) {
+        console.error('Failed to fetch comments:', error);
+      }
+    };
+
+    fetchComments();
+  }, [recipeId]);
+
+  function processComments(flatComments: IComment[]): IComment[] {
+    const commentMap = {};
+    const topLevelComments = [];
+  
+    flatComments.forEach(comment => {
+      commentMap[comment.id] = { ...comment, replies: [] };
+    });
+  
+    flatComments.forEach(comment => {
+      if (comment.parentCommentId) {
+        if (commentMap[comment.parentCommentId]) { // Ensure parent exists
+          commentMap[comment.parentCommentId].replies.push(commentMap[comment.id]);
+        } else {
+          console.warn(`Missing parent comment for id ${comment.parentCommentId}`);
+        }
+      } else {
+        topLevelComments.push(commentMap[comment.id]);
+      }
+    });
+  
+    return topLevelComments;
+  }
+
+  
   return (
     <>
       <br/>
       <CreateComment/>
       <br/>
-      <OneMarginWrapper>
-        {commentData.commentSection.map((cmt: IComment, index: number) => (
-          <div key={index} className="cmt">
-            {/** TODO: use function to grab all user data */}
-            <Comment
-              key={index}
-              username={`User ID: ${cmt.userId}`} // Use userId as temporary username
-              content={cmt.content}
-              hasImages={cmt.hasImages}
-              images={cmt.images}
-            />
-            {/** comment replies */} 
-            {cmt.hasReplies && (
-              <ReplySection replies={cmt.replies}></ReplySection>
-            )}
-          </div>
-        ))}      
-      </OneMarginWrapper>
+      {comments.map((cmt, index) => (
+        <div key={index} className="cmt">
+          <Comment
+            id = {cmt.id}
+            username={cmt.authorUsername} // Adjust as necessary
+            content={cmt.content}
+            hasImages={cmt.hasImages}
+            images={cmt.images}
+          />
+
+          {cmt.replies.length > 0 && (
+            <ReplySection replies={cmt.replies} />
+          )}
+        </div>
+      ))}
     </>
-  )
-}
+  );
+};
 
 //base comment structure with user data, string content, and possible images 
-const Comment = ({ username, content, hasImages, images}: { username: string; content: string, hasImages: boolean, images: string[]}) => {
+const Comment = ({ id, username, content, hasImages, images}: { id: number; username: string; content: string, hasImages: boolean, images: string[]}) => {
 
   return (
     <>
@@ -83,7 +124,8 @@ const Comment = ({ username, content, hasImages, images}: { username: string; co
               />
             )}
           </Content>
-          <CreateReply/>
+          <CreateReply parentCommentId={id} />
+
         </CommentContentWrapper>
         <SimplePopup></SimplePopup>
       </CommentWrapper>
@@ -92,7 +134,7 @@ const Comment = ({ username, content, hasImages, images}: { username: string; co
 }
 
 // basic reply structure with no images, user data, and string content
-const Reply = ({ username, content}: { username: string; content: string }) => {
+const Reply = ({id, username, content}: { id:number; username: string; content: string }) => {
   return (
     <>
       <CommentWrapper>
@@ -102,7 +144,8 @@ const Reply = ({ username, content}: { username: string; content: string }) => {
           <Content>
             <div> {content} </div>
           </Content>
-          <CreateReply/>
+          <CreateReply parentCommentId={id} />
+
         </CommentContentWrapper>
         <SimplePopup></SimplePopup>
       </CommentWrapper>
@@ -128,28 +171,30 @@ const ReplySection = ({ replies }: {replies: IReply[]})  => {
       setTri(upTriangle)
   }
 
+  // Inside ReplySection component
   return (
     <>
       <div className="replies">
         <ReplyWrapper>
-        <ViewReplyButton onClick={toggleVisibility}> {whatTri} {numberOfReplies} replies</ViewReplyButton>
-        {isVisible && (
-          <OneMarginWrapper>
-            {replies.map((reply: IReply, replyIndex: number) => (
-              <div key={replyIndex} className="reply">
+          <ViewReplyButton onClick={toggleVisibility}>
+            {whatTri} {numberOfReplies} replies
+          </ViewReplyButton>
+          {isVisible && (
+            <OneMarginWrapper>
+              {replies.map((reply, replyIndex) => (
                 <Reply
                   key={replyIndex}
-                  username={`User ID: ${reply.userId}`} // Use userId as temporary username
+                  username={`${reply.authorUsername}`}
                   content={reply.content}
                 />
-              </div>
-            ))}
-          </OneMarginWrapper>
-        )}
+              ))}
+            </OneMarginWrapper>
+          )}
         </ReplyWrapper>
       </div>
     </>
-  )
+  );
+
 }
 
 //input text comment
@@ -172,17 +217,38 @@ const CreateComment = () => {
     setInputValue(event.target.value)
   }
 
-  const handleInputSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if (inputValue != ''){
-      console.log('submit comment', inputValue)
-      setInputValue('')
-      setActive(false)
+  const handleInputSubmit = async (event) => {
+    event.preventDefault();
+    if (inputValue.trim() === '') {
+      console.log('Cannot submit empty string');
+      return;
     }
-    else {
-      console.log('cannot submit empty string')
+    
+    try {
+      const payload = {
+        recipe_id: 1,
+        content: inputValue,
+        // parent_comment_id: null,
+      };
+  
+      const response = await fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/api/comments/new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!response.ok) throw new Error('Network response was not ok.');
+  
+      console.log('Comment submitted successfully');
+    } catch (error) {
+      console.error('Failed to submit comment:', error);
+    } finally {
+      setInputValue('');
+      setActive(false);
     }
-  }
+  };
 
   return (
     <>
@@ -211,7 +277,7 @@ const CreateComment = () => {
 }
 
 //input text reply
-const CreateReply = () => {
+const CreateReply = ({ parentCommentId }) => {
   //TODO: connect to backend
 
   const [inputValue, setInputValue] = useState('')
@@ -234,17 +300,42 @@ const CreateReply = () => {
   }
 
   //submit reply
-  const handleInputSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if (inputValue != ''){
-      console.log('submit reply', inputValue)
-      setInputValue('')
-      setActive(false)
+  const handleInputSubmit = async (event) => {
+    event.preventDefault();
+    if (inputValue.trim() === '') {
+      console.log('Cannot submit empty string');
+      return;
     }
-    else {
-      console.log('cannot submit empty string')
+  
+  
+    try {
+      const payload = {
+        recipe_id: 1, // Ensure this is available in your component
+        content: inputValue,
+        parent_comment_id: parentCommentId, 
+      };
+  
+      const response = await fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/api/comments/new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Include any auth headers if necessary
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!response.ok) throw new Error('Network response was not ok.');
+  
+      // Optionally, update the comment section to include the new reply
+      console.log('Reply submitted successfully');
+    } catch (error) {
+      console.error('Failed to submit reply:', error);
+    } finally {
+      setInputValue('');
+      setActive(false);
     }
-  }
+  };
+  
 
   return (
     <>
