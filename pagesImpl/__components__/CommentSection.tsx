@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { IRData } from '@pagesImpl/viewpost/postIdImpl'
 import { CommentImgPopUp } from '@pagesImpl/__components__/CommentImgPopUp'
 import { CircleAvatar } from '@pagesImpl/__components__/CircleAvatar'
-import { MoreVertButtonIcon } from '@pagesImpl/__components__/MoreVertButton'
+import { MoreVertButtonIcon, SimplePopup} from '@pagesImpl/__components__/MoreVertButton'
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -85,7 +85,7 @@ const Comment = ({ username, content, hasImages, images}: { username: string; co
           </Content>
           <CreateReply/>
         </CommentContentWrapper>
-        <ShowWhenHover className="show-when-hover"> <MoreVertButtonIcon/> </ShowWhenHover>
+        <SimplePopup></SimplePopup>
       </CommentWrapper>
     </>
   )
@@ -104,7 +104,7 @@ const Reply = ({ username, content}: { username: string; content: string }) => {
           </Content>
           <CreateReply/>
         </CommentContentWrapper>
-        <ShowWhenHover className="show-when-hover"> <MoreVertButtonIcon/> </ShowWhenHover>
+        <SimplePopup></SimplePopup>
       </CommentWrapper>
     </>
   )
@@ -410,11 +410,13 @@ const AvatarCreateCommentWrapper = styled.div`
   left: 0.5em;
 `;
 
+/* 
 const ShowWhenHover = styled.div`
   background-color: #ff0000;
   opacity: 0; 
   transition: opacity 0.3s ease; 
 `;
+*/
 
 // Define the CommentWrapper styled component
 const CommentWrapper = styled.div`

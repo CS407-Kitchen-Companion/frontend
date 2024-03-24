@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { StarRating } from '@pagesImpl/__components__/StarRating'
-import { MoreVertButton } from '@pagesImpl/__components__/MoreVertButton'
+import { MoreVertButton, SimplePopup } from '@pagesImpl/__components__/MoreVertButton'
 import { Tags } from '@pagesImpl/__components__/Tags'
 import { IRData } from '@pagesImpl/viewpost/postIdImpl'
 import { CommentSection, ICommentSection, IComment, IReply } from '@pagesImpl/__components__/CommentSection'
@@ -92,6 +92,8 @@ const RecipePostHeader = ({ rDataTemp }: { rDataTemp: IRData }) => {
 
   return (
     <>
+
+    <SimplePopup></SimplePopup>
       <HeaderImage headerImageURL={headerImageURL}></HeaderImage>
       <AuthorIcon>
         <AuthorProfileImage />
