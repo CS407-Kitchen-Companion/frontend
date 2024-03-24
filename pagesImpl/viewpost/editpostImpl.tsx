@@ -2,16 +2,46 @@ import styled from '@emotion/styled'
 import { Header } from '@pagesImpl/__components__/Header'
 import { PageImplView } from '@pagesImpl/__components__/PageImplView'
 import { useRouter } from"next/navigation";
-import { FormEvent } from 'react'
+import { FormEvent, useEffect } from 'react'
 import React, { useState } from 'react';
-import { selectrecipeData } from '@lib/store/recipeData/recipeData.slice';
-import { select } from 'redux-saga/effects';
+import { selectRecipeData } from '@lib/store/recipeData/recipeData.slice';
+import { useDispatch, useSelector } from 'react-redux'
+import { 
+  recipeDataAction,
+  selectPostID,
+  selectIsPostIDNotEmpty, 
+  selectRecipeDataVar, 
+  selectIsRecipeDataVarValid,
+  selectIsSubmitted,
+} from '@lib/store/recipeData/recipeData.slice'
 
 interface PostIdImplProps { //make sure postId is a string
   postId: string | string[] | undefined;
 }
 
 const EditRecipeImpl: React.FC<PostIdImplProps> = ({ postId }) => {
+  const dispatch = useDispatch()
+
+  // Check if postId exists before making the fetch request
+  useEffect(() => {
+    //set postID
+    const postIDValue = Number(postId)
+    if (isNaN(postIDValue)) {
+      //non int postID
+      console.error('postId is not a valid number')
+    } 
+    else {
+      //possible valid int postID
+      console.log('postIdValue:', postIDValue)
+      dispatch(recipeDataAction.setPostID({ postID: postIDValue }))
+      
+      if (postIDValue > 0) //positive postID
+      { 
+        dispatch(recipeDataAction.requestFlowGetRecipeById())
+      }
+    }
+  }, [postId]) // Include postId as a dependency
+
   return (
     <PageImplView>
       <Header />
@@ -34,10 +64,10 @@ const EditRecipeImpl: React.FC<PostIdImplProps> = ({ postId }) => {
 export default EditRecipeImpl;
 
 const RecipeForm : React.FC<PostIdImplProps> = ({ postId }) => {
-  const cachedRecipe = select(selectrecipeData)
-  const [title, setTitle] = useState(cachedRecipe.title);
-  const [time, setTime] = useState('');
-  const [servings, setServings] = useState('');
+  const cachedRecipe = useSelector(selectRecipeData)
+  const [title, setTitle] = useState(cachedRecipe.recipeDataVar.title.toString);
+  const [time, setTime] = useState(cachedRecipe.recipeDataVar.time.toString);
+  const [servings, setServings] = useState(cachedRecipe.recipeDataVar.serves.toString);
   const router = useRouter();
   
   //Ingredient handling
@@ -104,6 +134,9 @@ const handleDeleteTag= (index: any) => {
   setTags(newTags);
 };
     
+useEffect(() => {
+  setIngredients(cachedRecipe.recipeDataVar.ingredients.map((value) => ({ value })));
+}, []);
     
 const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
   event.preventDefault();

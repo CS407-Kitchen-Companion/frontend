@@ -23,8 +23,7 @@ function* flowGetRecipeByIdSaga() {
     yield put(recipeDataAction.failureFlowGetRecipeById())
     return
   }
-  // TODO uncomment it later
-  // yield put(recipeDataAction.setFilter({ filter: data }))
+ 
   yield put(recipeDataAction.successFlowGetRecipeById())
 }
 
