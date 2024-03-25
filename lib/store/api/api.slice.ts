@@ -73,6 +73,9 @@ export const apiSlice = createApi({
       getUserById: builder.query({
         query: ({ id }) => `user/${id}`,
       }),
+      verifyEmail: builder.query({
+        query: ({ id, token }) => `user/verify?uid=${id}&token=${token}`,
+      }),
     }
   },
 })
