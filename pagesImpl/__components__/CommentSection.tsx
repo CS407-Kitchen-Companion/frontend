@@ -126,7 +126,8 @@ const Comment = ({ commentId, username, content, hasImages, images, fetchComment
   const [keepIconVisible, setKeepIconVisible] = React.useState<boolean>(false);
   const [wantEditComment, setwantEditComment] = useState(false);
   
-  const { editComHTML, submitEdit } = EditComment({ parentCommentId: commentId, content: content, fetchComments: fetchComments });
+  const { editComHTML, isEditActive } = EditComment({ parentCommentId: commentId, content: content, fetchComments: fetchComments });
+  
 
   const handleMouseEnter = () => {
     setIconVisible(true);
@@ -140,29 +141,31 @@ const Comment = ({ commentId, username, content, hasImages, images, fetchComment
     setAnchor(anchor ? null : event.currentTarget);
     setIconVisible(true);
     setKeepIconVisible(!keepIconVisible);
+    //call edit
+    
   };
 
   //edit comment
   const handleEditComment = () => {
-    console.log('edit comment');
     setwantEditComment(true);
+    console.log('EDIT comment');
     setAnchor(null); // Close the BasePopup when editing is clicked
   };
 
   //TODO: delete comment
   const handleDeleteComment = () => {
-    console.log('delete comment');
+    console.log('DELETE comment');
     setAnchor(null); // Close the BasePopup when editing is clicked
   };
 
-  // Effect hook to listen for changes in submitEdit 
+  // Effect hook to listen for changes in isEditActive  to close
   useEffect(() => {
-    if (submitEdit) {
-      console.log('submitEdit is true');
+    if (!isEditActive)
+    {
       setwantEditComment(false);
-      // Add any actions you want to perform when submitEdit becomes true
     }
-  }, [submitEdit]);
+    
+  }, [isEditActive]);
 
   const open = Boolean(anchor);
   const id = open ? 'simple-popper' : undefined;
@@ -515,13 +518,18 @@ const CreateReply = ({ parentCommentId, fetchComments}: {parentCommentId: number
 const EditComment = ({ parentCommentId, content, fetchComments}: {parentCommentId: number; content: string; fetchComments: FetchCommentsFunction}) => {
   //TODO: connect to backend
 
-  const [inputValue, setInputValue] = useState(content)
+  const [inputValue, setInputValue] = useState(content);
   const [isActive, setActive] = useState(true)
   
+  //user activly uses edit
+  const handleMouseEnter = () => {
+    console.log('active')
+    setActive(true)
+  };
 
   //cancel button
   const handleCancel = () => {
-    setInputValue('')
+    //setInputValue('')
     setActive(false)
   }
 
@@ -540,9 +548,10 @@ const EditComment = ({ parentCommentId, content, fetchComments}: {parentCommentI
   
   
     //TODO: EDIT COMMENT
-    console.log('submitted edited comment');
-    setInputValue('');
+    if (inputValue != content)
+      console.log('submitted edited comment:', inputValue);
     setActive(false);
+
     /*
     try {
       const payload = {
@@ -580,7 +589,10 @@ const EditComment = ({ parentCommentId, content, fetchComments}: {parentCommentI
   return {
     editComHTML: (
     <>
-      <CommentForm onSubmit={handleInputSubmit}>
+      <CommentForm 
+      onSubmit={handleInputSubmit}
+      onMouseEnter={handleMouseEnter}
+      >
         <AvatarCreateCommentWrapper>
           <CircleAvatar/>
         </AvatarCreateCommentWrapper>
@@ -596,7 +608,7 @@ const EditComment = ({ parentCommentId, content, fetchComments}: {parentCommentI
       </CommentForm>
     </>
     ), 
-    submitEdit: (!isActive)
+    isEditActive: (isActive)
   }
 }
 
