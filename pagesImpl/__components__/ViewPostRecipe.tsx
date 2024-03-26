@@ -2,8 +2,9 @@ import styled from '@emotion/styled'
 import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
+import { HorizontalLine } from '@pagesImpl/__components__/HorizontalLine'
 import { StarRating } from '@pagesImpl/__components__/StarRating'
-import { MoreVertButton, SimplePopup } from '@pagesImpl/__components__/MoreVertButton'
+import { MoreVertButton } from '@pagesImpl/__components__/MoreVertButton'
 import { Tags } from '@pagesImpl/__components__/Tags'
 import { IRData } from '@pagesImpl/viewpost/postIdImpl'
 import { CommentSection, ICommentSection, IComment, IReply } from '@pagesImpl/__components__/CommentSection'
@@ -142,7 +143,7 @@ const RecipePostHeader = ({ rDataTemp }: { rDataTemp: IRData }) => {
           </DivFlex>
         </div>
       </ViewPostSectionWrapper>
-      <StyledLine/>
+      <HorizontalLine/>
     </>
   );
 }
@@ -543,7 +544,7 @@ const RecipePostAppliances = ({ rDataTemp }: { rDataTemp: IRData }) => {
         <SectionTitles>Appliances</SectionTitles>
         <TwoStyledList items={recipeDataVar.appliances} />
       </ViewPostSectionWrapper>
-      <StyledLine/>
+      <HorizontalLine/>
     </>
   );
 }
@@ -593,7 +594,7 @@ const RecipePostDirections = ({ rDataTemp }: { rDataTemp: IRData }) => {
           </div>
         <StepList steps={recipeDataVar.content} />
       </ViewPostSectionWrapper>
-      <StyledLine/>
+      <HorizontalLine/>
     </>
   );
 }
@@ -631,7 +632,7 @@ const RecipePostNutrition = ({ rDataTemp }: { rDataTemp: IRData }) => {
      <ViewPostSectionWrapper>
         <SectionTitles>Nutrition Facts</SectionTitles>
       </ViewPostSectionWrapper>
-      <StyledLine/>
+      <HorizontalLine/>
     </>
   );
 }
@@ -647,7 +648,7 @@ const RecipePostTags = ({ rDataTemp }: { rDataTemp: IRData }) => {
         <SectionTitles>Tags</SectionTitles>
         <Tags items={recipeDataVar.tags} />
       </ViewPostSectionWrapper>
-      <StyledLine/>
+      <HorizontalLine/>
     </>
   );
 }
@@ -684,11 +685,7 @@ const RecipePostComments = ({ rDataTemp }: { rDataTemp: IRData }) => {
   );
 };
 
-const StyledLine = styled.hr`
-  border: none;
-  height: 3px;
-  background-color: #f5f7fa; /* Change 'red' to any color you want */
-`
+
 const SectionTitles = styled.div`
   font-weight: 600;
   font-size: 32px;
