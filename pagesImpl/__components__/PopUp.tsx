@@ -33,15 +33,14 @@ const SimplePopupExample = () => {
 
 
 
-
+//wrapper for showwhenhover icon i.e. 3 dot vert
 export const IconDiv = styled.div<{ visible: boolean }>`
   opacity: ${(props) => (props.visible ? 1 : 0)};
   transition: opacity 0.3s ease;
-  /* Include your styling for the three-dot icon here */
 `;
-
+//
 export const ShowWhenHover = styled.div`
-  background-color: #ff0000;
+  //background-color: #ff0000;
   opacity: 1;
   transition: opacity 0.3s ease;
 `;

@@ -141,20 +141,20 @@ const Comment = ({ commentId, username, content, hasImages, images, fetchComment
     setAnchor(anchor ? null : event.currentTarget);
     setIconVisible(true);
     setKeepIconVisible(!keepIconVisible);
-    //call edit
-    
   };
 
   //edit comment
   const handleEditComment = () => {
     setwantEditComment(true);
     console.log('EDIT comment');
+    setKeepIconVisible(false);
     setAnchor(null); // Close the BasePopup when editing is clicked
   };
 
   //TODO: delete comment
   const handleDeleteComment = () => {
     console.log('DELETE comment');
+    setKeepIconVisible(false);
     setAnchor(null); // Close the BasePopup when editing is clicked
   };
 
@@ -223,17 +223,19 @@ const Comment = ({ commentId, username, content, hasImages, images, fetchComment
 
 
 
-
-
-export const CommentEditPopup = ({commentId, content}: { commentId: number; content: string }) => {
+// basic reply structure with no images, user data, and string content
+const Reply = ({parentId, replyId, username, content, fetchComments}: { parentId: number; replyId: number; username: string; content: string; fetchComments: FetchCommentsFunction}) => {
   const [anchor, setAnchor] = React.useState<null | HTMLElement>(null);
   const [iconVisible, setIconVisible] = React.useState<boolean>(false);
   const [keepIconVisible, setKeepIconVisible] = React.useState<boolean>(false);
+  const [wantEditReply, setwantEditReply] = useState(false);
+  
+  const { editComHTML, isEditActive } = EditReply({ parentCommentId: parentId, replyId: replyId, content: content, fetchComments: fetchComments });
+  
 
   const handleMouseEnter = () => {
     setIconVisible(true);
   };
-
   const handleMouseLeave = () => {
     setIconVisible(false);
   };
@@ -245,54 +247,74 @@ export const CommentEditPopup = ({commentId, content}: { commentId: number; cont
     setKeepIconVisible(!keepIconVisible);
   };
 
-  //edit comment
-  const handleEditComment = () => {
-    console.log('edit comment');
+  //edit reply
+  const handleEditReply = () => {
+    setwantEditReply(true);
+    console.log('EDIT reply');
+    setKeepIconVisible(false);
+    setAnchor(null); // Close the BasePopup when editing is clicked
   };
+
+  //TODO: delete reply
+  const handleDeleteComment = () => {
+    console.log('DELETE reply');
+    setKeepIconVisible(false);
+    setAnchor(null); // Close the BasePopup when editing is clicked
+  };
+
+  // Effect hook to listen for changes in isEditActive  to close
+  useEffect(() => {
+    if (!isEditActive)
+    {
+      setwantEditReply(false);
+    }
+    
+  }, [isEditActive]);
 
   const open = Boolean(anchor);
   const id = open ? 'simple-popper' : undefined;
-
-  return (
-    <div>
-      <ShowWhenHover
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onClick={handleClick}
-      >
-        <IconDiv visible={iconVisible || keepIconVisible}>
-          <MoreVertButtonIcon/>
-        </IconDiv>
-        
-      </ShowWhenHover>
-      <BasePopup id={id} open={open} anchor={anchor} placement="bottom-end">
-        <PopupBody>
-          <PopupOption onClick={handleEditComment}> Edit Comment</PopupOption>
-          <HorizontalLine />
-          <PopupOption style={{ color: 'red' }}> Delete Comment</PopupOption>
-        </PopupBody>
-      </BasePopup>
-    </div>
-  );
-};
-
-
-// basic reply structure with no images, user data, and string content
-const Reply = ({id, username, content, fetchComments}: { id:number; username: string; content: string; fetchComments: FetchCommentsFunction}) => {
+  
   return (
     <>
-      <CommentWrapper>
+    {/* edit reply */}
+    {wantEditReply ? (
+        editComHTML // Render the editComHTML returned from EditReply
+      ) : (
+      <CommentWrapper
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave} 
+        >
         <CircleAvatar />
         <CommentContentWrapper>
           <Username>@{username}</Username>
           <Content>
             <div> {content} </div>
           </Content>
-          <CreateReply parentCommentId={id} fetchComments={fetchComments}/>
-
+          <CreateReply parentCommentId={parentId} fetchComments={fetchComments}/>
+          
         </CommentContentWrapper>
-        <CommentEditPopup commentId={id} content={content} />
+        <>
+          {/* edit and delete comment */}
+          <ShowWhenHover
+            onClick={handleClick}
+          >
+            <IconDiv visible={iconVisible || keepIconVisible}>
+              <MoreVertButtonIcon/>
+            </IconDiv>
+            
+          </ShowWhenHover>
+          <BasePopup id={id} open={open} anchor={anchor} placement="bottom-end">
+            <PopupBody>
+              <PopupOption onClick={handleEditReply}> Edit Reply</PopupOption>
+              <HorizontalLine />
+              <PopupOption style={{ color: 'red' }} onClick={handleDeleteComment}> Delete Reply</PopupOption>
+            </PopupBody>
+          </BasePopup>
+        </>
       </CommentWrapper>
+    )}
+
+     
     </>
   )
 }
@@ -329,7 +351,8 @@ const ReplySection = ({ parentId, replies, fetchComments }: {parentId: number; r
             <OneMarginWrapper>
               {replies.map((reply, replyIndex) => (
                 <Reply
-                  id={parentId}
+                  parentId={parentId}
+                  replyId={reply.id}
                   key={replyIndex}
                   username={`${reply.authorUsername}`}
                   content={reply.content}
@@ -352,7 +375,7 @@ const CreateComment = ({ fetchComments }: { fetchComments: FetchCommentsFunction
 
   //user clicks into form
   const handleFocus = () => {
-    console.log('active')
+    //console.log('active')
     setActive(true)
   }
 
@@ -514,7 +537,7 @@ const CreateReply = ({ parentCommentId, fetchComments}: {parentCommentId: number
   )
 }
 
-//edit comment
+//edit parent comment
 const EditComment = ({ parentCommentId, content, fetchComments}: {parentCommentId: number; content: string; fetchComments: FetchCommentsFunction}) => {
   //TODO: connect to backend
 
@@ -523,7 +546,7 @@ const EditComment = ({ parentCommentId, content, fetchComments}: {parentCommentI
   
   //user activly uses edit
   const handleMouseEnter = () => {
-    console.log('active')
+    //console.log('active')
     setActive(true)
   };
 
@@ -596,6 +619,106 @@ const EditComment = ({ parentCommentId, content, fetchComments}: {parentCommentI
         <AvatarCreateCommentWrapper>
           <CircleAvatar/>
         </AvatarCreateCommentWrapper>
+        
+        <CommentStringInput
+          type="text"
+          value={inputValue}
+          onChange={handleChange}
+        />
+
+        <br/><br/>
+        <SubButton onClick={handleCancel}> Cancel </SubButton>
+        <BlueButton type="submit" >Submit</BlueButton>
+      </CommentForm>
+    </>
+    ), 
+    isEditActive: (isActive)
+  }
+}
+
+//edit reply comment
+const EditReply = ({ parentCommentId, replyId, content, fetchComments}: {parentCommentId: number; replyId: number; content: string; fetchComments: FetchCommentsFunction}) => {
+  //TODO: connect to backend
+
+  const [inputValue, setInputValue] = useState(content);
+  const [isActive, setActive] = useState(true)
+  
+  //user activly uses edit
+  const handleMouseEnter = () => {
+    //console.log('active')
+    setActive(true)
+  };
+
+  //cancel button
+  const handleCancel = () => {
+    //setInputValue('')
+    setActive(false)
+  }
+
+  //input reply text
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value)
+  }
+
+  //submit reply
+  const handleInputSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (inputValue.trim() === '') {
+      console.log('Cannot submit empty string');
+      return;
+    }
+  
+  
+    //TODO: EDIT REPLY
+    if (inputValue != content)
+      console.log('submitted edited reply:', inputValue);
+    setActive(false);
+
+    /*
+    try {
+      const payload = {
+        recipe_id: 1, // Ensure this is available in your component
+        content: inputValue,
+        parent_comment_id: parentCommentId, 
+      };
+  
+      const response = await fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/api/comments/new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Include any auth headers if necessary
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!response.ok) throw new Error('Network response was not ok.');
+  
+      // Optionally, update the comment section to include the new reply
+      console.log('Edit Comment submitted successfully');
+      fetchComments(1) //reload comments
+    } catch (error) {
+      console.error('Failed to submit reply:', error);
+    } finally {
+      setInputValue('');
+      setActive(false);
+    }
+    */
+
+
+  };
+  
+
+  return {
+    editComHTML: (
+    <>
+      <CommentForm 
+      onSubmit={handleInputSubmit}
+      onMouseEnter={handleMouseEnter}
+      >
+        <AvatarCreateCommentWrapper>
+          <CircleAvatar/>
+        </AvatarCreateCommentWrapper>
+        
         <CommentStringInput
           type="text"
           value={inputValue}
@@ -755,6 +878,7 @@ const CommentWrapper = styled.div`
   display: flex;
   align-items: flex-start;
   margin-top: 0.5em;
+  margin-left: 0.5em;
 
   &:hover .show-when-hover {
     opacity: 1;
