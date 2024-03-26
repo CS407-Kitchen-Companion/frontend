@@ -32,7 +32,7 @@ import fish from 'public/fish_post_dummy.jpg';
 //main viewing of recipe i.e. header, ingredients, appliances, directions, nutrition, tags 
 
 
-export const ViewPostRecipe = ({ rDataTemp }: { rDataTemp: IRData }) => {
+export const ViewPostRecipe = ({ recipeId, rDataTemp }: { recipeId: number; rDataTemp: IRData }) => {
   const recipeDataTemp: IRData = { ...rDataTemp }
 
   return (
@@ -43,7 +43,7 @@ export const ViewPostRecipe = ({ rDataTemp }: { rDataTemp: IRData }) => {
       <RecipePostDirections rDataTemp={recipeDataTemp}/>
       <RecipePostNutrition rDataTemp={recipeDataTemp}/>
       <RecipePostTags rDataTemp={recipeDataTemp}/>
-      <RecipePostComments rDataTemp={recipeDataTemp}/>
+      <RecipePostComments recipeId={recipeId} rDataTemp={recipeDataTemp}/>
     </>
   );
 }
@@ -654,32 +654,14 @@ const RecipePostTags = ({ rDataTemp }: { rDataTemp: IRData }) => {
 }
 
 /* RECIPE COMMENTS */
-const RecipePostComments = ({ rDataTemp }: { rDataTemp: IRData }) => {
-  const [comments, setComments] = useState<IComment[]>([]);
-
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const response = await fetch(`http://127.0.0.1:8080/api/comments/recipe/1`); // Adjust the URL as needed
-        if (!response.ok) {
-          throw new Error('Failed to fetch comments');
-        }
-        const data = await response.json();
-        setComments(data); // Assuming the response structure matches your IComment interface
-      } catch (error) {
-        console.error('Error fetching comments:', error);
-      }
-    };
-
-    fetchComments();
-  }, [rDataTemp.id]);
+const RecipePostComments = ({ recipeId, rDataTemp }: { recipeId: number; rDataTemp: IRData }) => {
 
   // Assuming the CommentSection component can directly accept the comments array
   return (
     <>
       <ViewPostSectionWrapper>
         <SectionTitles>Comments</SectionTitles>
-        <CommentSection commentSection={comments}/>
+        <CommentSection recipeId={recipeId}/>
       </ViewPostSectionWrapper>
     </>
   );

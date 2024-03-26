@@ -90,7 +90,7 @@ const PostIdImpl: React.FC<PostIdImplProps> = ({ postId }) => { //main viewpostp
       <MainBackgroundWrapper>
 
         <FloatingCardWrapper>
-          <ViewPostRecipe rDataTemp={recipeDataTemp}/>
+          <ViewPostRecipe recipeId={recipeDataTemp} rDataTemp={recipeDataTemp}/>
         </FloatingCardWrapper>
 
       </MainBackgroundWrapper>

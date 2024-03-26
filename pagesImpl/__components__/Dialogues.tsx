@@ -3,8 +3,15 @@ import { SelectAllRounded } from '@mui/icons-material';
 import React, { useState, useEffect, useRef } from 'react'
 import { CircleAvatar } from '@pagesImpl/__components__/CircleAvatar'
 import { CloseIcon } from '@pagesImpl/__components__/CloseIcon'
+import { ButtonsContainer, SubButton, BlueButton} from '@pagesImpl/__components__/Buttons'
 
 
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 //popup to see larger full sized img from comments
 //assumed to have nonempty images array
@@ -92,15 +99,56 @@ export const CommentImgDialogue = ({ username, content, images }: { username: st
   )
 }
 
+
 //base warning popup dialogue
-export const BaseWarningDialogue = ({warningTitle, warningMsg, warningSubmitName, warningSubmitFunction }: {warningTitle: string; warningMsg: string; warningSubmitName: string; }) => {
-  const [isVisible, setIsVisible] = useState(true);
+export const WarningDeleteCommentDialogue = ({
+  recipeId,
+  commentId,
+  isVisible,
+  setIsVisible,
+}: {
+  recipeId: number;
+  commentId: number;
+  isVisible: boolean;
+  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(isVisible);
+
+  const handleConfirmDelete = () => {
+    //TODO: connect with backend
+    console.log('Deleting comment...', 'recipeId=', recipeId, 'commentId=', commentId);
+    setOpenDeleteDialog(false); // Close the dialog after confirmation
+    setIsVisible(false); // Hide the warning dialog
+  };
+
+  const handleCancelDelete = () => {
+    setOpenDeleteDialog(false); // Close the dialog without deleting
+    setIsVisible(false); // Hide the warning dialog
+  };
 
   return (
     <>
+      <Overlay>
+        <WarningWindowBase>
+          <WarningTitleStyle> Delete Comment? </WarningTitleStyle>
+          <div style={{
+          margin: '1em 0'
+        }} > Are you sure you want to delete this comment? </div>
+          <ButtonsContainer>
+            <SubButton onClick={handleCancelDelete}>
+              Cancel
+            </SubButton>
+            <BlueButton onClick={handleConfirmDelete}>
+              Delete
+            </BlueButton>
+          </ButtonsContainer>
+        </WarningWindowBase>
+      </Overlay>
+
+      
     </>
-  )
-}
+  );
+};
 
 
 //rounded box for image thumbnails in base comments
@@ -131,8 +179,28 @@ const Overlay = styled.div`
   justify-content: center;
   align-items: center; 
 `
+
+const WarningWindowBase = styled.div`  
+  font-family: 'Inter';
+  display: inline-block;
+  padding: 1em;
+  
+  maxWidth: 50%;
+  background-color: #FFFFFF;
+  box-shadow: 0px 4px 4px 5px rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
+`
+const WarningTitleStyle = styled.div`
+  margin-top: 1em;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+`
+
+
 /* pop up window base*/
 const WindowBase = styled.div`  
+  font-family: 'Inter';
   display: grid;
   grid-template-rows: 70px 1fr 30px;
   grid-template-columns: 60fr 40fr ;

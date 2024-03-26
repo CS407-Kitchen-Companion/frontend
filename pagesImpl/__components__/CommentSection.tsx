@@ -2,11 +2,12 @@ import styled from '@emotion/styled'
 import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { IRData } from '@pagesImpl/viewpost/postIdImpl'
-import { CommentImgDialogue } from '@pagesImpl/__components__/CommentImgDialogue'
+import { CommentImgDialogue, WarningDeleteCommentDialogue } from '@pagesImpl/__components__/Dialogues'
 import { CircleAvatar } from '@pagesImpl/__components__/CircleAvatar'
 import { ShowWhenHover, IconDiv, PopupBody, PopupOption } from '@pagesImpl/__components__/PopUp'
 import { HorizontalLine } from '@pagesImpl/__components__/HorizontalLine'
 import { MoreVertButtonIcon } from '@pagesImpl/__components__/MoreVertButton'
+import { ButtonsContainer, SubButton, BlueButton} from '@pagesImpl/__components__/Buttons'
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -41,7 +42,7 @@ export interface IReply {
 }
 
 type FetchCommentsFunction = (recipeId: number) => Promise<void>;
-
+//const [currentRecipeId, setCurrentRecipeId] = useState(0);
 
 // Display comment section for viewing a recipe
 export const CommentSection = ({ recipeId }: { recipeId: number }) => {
@@ -50,6 +51,8 @@ export const CommentSection = ({ recipeId }: { recipeId: number }) => {
   //get comments on recipe post
   useEffect(() => {
     fetchComments(recipeId);
+    console.log('CURRENT recipeId=', recipeId);
+
   }, [recipeId]);
 
   //grab comment data
@@ -96,11 +99,12 @@ export const CommentSection = ({ recipeId }: { recipeId: number }) => {
   return (
     <>
       <br/>
-      <CreateComment fetchComments={fetchComments}/>
+      <CreateComment recipeId={recipeId} fetchComments={fetchComments}/>
       <br/>
       {comments.slice().reverse().map((cmt, index) => (
         <div key={index} className="cmt">
           <Comment
+            recipeId={recipeId}
             commentId={cmt.id}
             username={cmt.authorUsername} // Adjust as necessary
             content={cmt.content}
@@ -110,7 +114,12 @@ export const CommentSection = ({ recipeId }: { recipeId: number }) => {
           />
   
           {cmt.replies.length > 0 && (
-            <ReplySection parentId={cmt.id} replies={cmt.replies} fetchComments={fetchComments} />
+            <ReplySection 
+              recipeId={recipeId} 
+              parentId={cmt.id} 
+              replies={cmt.replies} 
+              fetchComments={fetchComments} 
+            />
           )}
         </div>
       ))}
@@ -120,15 +129,16 @@ export const CommentSection = ({ recipeId }: { recipeId: number }) => {
 
 //base comment structure with user data, string content, and possible images 
 //fetchComments= function to update comment data
-const Comment = ({ commentId, username, content, hasImages, images, fetchComments}: { commentId: number; username: string; content: string, hasImages: boolean, images: string[], fetchComments: FetchCommentsFunction}) => {
+const Comment = ({ recipeId, commentId, username, content, hasImages, images, fetchComments}: { recipeId: number; commentId: number; username: string; content: string, hasImages: boolean, images: string[], fetchComments: FetchCommentsFunction}) => {
   const [anchor, setAnchor] = React.useState<null | HTMLElement>(null);
   const [iconVisible, setIconVisible] = React.useState<boolean>(false);
   const [keepIconVisible, setKeepIconVisible] = React.useState<boolean>(false);
   const [wantEditComment, setwantEditComment] = useState(false);
+  const [wantDeleteComment, setwantDeleteComment] = useState(false);
   
-  const { editComHTML, isEditActive } = EditComment({ parentCommentId: commentId, content: content, fetchComments: fetchComments });
+  const { editComHTML, isEditActive } = EditComment({ recipeId: recipeId, parentCommentId: commentId, content: content, fetchComments: fetchComments });
   
-
+  
   const handleMouseEnter = () => {
     setIconVisible(true);
   };
@@ -153,7 +163,9 @@ const Comment = ({ commentId, username, content, hasImages, images, fetchComment
 
   //TODO: delete comment
   const handleDeleteComment = () => {
+    setwantDeleteComment(true);
     console.log('DELETE comment');
+    
     setKeepIconVisible(false);
     setAnchor(null); // Close the BasePopup when editing is clicked
   };
@@ -187,13 +199,13 @@ const Comment = ({ commentId, username, content, hasImages, images, fetchComment
             <div> {content} </div>
             {hasImages && (
               <CommentImgDialogue 
-              username={username}
-              content={content}
-              images={images} 
+                username={username}
+                content={content}
+                images={images} 
               />
             )}
           </Content>
-          <CreateReply parentCommentId={commentId} fetchComments={fetchComments}/>
+          <CreateReply recipeId={recipeId} parentCommentId={commentId} fetchComments={fetchComments}/>
           
         </CommentContentWrapper>
         <>
@@ -216,13 +228,21 @@ const Comment = ({ commentId, username, content, hasImages, images, fetchComment
         </>
       </CommentWrapper>
     )}
+    { wantDeleteComment && (
+      <WarningDeleteCommentDialogue
+        recipeId= {recipeId}
+        commentId={commentId}
+        isVisible={wantDeleteComment}
+        setIsVisible={setwantDeleteComment}
+    />
+    )}
       
     </>
   )
 }
 
 //input text comment
-const CreateComment = ({ fetchComments }: { fetchComments: FetchCommentsFunction}) => {
+const CreateComment = ({ recipeId, fetchComments }: { recipeId: number; fetchComments: FetchCommentsFunction}) => {
   const [inputValue, setInputValue] = useState('')
   const [isActive, setActive] = useState(false)
 
@@ -252,7 +272,7 @@ const CreateComment = ({ fetchComments }: { fetchComments: FetchCommentsFunction
     
     try {
       const payload = {
-        recipe_id: 1,
+        recipe_id: recipeId,
         content: inputValue,
         // parent_comment_id: null,
       };
@@ -268,7 +288,7 @@ const CreateComment = ({ fetchComments }: { fetchComments: FetchCommentsFunction
       if (!response.ok) throw new Error('Network response was not ok.');
   
       console.log('Comment submitted successfully');
-      fetchComments(1) //reload comments
+      fetchComments(recipeId) //reload comments
     } catch (error) {
       console.error('Failed to submit comment:', error);
     } finally {
@@ -294,8 +314,10 @@ const CreateComment = ({ fetchComments }: { fetchComments: FetchCommentsFunction
         <> 
         <br/>
         <br/>
-        <SubButton onClick={handleCancel}> Cancel </SubButton>
-        <BlueButton type="submit" >Submit</BlueButton>
+        <ButtonsContainer>
+          <SubButton onClick={handleCancel}> Cancel </SubButton>
+          <BlueButton type="submit" >Submit</BlueButton>
+        </ButtonsContainer>
         </>
       )}
       </CommentForm>
@@ -304,7 +326,7 @@ const CreateComment = ({ fetchComments }: { fetchComments: FetchCommentsFunction
 }
 
 //view reply section
-const ReplySection = ({ parentId, replies, fetchComments }: {parentId: number; replies: IReply[]; fetchComments: FetchCommentsFunction})  => {
+const ReplySection = ({ recipeId, parentId, replies, fetchComments }: {recipeId: number; parentId: number; replies: IReply[]; fetchComments: FetchCommentsFunction})  => {
   const [isVisible, setIsVisible] = useState(false)
 
   const upTriangle = "▴"
@@ -333,6 +355,7 @@ const ReplySection = ({ parentId, replies, fetchComments }: {parentId: number; r
             <OneMarginWrapper>
               {replies.map((reply, replyIndex) => (
                 <Reply
+                  recipeId={recipeId}
                   parentId={parentId}
                   replyId={reply.id}
                   key={replyIndex}
@@ -351,13 +374,13 @@ const ReplySection = ({ parentId, replies, fetchComments }: {parentId: number; r
 }
 
 // basic reply structure with no images, user data, and string content
-const Reply = ({parentId, replyId, username, content, fetchComments}: { parentId: number; replyId: number; username: string; content: string; fetchComments: FetchCommentsFunction}) => {
+const Reply = ({recipeId, parentId, replyId, username, content, fetchComments}: { recipeId: number; parentId: number; replyId: number; username: string; content: string; fetchComments: FetchCommentsFunction}) => {
   const [anchor, setAnchor] = React.useState<null | HTMLElement>(null);
   const [iconVisible, setIconVisible] = React.useState<boolean>(false);
   const [keepIconVisible, setKeepIconVisible] = React.useState<boolean>(false);
   const [wantEditReply, setwantEditReply] = useState(false);
   
-  const { editComHTML, isEditActive } = EditReply({ parentCommentId: parentId, replyId: replyId, content: content, fetchComments: fetchComments });
+  const { editComHTML, isEditActive } = EditReply({ recipeId: recipeId, parentCommentId: parentId, replyId: replyId, content: content, fetchComments: fetchComments });
   
 
   const handleMouseEnter = () => {
@@ -417,7 +440,7 @@ const Reply = ({parentId, replyId, username, content, fetchComments}: { parentId
           <Content>
             <div> {content} </div>
           </Content>
-          <CreateReply parentCommentId={parentId} fetchComments={fetchComments}/>
+          <CreateReply recipeId={recipeId} parentCommentId={parentId} fetchComments={fetchComments}/>
           
         </CommentContentWrapper>
         <>
@@ -447,7 +470,7 @@ const Reply = ({parentId, replyId, username, content, fetchComments}: { parentId
 
 //input text reply
 //TODO: debug network connection
-const CreateReply = ({ parentCommentId, fetchComments}: {parentCommentId: number; fetchComments: FetchCommentsFunction}) => {
+const CreateReply = ({ recipeId, parentCommentId, fetchComments}: {recipeId: number; parentCommentId: number; fetchComments: FetchCommentsFunction}) => {
   const [inputValue, setInputValue] = useState('')
   const [isActive, setActive] = useState(false)
 
@@ -478,7 +501,7 @@ const CreateReply = ({ parentCommentId, fetchComments}: {parentCommentId: number
   
     try {
       const payload = {
-        recipe_id: 1, // Ensure this is available in your component
+        recipe_id: recipeId, // Ensure this is available in your component
         content: inputValue,
         parent_comment_id: parentCommentId, 
       };
@@ -496,7 +519,7 @@ const CreateReply = ({ parentCommentId, fetchComments}: {parentCommentId: number
   
       // Optionally, update the comment section to include the new reply
       console.log('Reply submitted successfully');
-      fetchComments(1) //reload comments
+      fetchComments(recipeId) //reload comments
     } catch (error) {
       console.error('Failed to submit reply:', error);
     } finally {
@@ -523,8 +546,10 @@ const CreateReply = ({ parentCommentId, fetchComments}: {parentCommentId: number
           />
 
           <br/><br/>
-          <SubButton onClick={handleCancel}> Cancel </SubButton>
-          <BlueButton type="submit" >Submit</BlueButton>
+          <ButtonsContainer>
+            <SubButton onClick={handleCancel}> Cancel </SubButton>
+            <BlueButton type="submit" >Submit</BlueButton>
+          </ButtonsContainer>
         </CommentForm>
     )}
     </>
@@ -532,7 +557,7 @@ const CreateReply = ({ parentCommentId, fetchComments}: {parentCommentId: number
 }
 
 //edit parent comment
-const EditComment = ({ parentCommentId, content, fetchComments}: {parentCommentId: number; content: string; fetchComments: FetchCommentsFunction}) => {
+const EditComment = ({ recipeId, parentCommentId, content, fetchComments}: {recipeId: number; parentCommentId: number; content: string; fetchComments: FetchCommentsFunction}) => {
   //TODO: connect to backend
 
   const [inputValue, setInputValue] = useState(content);
@@ -572,7 +597,7 @@ const EditComment = ({ parentCommentId, content, fetchComments}: {parentCommentI
     /*
     try {
       const payload = {
-        recipe_id: 1, // Ensure this is available in your component
+        recipe_id: recipeId, // Ensure this is available in your component
         content: inputValue,
         parent_comment_id: parentCommentId, 
       };
@@ -590,7 +615,7 @@ const EditComment = ({ parentCommentId, content, fetchComments}: {parentCommentI
   
       // Optionally, update the comment section to include the new reply
       console.log('Edit Comment submitted successfully');
-      fetchComments(1) //reload comments
+      fetchComments(recipeId) //reload comments
     } catch (error) {
       console.error('Failed to submit reply:', error);
     } finally {
@@ -621,8 +646,11 @@ const EditComment = ({ parentCommentId, content, fetchComments}: {parentCommentI
         />
 
         <br/><br/>
-        <SubButton onClick={handleCancel}> Cancel </SubButton>
-        <BlueButton type="submit" >Submit</BlueButton>
+        <ButtonsContainer>
+          <SubButton onClick={handleCancel}> Cancel </SubButton>
+          <BlueButton type="submit" >Submit</BlueButton>
+        </ButtonsContainer>
+        
       </CommentForm>
     </>
     ), 
@@ -631,7 +659,7 @@ const EditComment = ({ parentCommentId, content, fetchComments}: {parentCommentI
 }
 
 //edit reply comment
-const EditReply = ({ parentCommentId, replyId, content, fetchComments}: {parentCommentId: number; replyId: number; content: string; fetchComments: FetchCommentsFunction}) => {
+const EditReply = ({ recipeId, parentCommentId, replyId, content, fetchComments}: {recipeId: number; parentCommentId: number; replyId: number; content: string; fetchComments: FetchCommentsFunction}) => {
   //TODO: connect to backend
 
   const [inputValue, setInputValue] = useState(content);
@@ -671,7 +699,7 @@ const EditReply = ({ parentCommentId, replyId, content, fetchComments}: {parentC
     /*
     try {
       const payload = {
-        recipe_id: 1, // Ensure this is available in your component
+        recipe_id: recipeId, // Ensure this is available in your component
         content: inputValue,
         parent_comment_id: parentCommentId, 
       };
@@ -689,7 +717,7 @@ const EditReply = ({ parentCommentId, replyId, content, fetchComments}: {parentC
   
       // Optionally, update the comment section to include the new reply
       console.log('Edit Comment submitted successfully');
-      fetchComments(1) //reload comments
+      fetchComments(recipeId) //reload comments
     } catch (error) {
       console.error('Failed to submit reply:', error);
     } finally {
@@ -720,8 +748,10 @@ const EditReply = ({ parentCommentId, replyId, content, fetchComments}: {parentC
         />
 
         <br/><br/>
-        <SubButton onClick={handleCancel}> Cancel </SubButton>
-        <BlueButton type="submit" >Submit</BlueButton>
+        <ButtonsContainer>
+          <SubButton onClick={handleCancel}> Cancel </SubButton>
+          <BlueButton type="submit" >Submit</BlueButton>
+        </ButtonsContainer>
       </CommentForm>
     </>
     ), 
@@ -756,54 +786,6 @@ const CommentStringInput = styled.input`
     font-style: inherit;
     font-weight: inherit;
     line-height: inherit;
-  }
-`;
-const SubButton = styled.button`
-  display: inline-block; 
-  padding: 10px 20px;
-  border-radius: 25px;
-  font-family: inherit;
-  font-size: inherit;
-  font-style: inherit;
-  font-weight: inherit;
-  line-height: inherit;
-  font-weight: 600;
-  color: #343C6A; /* Text color */
-
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.1s ease;
-
-  &:hover {
-    background-color: #e4e9f2; /* Background color on hover */
-  }
-  &:active {
-    background-color: #d3dce9; /* Background color when clicked */
-  }
-`;
-const BlueButton = styled.button`
-  display: inline-block; 
-  padding: 10px 20px;
-  border-radius: 25px;
-  font-family: inherit;
-  font-size: inherit;
-  font-style: inherit;
-  font-weight: inherit;
-  line-height: inherit;
-  font-weight: 600;
-  color: #fff; /* Text color */
-
-  background-color: #1814f3;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.1s ease;
-
-  &:hover {
-    background-color: #0f0ce2; /* Background color on hover */
-  }
-  &:active {
-    background-color: #0c09b1; /* Background color when clicked */
   }
 `;
 

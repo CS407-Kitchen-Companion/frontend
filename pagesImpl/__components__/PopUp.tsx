@@ -7,7 +7,6 @@ import {
 } from '@mui/base/Unstable_Popup';
 import { MoreVertButtonIcon } from '@pagesImpl/__components__/MoreVertButton'
 import { HorizontalLine } from '@pagesImpl/__components__/HorizontalLine'
-import { EditComment } from '@pagesImpl/__components__/CommentSection'
 
 //popup example
 const SimplePopupExample = () => {
