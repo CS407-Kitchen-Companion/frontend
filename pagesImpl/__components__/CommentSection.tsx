@@ -34,6 +34,8 @@ export interface IReply {
   content: string,
 }
 
+type FetchCommentsFunction = (recipeId: number) => Promise<void>;
+
 
 // Display comment section for viewing a recipe
 export const CommentSection = ({ recipeId }: { recipeId: number }) => {
@@ -41,23 +43,24 @@ export const CommentSection = ({ recipeId }: { recipeId: number }) => {
 
   //get comments on recipe post
   useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const response = await fetch(`https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/api/comments/recipe/1`);
-        if (!response.ok) throw new Error('Network response was not ok');
-        
-        const data: { data: IComment[] } = await response.json();
-        const processedComments = processComments(data.data);
-        console.log('processedComments', processedComments);
-        setComments(processedComments);
-      } catch (error) {
-        console.error('Failed to fetch comments:', error);
-      }
-    };
-
-    fetchComments();
+    fetchComments(recipeId);
   }, [recipeId]);
 
+  //grab comment data
+  const fetchComments: FetchCommentsFunction = async (recipeId) => {
+    try {
+      //TODO: 
+      const response = await fetch(`https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/api/comments/recipe/1`);
+      if (!response.ok) throw new Error('Network response was not ok');
+      
+      const data: { data: IComment[] } = await response.json();
+      const processedComments = processComments(data.data);
+      console.log('processedComments', processedComments);
+      setComments(processedComments);
+    } catch (error) {
+      console.error('Failed to fetch comments:', error);
+    }
+  };
 
   //map replies to comments
   function processComments(flatComments: IComment[]): IComment[] {
@@ -87,29 +90,31 @@ export const CommentSection = ({ recipeId }: { recipeId: number }) => {
   return (
     <>
       <br/>
-      <CreateComment/>
+      <CreateComment fetchComments={fetchComments}/>
       <br/>
-      {comments.map((cmt, index) => (
+      {comments.slice().reverse().map((cmt, index) => (
         <div key={index} className="cmt">
           <Comment
-            id = {cmt.id}
+            id={cmt.id}
             username={cmt.authorUsername} // Adjust as necessary
             content={cmt.content}
             hasImages={cmt.hasImages}
             images={cmt.images}
+            fetchComments={fetchComments}
           />
-
+  
           {cmt.replies.length > 0 && (
-            <ReplySection parentId = {cmt.id} replies={cmt.replies} />
+            <ReplySection parentId={cmt.id} replies={cmt.replies} fetchComments={fetchComments} />
           )}
         </div>
       ))}
     </>
-  );
+  );  
 };
 
 //base comment structure with user data, string content, and possible images 
-const Comment = ({ id, username, content, hasImages, images}: { id: number; username: string; content: string, hasImages: boolean, images: string[]}) => {
+//fetchComments={fetchComments}
+const Comment = ({ id, username, content, hasImages, images, fetchComments}: { id: number; username: string; content: string, hasImages: boolean, images: string[], fetchComments: FetchCommentsFunction}) => {
 
   return (
     <>
@@ -127,7 +132,7 @@ const Comment = ({ id, username, content, hasImages, images}: { id: number; user
               />
             )}
           </Content>
-          <CreateReply parentCommentId={id} />
+          <CreateReply parentCommentId={id} fetchComments={fetchComments}/>
         </CommentContentWrapper>
         <SimplePopup></SimplePopup>
       </CommentWrapper>
@@ -136,7 +141,7 @@ const Comment = ({ id, username, content, hasImages, images}: { id: number; user
 }
 
 // basic reply structure with no images, user data, and string content
-const Reply = ({id, username, content}: { id:number; username: string; content: string }) => {
+const Reply = ({id, username, content, fetchComments}: { id:number; username: string; content: string; fetchComments: FetchCommentsFunction}) => {
   return (
     <>
       <CommentWrapper>
@@ -146,7 +151,7 @@ const Reply = ({id, username, content}: { id:number; username: string; content: 
           <Content>
             <div> {content} </div>
           </Content>
-          <CreateReply parentCommentId={id} />
+          <CreateReply parentCommentId={id} fetchComments={fetchComments}/>
 
         </CommentContentWrapper>
         <SimplePopup></SimplePopup>
@@ -156,7 +161,7 @@ const Reply = ({id, username, content}: { id:number; username: string; content: 
 }
 //view reply section
 //id : parent comment id
-const ReplySection = ({ parentId, replies }: {parentId: number; replies: IReply[]})  => {
+const ReplySection = ({ parentId, replies, fetchComments }: {parentId: number; replies: IReply[]; fetchComments: FetchCommentsFunction})  => {
   const [isVisible, setIsVisible] = useState(false)
 
   const upTriangle = "▴"
@@ -189,6 +194,7 @@ const ReplySection = ({ parentId, replies }: {parentId: number; replies: IReply[
                   key={replyIndex}
                   username={`${reply.authorUsername}`}
                   content={reply.content}
+                  fetchComments={fetchComments}
                 />
               ))}
             </OneMarginWrapper>
@@ -201,10 +207,11 @@ const ReplySection = ({ parentId, replies }: {parentId: number; replies: IReply[
 }
 
 //input text comment
-const CreateComment = () => {
+const CreateComment = ({ fetchComments }: { fetchComments: FetchCommentsFunction}) => {
   const [inputValue, setInputValue] = useState('')
   const [isActive, setActive] = useState(false)
 
+  //user clicks into form
   const handleFocus = () => {
     console.log('active')
     setActive(true)
@@ -220,7 +227,8 @@ const CreateComment = () => {
     setInputValue(event.target.value)
   }
 
-  const handleInputSubmit = async (event) => {
+  //create comment
+  const handleInputSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (inputValue.trim() === '') {
       console.log('Cannot submit empty string');
@@ -245,6 +253,7 @@ const CreateComment = () => {
       if (!response.ok) throw new Error('Network response was not ok.');
   
       console.log('Comment submitted successfully');
+      fetchComments(1) //reload comments
     } catch (error) {
       console.error('Failed to submit comment:', error);
     } finally {
@@ -280,7 +289,7 @@ const CreateComment = () => {
 }
 
 //input text reply
-const CreateReply = ({ parentCommentId }: {parentCommentId: number}) => {
+const CreateReply = ({ parentCommentId, fetchComments}: {parentCommentId: number; fetchComments: FetchCommentsFunction}) => {
   //TODO: connect to backend
 
   const [inputValue, setInputValue] = useState('')
@@ -303,7 +312,7 @@ const CreateReply = ({ parentCommentId }: {parentCommentId: number}) => {
   }
 
   //submit reply
-  const handleInputSubmit = async (event) => {
+  const handleInputSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (inputValue.trim() === '') {
       console.log('Cannot submit empty string');
@@ -331,6 +340,7 @@ const CreateReply = ({ parentCommentId }: {parentCommentId: number}) => {
   
       // Optionally, update the comment section to include the new reply
       console.log('Reply submitted successfully');
+      fetchComments(1) //reload comments
     } catch (error) {
       console.error('Failed to submit reply:', error);
     } finally {
