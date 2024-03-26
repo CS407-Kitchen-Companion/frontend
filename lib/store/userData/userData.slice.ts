@@ -4,6 +4,9 @@ import { RootState } from '@lib/store/store'
 export interface IName {
   name: string
 }
+export interface IVisibility {
+  visibility: string
+}
 export interface IEmail {
   email: string
 }
@@ -45,6 +48,7 @@ export interface UserDataState {
   bio: string,
   profilePicture: string,
   isSubmitted: boolean,
+  visibility: string
 }
 
 const initialState = (): UserDataState => {
@@ -59,6 +63,7 @@ const initialState = (): UserDataState => {
     bio: '',
     profilePicture: '',
     isSubmitted: false,
+    visibility: ''
   }
 }
 
@@ -124,6 +129,9 @@ const userDataSlice = createSlice({
     setIsSubmitted: (state, action: PayloadAction<IIsSubmitted>) => {
       state.isSubmitted = action.payload.isSubmitted
     },
+    setVisibility: (state, action: PayloadAction<IVisibility>) => {
+      state.visibility = action.payload.visibility
+    },
 
   },
 })
@@ -144,6 +152,7 @@ export const selectBio = createSelector(userData, state => state.bio)
 export const selectProfilePicture= createSelector(userData, state => state.profilePicture)
 export const selectIsUsernameValid = createSelector(userData, state => state.username !== "")
 export const selectIsSubmitted = createSelector(userData, state => state.isSubmitted)
+export const selectUserVisibility = createSelector(userData, state => state.visibility)
 
 
 // root reducer

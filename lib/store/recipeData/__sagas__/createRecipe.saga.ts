@@ -2,6 +2,7 @@ import { put, take, takeLeading, select, fork, takeEvery } from '@redux-saga/cor
 import { fetchEndpoint } from '@lib/store/helperSaga/fetchEndpoint'
 import { checkLength, ComparisonType } from '@lib/utils/checkLength'
 import { recipeDataAction, selectRecipeData, RecipeDataState, selectRecipeDataVar } from '../recipeData.slice'
+import { navActions } from '@lib/store/nav/nav.slice'
 
 
 function* flowCreateRecipeSaga() {
@@ -40,6 +41,8 @@ function* flowCreateRecipeSaga() {
     ingredients 
   })
   
+  console.log(ingredients)
+  
   if (error) {
     // TODO popup
     console.log(error)
@@ -52,7 +55,7 @@ function* flowCreateRecipeSaga() {
 
   // TODO success popup
   console.log(data)
- 
+  yield put(navActions.push({ url: '/main' }))
   yield put(recipeDataAction.successFlowCreateRecipe())
 }
 
