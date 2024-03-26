@@ -5,9 +5,10 @@ import { CircleAvatar } from '@pagesImpl/__components__/CircleAvatar'
 import { CloseIcon } from '@pagesImpl/__components__/CloseIcon'
 
 
+
 //popup to see larger full sized img from comments
 //assumed to have nonempty images array
-export const CommentImgPopUp = ({ username, content, images }: { username: string; content: string, images: string[] }) => {
+export const CommentImgDialogue = ({ username, content, images }: { username: string; content: string, images: string[] }) => {
   const [wantPopUp, setWantPopUp] = useState(false);
   const [selectedImg, setselectedImg] = useState(0) //keeps selected img key number
   
@@ -90,6 +91,17 @@ export const CommentImgPopUp = ({ username, content, images }: { username: strin
     </>
   )
 }
+
+//base warning popup dialogue
+export const BaseWarningDialogue = ({warningTitle, warningMsg, warningSubmitName, warningSubmitFunction }: {warningTitle: string; warningMsg: string; warningSubmitName: string; }) => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  return (
+    <>
+    </>
+  )
+}
+
 
 //rounded box for image thumbnails in base comments
 const CommentImgBox = styled.div`

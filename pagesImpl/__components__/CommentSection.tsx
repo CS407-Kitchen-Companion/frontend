@@ -2,7 +2,7 @@ import styled from '@emotion/styled'
 import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { IRData } from '@pagesImpl/viewpost/postIdImpl'
-import { CommentImgPopUp } from '@pagesImpl/__components__/CommentImgPopUp'
+import { CommentImgDialogue } from '@pagesImpl/__components__/CommentImgDialogue'
 import { CircleAvatar } from '@pagesImpl/__components__/CircleAvatar'
 import { ShowWhenHover, IconDiv, PopupBody, PopupOption } from '@pagesImpl/__components__/PopUp'
 import { HorizontalLine } from '@pagesImpl/__components__/HorizontalLine'
@@ -186,7 +186,7 @@ const Comment = ({ commentId, username, content, hasImages, images, fetchComment
           <Content>
             <div> {content} </div>
             {hasImages && (
-              <CommentImgPopUp 
+              <CommentImgDialogue 
               username={username}
               content={content}
               images={images} 
@@ -221,7 +221,134 @@ const Comment = ({ commentId, username, content, hasImages, images, fetchComment
   )
 }
 
+//input text comment
+const CreateComment = ({ fetchComments }: { fetchComments: FetchCommentsFunction}) => {
+  const [inputValue, setInputValue] = useState('')
+  const [isActive, setActive] = useState(false)
 
+  //user clicks into form
+  const handleFocus = () => {
+    //console.log('active')
+    setActive(true)
+  }
+
+  //cancel button
+  const handleCancel = () => {
+    setInputValue('')
+    setActive(false)
+  }
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value)
+  }
+
+  //create comment
+  const handleInputSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (inputValue.trim() === '') {
+      console.log('Cannot submit empty string');
+      return;
+    }
+    
+    try {
+      const payload = {
+        recipe_id: 1,
+        content: inputValue,
+        // parent_comment_id: null,
+      };
+  
+      const response = await fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/api/comments/new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!response.ok) throw new Error('Network response was not ok.');
+  
+      console.log('Comment submitted successfully');
+      fetchComments(1) //reload comments
+    } catch (error) {
+      console.error('Failed to submit comment:', error);
+    } finally {
+      setInputValue('');
+      setActive(false);
+    }
+  };
+
+  return (
+    <>
+      <CommentForm onSubmit={handleInputSubmit}>
+        <AvatarCreateCommentWrapper>
+          <CircleAvatar/>
+        </AvatarCreateCommentWrapper>
+        <CommentStringInput
+          type="text"
+          value={inputValue}
+          onChange={handleChange}
+          onFocus={handleFocus} 
+          placeholder="Add a Comment..."
+        />
+        {isActive && (
+        <> 
+        <br/>
+        <br/>
+        <SubButton onClick={handleCancel}> Cancel </SubButton>
+        <BlueButton type="submit" >Submit</BlueButton>
+        </>
+      )}
+      </CommentForm>
+    </>
+  )
+}
+
+//view reply section
+const ReplySection = ({ parentId, replies, fetchComments }: {parentId: number; replies: IReply[]; fetchComments: FetchCommentsFunction})  => {
+  const [isVisible, setIsVisible] = useState(false)
+
+  const upTriangle = "▴"
+  const downTriangle = "▾"
+  const [whatTri, setTri] = useState(downTriangle)
+
+  const numberOfReplies = replies.length
+
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible)
+    if (isVisible === true)
+      setTri(downTriangle)
+    else
+      setTri(upTriangle)
+  }
+
+  // Inside ReplySection component
+  return (
+    <>
+      <div className="replies">
+        <ReplyWrapper>
+          <ViewReplyButton onClick={toggleVisibility}>
+            {whatTri} {numberOfReplies} replies
+          </ViewReplyButton>
+          {isVisible && (
+            <OneMarginWrapper>
+              {replies.map((reply, replyIndex) => (
+                <Reply
+                  parentId={parentId}
+                  replyId={reply.id}
+                  key={replyIndex}
+                  username={`${reply.authorUsername}`}
+                  content={reply.content}
+                  fetchComments={fetchComments}
+                />
+              ))}
+            </OneMarginWrapper>
+          )}
+        </ReplyWrapper>
+      </div>
+    </>
+  );
+
+}
 
 // basic reply structure with no images, user data, and string content
 const Reply = ({parentId, replyId, username, content, fetchComments}: { parentId: number; replyId: number; username: string; content: string; fetchComments: FetchCommentsFunction}) => {
@@ -314,146 +441,13 @@ const Reply = ({parentId, replyId, username, content, fetchComments}: { parentId
       </CommentWrapper>
     )}
 
-     
-    </>
-  )
-}
-
-
-//view reply section
-//id : parent comment id
-const ReplySection = ({ parentId, replies, fetchComments }: {parentId: number; replies: IReply[]; fetchComments: FetchCommentsFunction})  => {
-  const [isVisible, setIsVisible] = useState(false)
-
-  const upTriangle = "▴"
-  const downTriangle = "▾"
-  const [whatTri, setTri] = useState(downTriangle)
-
-  const numberOfReplies = replies.length
-
-  const toggleVisibility = () => {
-    setIsVisible(!isVisible)
-    if (isVisible === true)
-      setTri(downTriangle)
-    else
-      setTri(upTriangle)
-  }
-
-  // Inside ReplySection component
-  return (
-    <>
-      <div className="replies">
-        <ReplyWrapper>
-          <ViewReplyButton onClick={toggleVisibility}>
-            {whatTri} {numberOfReplies} replies
-          </ViewReplyButton>
-          {isVisible && (
-            <OneMarginWrapper>
-              {replies.map((reply, replyIndex) => (
-                <Reply
-                  parentId={parentId}
-                  replyId={reply.id}
-                  key={replyIndex}
-                  username={`${reply.authorUsername}`}
-                  content={reply.content}
-                  fetchComments={fetchComments}
-                />
-              ))}
-            </OneMarginWrapper>
-          )}
-        </ReplyWrapper>
-      </div>
-    </>
-  );
-
-}
-
-//input text comment
-const CreateComment = ({ fetchComments }: { fetchComments: FetchCommentsFunction}) => {
-  const [inputValue, setInputValue] = useState('')
-  const [isActive, setActive] = useState(false)
-
-  //user clicks into form
-  const handleFocus = () => {
-    //console.log('active')
-    setActive(true)
-  }
-
-  //cancel button
-  const handleCancel = () => {
-    setInputValue('')
-    setActive(false)
-  }
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value)
-  }
-
-  //create comment
-  const handleInputSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (inputValue.trim() === '') {
-      console.log('Cannot submit empty string');
-      return;
-    }
-    
-    try {
-      const payload = {
-        recipe_id: 1,
-        content: inputValue,
-        // parent_comment_id: null,
-      };
-  
-      const response = await fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/api/comments/new', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-  
-      if (!response.ok) throw new Error('Network response was not ok.');
-  
-      console.log('Comment submitted successfully');
-      fetchComments(1) //reload comments
-    } catch (error) {
-      console.error('Failed to submit comment:', error);
-    } finally {
-      setInputValue('');
-      setActive(false);
-    }
-  };
-
-  return (
-    <>
-      <CommentForm onSubmit={handleInputSubmit}>
-        <AvatarCreateCommentWrapper>
-          <CircleAvatar/>
-        </AvatarCreateCommentWrapper>
-        <CommentStringInput
-          type="text"
-          value={inputValue}
-          onChange={handleChange}
-          onFocus={handleFocus} 
-          placeholder="Add a Comment..."
-        />
-        {isActive && (
-        <> 
-        <br/>
-        <br/>
-        <SubButton onClick={handleCancel}> Cancel </SubButton>
-        <BlueButton type="submit" >Submit</BlueButton>
-        </>
-      )}
-      </CommentForm>
     </>
   )
 }
 
 //input text reply
+//TODO: debug network connection
 const CreateReply = ({ parentCommentId, fetchComments}: {parentCommentId: number; fetchComments: FetchCommentsFunction}) => {
-  //TODO: connect to backend
-
   const [inputValue, setInputValue] = useState('')
   const [isActive, setActive] = useState(false)
 
