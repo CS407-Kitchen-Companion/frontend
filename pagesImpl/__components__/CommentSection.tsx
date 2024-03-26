@@ -39,6 +39,7 @@ export interface IReply {
 export const CommentSection = ({ recipeId }: { recipeId: number }) => {
   const [comments, setComments] = useState<IComment[]>([]);
 
+  //get comments on recipe post
   useEffect(() => {
     const fetchComments = async () => {
       try {
@@ -47,7 +48,7 @@ export const CommentSection = ({ recipeId }: { recipeId: number }) => {
         
         const data: { data: IComment[] } = await response.json();
         const processedComments = processComments(data.data);
-        console.log(processedComments);
+        console.log('processedComments', processedComments);
         setComments(processedComments);
       } catch (error) {
         console.error('Failed to fetch comments:', error);
@@ -57,16 +58,18 @@ export const CommentSection = ({ recipeId }: { recipeId: number }) => {
     fetchComments();
   }, [recipeId]);
 
+
+  //map replies to comments
   function processComments(flatComments: IComment[]): IComment[] {
-    const commentMap = {};
-    const topLevelComments = [];
+    const commentMap: { [key: number]: IComment } = {};
+    const topLevelComments: IComment[] = [];
   
-    flatComments.forEach(comment => {
+    flatComments.forEach((comment: IComment) => {
       commentMap[comment.id] = { ...comment, replies: [] };
     });
   
-    flatComments.forEach(comment => {
-      if (comment.parentCommentId) {
+    flatComments.forEach((comment: IComment) => {
+      if (comment.parentCommentId !== null && comment.parentCommentId !== undefined) {
         if (commentMap[comment.parentCommentId]) { // Ensure parent exists
           commentMap[comment.parentCommentId].replies.push(commentMap[comment.id]);
         } else {
@@ -79,7 +82,7 @@ export const CommentSection = ({ recipeId }: { recipeId: number }) => {
   
     return topLevelComments;
   }
-
+  
   
   return (
     <>
@@ -97,7 +100,7 @@ export const CommentSection = ({ recipeId }: { recipeId: number }) => {
           />
 
           {cmt.replies.length > 0 && (
-            <ReplySection replies={cmt.replies} />
+            <ReplySection parentId = {cmt.id} replies={cmt.replies} />
           )}
         </div>
       ))}
@@ -125,7 +128,6 @@ const Comment = ({ id, username, content, hasImages, images}: { id: number; user
             )}
           </Content>
           <CreateReply parentCommentId={id} />
-
         </CommentContentWrapper>
         <SimplePopup></SimplePopup>
       </CommentWrapper>
@@ -152,9 +154,9 @@ const Reply = ({id, username, content}: { id:number; username: string; content: 
     </>
   )
 }
-
 //view reply section
-const ReplySection = ({ replies }: {replies: IReply[]})  => {
+//id : parent comment id
+const ReplySection = ({ parentId, replies }: {parentId: number; replies: IReply[]})  => {
   const [isVisible, setIsVisible] = useState(false)
 
   const upTriangle = "▴"
@@ -183,6 +185,7 @@ const ReplySection = ({ replies }: {replies: IReply[]})  => {
             <OneMarginWrapper>
               {replies.map((reply, replyIndex) => (
                 <Reply
+                  id={parentId}
                   key={replyIndex}
                   username={`${reply.authorUsername}`}
                   content={reply.content}
@@ -277,7 +280,7 @@ const CreateComment = () => {
 }
 
 //input text reply
-const CreateReply = ({ parentCommentId }) => {
+const CreateReply = ({ parentCommentId }: {parentCommentId: number}) => {
   //TODO: connect to backend
 
   const [inputValue, setInputValue] = useState('')
