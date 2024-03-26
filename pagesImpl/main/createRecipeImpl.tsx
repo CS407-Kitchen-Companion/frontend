@@ -38,18 +38,25 @@ const RecipeForm = () => {
   const dispatch = useDispatch()
   
   //Ingredient handling
-  const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: '' }]);
+  const [ingrs, setIngrs] = useState([{ ingredient: '', amount: 0, unit: 'g' }]);
+  const [ingredients, setIngredients] = useState([{ ingredient: '', amount: '', unit: 'g' }]);
   const handleAddIngredient = () => {
-    setIngredients([...ingredients, { name: '', amount: '', unit: '' }]);
+    setIngredients([...ingredients, { ingredient: '', amount: '', unit: 'g' }]);
+    setIngrs([...ingrs, { ingredient: '', amount: 0, unit: '' }]);
   };
   const handleChangeIngredientName = (index: any, e: any) => {
     const newIngredients = [...ingredients];
-    newIngredients[index].name = e.target.value;
+    newIngredients[index].ingredient = e.target.value;
     setIngredients(newIngredients);
   };
   const handleChangeIngredientAmount = (index: any, e: any) => {
     const newIngredients = [...ingredients];
-    newIngredients[index].amount = e.target.value;
+    newIngredients[index].amount = (e.target.value);
+    setIngredients(newIngredients);
+  };
+  const handleChangeIngredientUnit = (index: any, e: any) => {
+    const newIngredients = [...ingredients];
+    newIngredients[index].unit = e.target.value;
     setIngredients(newIngredients);
   };
   const handleDeleteIngredient = (index: any) => {
@@ -145,11 +152,16 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
   });
   dispatch(recipeDataAction.setAppls({appls}))
 
-  let ingr: Array<string> = ['']
+  console.log(ingredients)
   ingredients.forEach((element: any, index: number) => {
-    ingr[index] = element.value
+    const newIngredients = [...ingrs];
+    newIngredients[index].ingredient = (element.ingredient);
+    newIngredients[index].amount = parseFloat(element.amount);
+    newIngredients[index].unit = (element.unit);
+    setIngrs(newIngredients);
   });
-  dispatch(recipeDataAction.setIngr({ingr}))
+  console.log(ingrs)
+  dispatch(recipeDataAction.setIngr({ingrs}))
   dispatch(recipeDataAction.requestFlowCreateRecipe())
   
   //router.push("/");
@@ -182,7 +194,7 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
          <div key={index}>
            <StyledIngredientName
              type="text"
-             value={ingredient.name}
+             value={ingredient.ingredient}
              onChange={(e) => handleChangeIngredientName(index, e)}
              placeholder={`Ingredient ${index + 1}`}
            />
@@ -192,6 +204,12 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
              onChange={(e) => handleChangeIngredientAmount(index, e)}
              placeholder={`Quantity (Ex. 2 Tbsp)`}
            />
+           <StyledDropdown value={ingredient.unit} onChange={(e) => handleChangeIngredientUnit(index, e)}>
+          <option value="g">gram(s)</option>
+          <option value="Tbsp">Tablespoon(s)</option>
+          <option value="tbsp">Teaspoon(s)</option>
+          <option value="oz">Ounce(s)</option>
+          </StyledDropdown>
            <StyledDeleteButton type="button" onClick={() => handleDeleteIngredient(index)}>
              Remove
            </StyledDeleteButton>
@@ -328,7 +346,7 @@ const FormBackgroundWrapper = styled.div`
   background: white;
   background-size: auto;
   height: auto;
-  width: 60%;
+  width: auto;
   margin-top: 1%;
   margin-left: 20%;
   border-radius: 20px;
@@ -350,7 +368,7 @@ const FormWrapper = styled.div`
   background: white;
   background-size: auto;
   height: 100%;
-  width: 60%;
+  width: auto;
   padding: 3%;
   margin-left: 2%;
   border-radius: 10px;
@@ -389,6 +407,7 @@ margin-left: 0px;
 `
 const IngredientWrapper = styled.div`
 margin-top: 5%;
+width: auto;
 `
 const StyledDescription = styled.p`
 border: 0;

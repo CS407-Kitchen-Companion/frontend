@@ -4,7 +4,7 @@ import { fetchEndpoint } from '@lib/store/helperSaga/fetchEndpoint'
 import isUndefined from 'lodash/isUndefined'
 import { selectVerifyData, verifyDataAction, VerifyDataState } from '../verify.slice'
 
-function* flowGetUserByIdSaga() {
+function* flowVerifyEmailSaga() {
 
   yield put(verifyDataAction.beginFlowVerifyEmail())
   const { id, token }: VerifyDataState = yield select(selectVerifyData)
@@ -28,6 +28,7 @@ function* flowGetUserByIdSaga() {
     return
   }
 
+  console.log(data)
   const stat = data.data
     const status = stat.response
   yield put(verifyDataAction.setStatus({ status }))
@@ -35,7 +36,7 @@ function* flowGetUserByIdSaga() {
 }
 
 function* watchVerifyEmailSaga() {
-  yield takeLeading(verifyDataAction.requestFlowVerifyEmail.type, flowGetUserByIdSaga)
+  yield takeLeading(verifyDataAction.requestFlowVerifyEmail.type, flowVerifyEmailSaga)
 }
 
 export default [watchVerifyEmailSaga]

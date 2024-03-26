@@ -6,6 +6,16 @@ export interface IPostID {
   postID: number
 }
 
+export interface IVisibility {
+  visibility: string
+}
+
+export interface Ingredient {
+  ingredient: string,
+  amount: number,
+  unit: string, 
+}
+
 export interface IRecipeDataVar {
   recipeDataVar: {
     title: string,
@@ -22,7 +32,7 @@ export interface IRecipeDataVar {
     time: number,
     tags: string[],
     appliances: string[],
-    ingredients: string[],
+    ingredients: Ingredient[],
     comments: string[],
   }
 }
@@ -32,7 +42,8 @@ export interface IIsSubmitted {
 }
 
 export interface RecipeDataState {
-  postID: number
+  postID: number,
+  visibility: string,
   recipeDataVar: {
     title: string,
     createdAt: string,
@@ -48,7 +59,7 @@ export interface RecipeDataState {
     time: number,
     tags: string[],
     appliances: string[],
-    ingredients: string[],
+    ingredients: Ingredient[],
     comments: string[],
   }
   isSubmitted: boolean
@@ -73,13 +84,14 @@ export interface IAppls {
   appls: string[]
 }
 export interface IIngr {
-  ingr: string[]
+  ingrs: Ingredient[],
 }
 
 
 const initialState = (): RecipeDataState => {
   return {
     postID: 0,
+    visibility: '',
     recipeDataVar: {
       title: '',
       createdAt: '',
@@ -147,7 +159,10 @@ const recipeDataSlice = createSlice({
       state.recipeDataVar.appliances = action.payload.appls
     },
     setIngr: (state, action: PayloadAction<IIngr>) => {
-      state.recipeDataVar.ingredients = action.payload.ingr
+      state.recipeDataVar.ingredients = action.payload.ingrs
+    },
+    setVisibility: (state, action: PayloadAction<IVisibility>) => {
+      state.visibility= action.payload.visibility
     },
 
     
@@ -166,6 +181,7 @@ export const selectIsPostIDNotEmpty = createSelector(recipeData, state => state.
 export const selectRecipeDataVar = createSelector(recipeData, state => state.recipeDataVar)
 export const selectIsRecipeDataVarValid = createSelector(recipeData, state => state.recipeDataVar.title !== '')
 export const selectIsSubmitted = createSelector(recipeData, state => state.isSubmitted)
+export const selectRecipeVisibility = createSelector(recipeData, state => state.visibility)
 
 
 

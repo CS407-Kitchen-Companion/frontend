@@ -28,6 +28,12 @@ const ForgotForm = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  const [visibility, setVisibility] = useState('public');
+
+  const handleChangeVisibility = (e: any) => {
+    setVisibility(e.target.value);
+  };
+
   const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
     event.preventDefault();
       console.log(id)
@@ -47,6 +53,11 @@ const ForgotForm = () => {
           padding: '2%',
         }
       }>Edit Profile</h1>
+      <InputWrapper>
+      <DeleteButton>
+        Delete Account
+      </DeleteButton>
+      </InputWrapper>
     <form onSubmit={handleSubmit}>
       
       <StyledLabel>Username: </StyledLabel>
@@ -60,7 +71,16 @@ const ForgotForm = () => {
       <StyledLabel>Profile Bio: </StyledLabel>
       <StyledInput></StyledInput>
       </InputWrapper>
+      <InputWrapper>
+      <StyledLabel>Profile Visibility: </StyledLabel>
+      <StyledDropdown value={visibility} onChange={handleChangeVisibility}>
+          <option value="public">Public</option>
+          <option value="private">Private</option>
+        </StyledDropdown>
+        </InputWrapper>
+        <InputWrapper>
       <StyledButton type="submit">Submit</StyledButton>
+      </InputWrapper>
     </form>
     </FormWrapper>
   );
@@ -77,7 +97,7 @@ const BackgroundWrapper = styled.div`
 const FormWrapper = styled.div`
   background: white;
   background-size: auto;
-  height: 100%;
+  height: auto;
   width: 60%;
   
   margin-left: 20%;
@@ -98,7 +118,8 @@ margin: 5px;
 margin-left: 0px;
 `
 const InputWrapper = styled.div`
-  margin-top: 5%;
+  margin-top: 2%;
+  padding-bottom: 3%;
 `
 const StyledButton = styled.button`
 color: lightgray;
@@ -108,6 +129,20 @@ width: 250px;
 height: 50px;
 border-radius:  30px ;
 border: 1px solid #2D3566;
+`
+const StyledDropdown = styled.select`
+margin: 1vh;
+width: 100px;
+height: 30px;
+background: #f5f7fa;
+border-radius: 5px;
+`
+const DeleteButton = styled.button` 
+width: 10vw;
+height: 8vh;
+background: red;
+border-radius: 5px;
+font-size: 20px
 `
 /*
 <div>
