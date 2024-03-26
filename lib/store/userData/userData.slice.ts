@@ -19,6 +19,12 @@ export interface INewPwd{
 export interface IToken {
   token: string
 }
+export interface IBio {
+  bio: string
+}
+export interface IProfilePicture {
+  profilePicture: string
+}
 
 export interface IId {
   id: number
@@ -36,6 +42,8 @@ export interface UserDataState {
   oldPassword: string,
   token: string,
   id: number,
+  bio: string,
+  profilePicture: string,
   isSubmitted: boolean,
 }
 
@@ -48,6 +56,8 @@ const initialState = (): UserDataState => {
     oldPassword: '',
     token: '',
     id: 0,
+    bio: '',
+    profilePicture: '',
     isSubmitted: false,
   }
 }
@@ -102,6 +112,12 @@ const userDataSlice = createSlice({
     setId: (state, action: PayloadAction<IId>) => {
       state.id = action.payload.id
     },
+    setBio: (state, action: PayloadAction<IBio>) => {
+      state.bio = action.payload.bio
+    },
+    setProfilePicture: (state, action: PayloadAction<IProfilePicture>) => {
+      state.profilePicture = action.payload.profilePicture
+    },
     emptyPassword: (state) => {
       state.password = ''
     },
@@ -124,6 +140,8 @@ export const selectEmail = createSelector(userData, state => state.email)
 export const selectToken = createSelector(userData, state => state.token)
 export const selectPassword = createSelector(userData, state => state.password)
 export const selectId = createSelector(userData, state => state.id)
+export const selectBio = createSelector(userData, state => state.bio)
+export const selectProfilePicture= createSelector(userData, state => state.profilePicture)
 export const selectIsUsernameValid = createSelector(userData, state => state.username !== "")
 export const selectIsSubmitted = createSelector(userData, state => state.isSubmitted)
 

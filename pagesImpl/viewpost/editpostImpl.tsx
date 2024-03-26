@@ -64,10 +64,11 @@ const EditRecipeImpl: React.FC<PostIdImplProps> = ({ postId }) => {
 export default EditRecipeImpl;
 
 const RecipeForm : React.FC<PostIdImplProps> = ({ postId }) => {
-  const cachedRecipe = useSelector(selectRecipeData)
-  const [title, setTitle] = useState(cachedRecipe.recipeDataVar.title.toString);
-  const [time, setTime] = useState(cachedRecipe.recipeDataVar.time.toString);
-  const [servings, setServings] = useState(cachedRecipe.recipeDataVar.serves.toString);
+  const recipeDataVar = useSelector(selectRecipeDataVar)
+  const oldIngredients = recipeDataVar.ingredients
+  const [title, setTitle] = useState('');
+  const [time, setTime] = useState('');
+  const [servings, setServings] = useState('');
   const router = useRouter();
   
   //Ingredient handling
@@ -135,7 +136,13 @@ const handleDeleteTag= (index: any) => {
 };
     
 useEffect(() => {
-  setIngredients(cachedRecipe.recipeDataVar.ingredients.map((value) => ({ value })));
+  console.log(oldIngredients)
+  setTitle(recipeDataVar.title)
+  setServings(String(recipeDataVar.serves))
+  setTime(String(recipeDataVar.time))
+  setTags(recipeDataVar.tags.map((value) => ({ value })))
+  setAppliances(recipeDataVar.appliances.map((value) => ({ value })))
+  setDirections(recipeDataVar.content.map((value) => ({ value })));
 }, []);
     
 const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
@@ -280,7 +287,7 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
        </StyledInput>
 
        <div>
-       <StyledAddButton type="submit">Submit</StyledAddButton>
+       <StyledAddButton type="submit">Update</StyledAddButton>
        </div>
      </form>
      
