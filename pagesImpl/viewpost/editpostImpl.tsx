@@ -77,6 +77,7 @@ const RecipeForm : React.FC<PostIdImplProps> = ({ postId }) => {
   const [time, setTime] = useState('');
   const [servings, setServings] = useState('');
   const router = useRouter();
+  const dispatch = useDispatch();
   
   //Ingredient handling
   const [ingrs, setIngrs] = useState([{ ingredient: '', amount: 0, unit: 'g' }]);
@@ -186,7 +187,7 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
 
 const handleDeleteRecipe = () => {
   if(confirm("Confirm delete recipe?")){
-
+    dispatch(recipeDataAction.requestFlowDeleteRecipe())
   }
 };
 
@@ -230,9 +231,7 @@ const handleDeleteRecipe = () => {
            />
            <StyledDropdown value={ingredient.unit} onChange={(e) => handleChangeIngredientUnit(index, e)}>
           <option value="g">gram(s)</option>
-          <option value="Tbsp">Tablespoon(s)</option>
-          <option value="tbsp">Teaspoon(s)</option>
-          <option value="oz">Ounce(s)</option>
+          <option value="ml">mL(s)</option>
           </StyledDropdown>
            <StyledDeleteButton type="button" onClick={() => handleDeleteIngredient(index)}>
              Remove

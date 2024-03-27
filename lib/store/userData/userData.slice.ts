@@ -95,6 +95,12 @@ const userDataSlice = createSlice({
     successFlowGetUserById: () => {},
     failureFlowGetUserById: () => {},
 
+     //get user flow
+     requestFlowDeleteUser: () => {},
+     beginFlowDeleteUser: () => {},
+     successFlowDeleteUser: () => {},
+     failureFlowDeleteUser: () => {},
+
     // setter
     setName: (state, action: PayloadAction<IName>) => {
       state.username = action.payload.name

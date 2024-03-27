@@ -81,6 +81,20 @@ export const apiSlice = createApi({
       verifyEmail: builder.query({
         query: ({ id, token }) => `user/verify?uid=${id}&token=${token}`,
       }),
+      //DELETE
+      deleteRecipe: builder.mutation({
+        query: ( {postID}) => ({
+          body: '',
+          url: `recipe/${postID}/remove`,
+          method: METHOD_TYPE,
+        }),
+      }),
+      deleteAccount: builder.mutation({
+        query: ({ id }) => ({
+          url: `user/${id}`,
+          method: 'DELETE',
+        }),
+      }),
     }
   },
 })

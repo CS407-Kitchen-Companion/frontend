@@ -45,6 +45,11 @@ const ForgotForm = () => {
       dispatch(userDataAction.requestFlowUpdatePassword())
 
   };
+  const handleDeleteRecipe = () => {
+    if(confirm("Confirm delete account?")){
+      dispatch(userDataAction.requestFlowDeleteUser())
+    }
+  };
 
   return (
     <FormWrapper>
@@ -54,7 +59,7 @@ const ForgotForm = () => {
         }
       }>Edit Profile</h1>
       <InputWrapper>
-      <DeleteButton>
+      <DeleteButton onClick={handleDeleteRecipe}>
         Delete Account
       </DeleteButton>
       </InputWrapper>

@@ -45,6 +45,7 @@ function* flowSubmitLoginSaga() {
     yield put(userDataAction.setToken({token}))
     yield put(userDataAction.setId({id}))
     Cookies.set('token', token, { expires: 7, secure: true });
+    Cookies.set('id', id, { expires: 7, secure: true });
 
     yield put(navActions.push({ url: '/main' }))
     yield put(userDataAction.successFlowSubmitLogin())

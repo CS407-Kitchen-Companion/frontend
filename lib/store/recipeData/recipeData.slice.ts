@@ -7,7 +7,7 @@ export interface IPostID {
 }
 
 export interface IVisibility {
-  visibility: string
+  visibility: boolean
 }
 
 export interface Ingredient {
@@ -43,7 +43,7 @@ export interface IIsSubmitted {
 
 export interface RecipeDataState {
   postID: number,
-  visibility: string,
+  visibility: boolean,
   recipeDataVar: {
     title: string,
     createdAt: string,
@@ -91,7 +91,7 @@ export interface IIngr {
 const initialState = (): RecipeDataState => {
   return {
     postID: 0,
-    visibility: '',
+    visibility: true,
     recipeDataVar: {
       title: '',
       createdAt: '',
@@ -118,7 +118,7 @@ const recipeDataSlice = createSlice({
   initialState: initialState(),
   name: 'recipeData',
   reducers: {
-    // register flow
+    // create recipe flow
     requestFlowCreateRecipe: () => {},
     beginFlowCreateRecipe: () => {},
     successFlowCreateRecipe: () => {},
@@ -129,6 +129,12 @@ const recipeDataSlice = createSlice({
     beginFlowGetRecipeById: () => {},
     successFlowGetRecipeById: () => {},
     failureFlowGetRecipeById: () => {},
+
+    // delete recipe flow
+    requestFlowDeleteRecipe: () => {},
+    beginFlowDeleteRecipe: () => {},
+    successFlowDeleteRecipe: () => {},
+    failureFlowDeleteRecipe: () => {},
 
     // setter 
     setPostID: (state, action: PayloadAction<IPostID>) => {
@@ -163,6 +169,13 @@ const recipeDataSlice = createSlice({
     },
     setVisibility: (state, action: PayloadAction<IVisibility>) => {
       state.visibility= action.payload.visibility
+    },
+    resetRecipe: (state) => {
+      const action = initialState()
+      state.recipeDataVar= action.recipeDataVar
+      state.postID = action.postID
+      state.visibility = action.visibility
+      state.isSubmitted = action.isSubmitted
     },
 
     
