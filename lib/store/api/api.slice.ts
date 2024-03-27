@@ -61,6 +61,13 @@ export const apiSlice = createApi({
           method: METHOD_TYPE,
         }),
       }),
+      editRecipe: builder.mutation({
+        query: ( {postID,...body}) => ({
+          body: JSON.stringify(body),
+          url: `recipe/${postID}/edit`,
+          method: METHOD_TYPE,
+        }),
+      }),
       // GET
       // TODO APPLY filter options for recipes
       getRelatedRecipes: builder.query({
@@ -81,6 +88,7 @@ export const apiSlice = createApi({
       verifyEmail: builder.query({
         query: ({ id, token }) => `user/verify?uid=${id}&token=${token}`,
       }),
+      
       //DELETE
       deleteRecipe: builder.mutation({
         query: ( {postID}) => ({

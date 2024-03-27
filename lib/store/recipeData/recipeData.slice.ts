@@ -136,6 +136,12 @@ const recipeDataSlice = createSlice({
     successFlowDeleteRecipe: () => {},
     failureFlowDeleteRecipe: () => {},
 
+    // edit recipe flow
+    requestFlowEditRecipe: () => {},
+    beginFlowEditRecipe: () => {},
+    successFlowEditRecipe: () => {},
+    failureFlowEditRecipe: () => {},
+
     // setter 
     setPostID: (state, action: PayloadAction<IPostID>) => {
       state.postID = action.payload.postID
