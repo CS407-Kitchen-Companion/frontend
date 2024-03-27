@@ -59,7 +59,7 @@ export const CommentSection = ({ recipeId }: { recipeId: number }) => {
   const fetchComments: FetchCommentsFunction = async (recipeId) => {
     try {
       //TODO: 
-      const response = await fetch(`https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/api/comments/recipe/1`);
+      const response = await fetch(`https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/api/comments/recipe/${recipeId}`);
       if (!response.ok) throw new Error('Network response was not ok');
       
       const data: { data: IComment[] } = await response.json();
