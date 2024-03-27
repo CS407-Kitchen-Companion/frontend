@@ -37,10 +37,14 @@ function* flowSubmitLoginSaga() {
     return
   }
   if(data){
-    console.log(data)
-    const loginResult =  data.token
-    userDataAction.setToken(loginResult)
-    Cookies.set('token', loginResult, { expires: 7, secure: true });
+    
+    const {token} =  data.data
+    const id = data.response
+    console.log(token)
+    console.log(data.response)
+    yield put(userDataAction.setToken({token}))
+    yield put(userDataAction.setId({id}))
+    Cookies.set('token', token, { expires: 7, secure: true });
 
     yield put(navActions.push({ url: '/main' }))
     yield put(userDataAction.successFlowSubmitLogin())

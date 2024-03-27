@@ -12,9 +12,14 @@ export const apiSlice = createApi({
     baseUrl,
     credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).userData.root.token
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`)
+      }
       const additionalHeaders = {
         accept: 'application/json',
         'content-type': 'application/json',
+        
       }
 
       Object.entries(additionalHeaders).forEach(([key, value]) => {
@@ -72,6 +77,9 @@ export const apiSlice = createApi({
       }),
       getUserById: builder.query({
         query: ({ id }) => `user/${id}`,
+      }),
+      verifyEmail: builder.query({
+        query: ({ id, token }) => `user/verify?uid=${id}&token=${token}`,
       }),
     }
   },

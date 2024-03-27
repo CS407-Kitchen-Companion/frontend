@@ -4,6 +4,9 @@ import { RootState } from '@lib/store/store'
 export interface IName {
   name: string
 }
+export interface IVisibility {
+  visibility: string
+}
 export interface IEmail {
   email: string
 }
@@ -18,6 +21,12 @@ export interface INewPwd{
 }
 export interface IToken {
   token: string
+}
+export interface IBio {
+  bio: string
+}
+export interface IProfilePicture {
+  profilePicture: string
 }
 
 export interface IId {
@@ -36,7 +45,10 @@ export interface UserDataState {
   oldPassword: string,
   token: string,
   id: number,
+  bio: string,
+  profilePicture: string,
   isSubmitted: boolean,
+  visibility: string
 }
 
 const initialState = (): UserDataState => {
@@ -48,7 +60,10 @@ const initialState = (): UserDataState => {
     oldPassword: '',
     token: '',
     id: 0,
+    bio: '',
+    profilePicture: '',
     isSubmitted: false,
+    visibility: ''
   }
 }
 
@@ -102,11 +117,20 @@ const userDataSlice = createSlice({
     setId: (state, action: PayloadAction<IId>) => {
       state.id = action.payload.id
     },
+    setBio: (state, action: PayloadAction<IBio>) => {
+      state.bio = action.payload.bio
+    },
+    setProfilePicture: (state, action: PayloadAction<IProfilePicture>) => {
+      state.profilePicture = action.payload.profilePicture
+    },
     emptyPassword: (state) => {
       state.password = ''
     },
     setIsSubmitted: (state, action: PayloadAction<IIsSubmitted>) => {
       state.isSubmitted = action.payload.isSubmitted
+    },
+    setVisibility: (state, action: PayloadAction<IVisibility>) => {
+      state.visibility = action.payload.visibility
     },
 
   },
@@ -124,8 +148,11 @@ export const selectEmail = createSelector(userData, state => state.email)
 export const selectToken = createSelector(userData, state => state.token)
 export const selectPassword = createSelector(userData, state => state.password)
 export const selectId = createSelector(userData, state => state.id)
+export const selectBio = createSelector(userData, state => state.bio)
+export const selectProfilePicture= createSelector(userData, state => state.profilePicture)
 export const selectIsUsernameValid = createSelector(userData, state => state.username !== "")
 export const selectIsSubmitted = createSelector(userData, state => state.isSubmitted)
+export const selectUserVisibility = createSelector(userData, state => state.visibility)
 
 
 // root reducer

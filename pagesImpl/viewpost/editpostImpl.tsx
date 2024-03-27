@@ -4,7 +4,7 @@ import { PageImplView } from '@pagesImpl/__components__/PageImplView'
 import { useRouter } from"next/navigation";
 import { FormEvent, useEffect } from 'react'
 import React, { useState } from 'react';
-import { selectRecipeData } from '@lib/store/recipeData/recipeData.slice';
+import { selectRecipeData, } from '@lib/store/recipeData/recipeData.slice';
 import { useDispatch, useSelector } from 'react-redux'
 import { 
   recipeDataAction,
@@ -29,6 +29,7 @@ const EditRecipeImpl: React.FC<PostIdImplProps> = ({ postId }) => {
     if (isNaN(postIDValue)) {
       //non int postID
       console.error('postId is not a valid number')
+      console.log(postId)
     } 
     else {
       //possible valid int postID
@@ -64,20 +65,39 @@ const EditRecipeImpl: React.FC<PostIdImplProps> = ({ postId }) => {
 export default EditRecipeImpl;
 
 const RecipeForm : React.FC<PostIdImplProps> = ({ postId }) => {
-  const cachedRecipe = useSelector(selectRecipeData)
-  const [title, setTitle] = useState(cachedRecipe.recipeDataVar.title.toString);
-  const [time, setTime] = useState(cachedRecipe.recipeDataVar.time.toString);
-  const [servings, setServings] = useState(cachedRecipe.recipeDataVar.serves.toString);
+  const recipeDataVar = useSelector(selectRecipeDataVar)
+  const oldIngredients = recipeDataVar.ingredients
+  
+  const newArray = oldIngredients.map((obj) => ({
+    ingredient: obj.ingredient,
+    amount: obj.amount.toString(),
+    unit: obj.unit
+  }));
+  const [title, setTitle] = useState('');
+  const [time, setTime] = useState('');
+  const [servings, setServings] = useState('');
   const router = useRouter();
   
   //Ingredient handling
-  const [ingredients, setIngredients] = useState([{ value: '' }]);
+  const [ingrs, setIngrs] = useState([{ ingredient: '', amount: 0, unit: 'g' }]);
+  const [ingredients, setIngredients] = useState([{ ingredient: '', amount: '', unit: 'g' }]);
   const handleAddIngredient = () => {
-    setIngredients([...ingredients, { value: '' }]);
+    setIngredients([...ingredients, { ingredient: '', amount: '', unit: 'g' }]);
+    setIngrs([...ingrs, { ingredient: '', amount: 0, unit: '' }]);
   };
   const handleChangeIngredient = (index: any, e: any) => {
     const newIngredients = [...ingredients];
-    newIngredients[index].value = e.target.value;
+    newIngredients[index].ingredient = e.target.value;
+    setIngredients(newIngredients);
+  };
+  const handleChangeIngredientAmount = (index: any, e: any) => {
+    const newIngredients = [...ingredients];
+    newIngredients[index].amount = (e.target.value);
+    setIngredients(newIngredients);
+  };
+  const handleChangeIngredientUnit = (index: any, e: any) => {
+    const newIngredients = [...ingredients];
+    newIngredients[index].unit = e.target.value;
     setIngredients(newIngredients);
   };
   const handleDeleteIngredient = (index: any) => {
@@ -134,22 +154,46 @@ const handleDeleteTag= (index: any) => {
   setTags(newTags);
 };
     
+//Visibility
+const [visibility, setVisibility] = useState('public');
+
+const handleChangeVisibility = (e: any) => {
+
+  setVisibility(e.target.value);
+
+};
+
 useEffect(() => {
-  setIngredients(cachedRecipe.recipeDataVar.ingredients.map((value) => ({ value })));
-}, []);
+
+  setIngredients(newArray)
+  setTitle(recipeDataVar.title)
+  setServings(String(recipeDataVar.serves))
+  setTime(String(recipeDataVar.time))
+  setTags(recipeDataVar.tags.map((value) => ({ value })))
+  setAppliances(recipeDataVar.appliances.map((value) => ({ value })))
+  setDirections(recipeDataVar.content.map((value) => ({ value })));
+
+}, [recipeDataVar]);
     
 const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
   event.preventDefault();
   console.log(title);
   console.log(ingredients);
+  //TODO Edit recipe api call
   router.push("/main");
   alert('Recipe updated!')      
   };
 
+const handleDeleteRecipe = () => {
+  if(confirm("Confirm delete recipe?")){
+
+  }
+};
+
   
   return (
      <div>
-      
+      <DeleteButton onClick={handleDeleteRecipe}>Delete Recipe</DeleteButton>
      <form onSubmit={handleSubmit}>
       
        <StyledLabel>Title</StyledLabel>
@@ -162,6 +206,7 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
        required
        >
        </StyledInput>
+       
 
         <IngredientWrapper>
        <StyledLabel>Ingredients</StyledLabel>
@@ -173,10 +218,22 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
          <div key={index}>
            <StyledInput
              type="text"
-             value={ingredient.value}
+             value={ingredient.ingredient}
              onChange={(e) => handleChangeIngredient(index, e)}
              placeholder={`Ingredient ${index + 1}`}
            />
+            <StyledIngredientAmount
+             type="text"
+             value={ingredient.amount}
+             onChange={(e) => handleChangeIngredientAmount(index, e)}
+             placeholder={`Quantity (Ex. 2 Tbsp)`}
+           />
+           <StyledDropdown value={ingredient.unit} onChange={(e) => handleChangeIngredientUnit(index, e)}>
+          <option value="g">gram(s)</option>
+          <option value="Tbsp">Tablespoon(s)</option>
+          <option value="tbsp">Teaspoon(s)</option>
+          <option value="oz">Ounce(s)</option>
+          </StyledDropdown>
            <StyledDeleteButton type="button" onClick={() => handleDeleteIngredient(index)}>
              Remove
            </StyledDeleteButton>
@@ -255,7 +312,7 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
          + Add Tag
        </StyledAddButton>
        </IngredientWrapper>
-
+       <IngredientWrapper>
        <StyledLabel>Time</StyledLabel>
        <StyledDescription>How long does your recipe take to make from 
         start to finish in minutes
@@ -267,7 +324,8 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
        placeholder= '30 minutes, 240 mintues'
        >
        </StyledInput>
-
+       </IngredientWrapper>
+        <div>
        <StyledLabel>Servings</StyledLabel>
        <StyledDescription>How many servings does your recipe make
        </StyledDescription>
@@ -278,9 +336,18 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
        placeholder= '2 servings, 5 servings'
        >
        </StyledInput>
-
+       </div>
+       <IngredientWrapper>
+       <StyledLabel>Visibility</StyledLabel>
+       <StyledDescription>Can your recipe be viewed publicly?
+       </StyledDescription>
+       <StyledDropdown value={visibility} onChange={handleChangeVisibility}>
+          <option value="public">Public</option>
+          <option value="private">Private</option>
+        </StyledDropdown>
+       </IngredientWrapper>
        <div>
-       <StyledAddButton type="submit">Submit</StyledAddButton>
+       <StyledAddButton type="submit">Update</StyledAddButton>
        </div>
      </form>
      
@@ -321,7 +388,7 @@ const FormWrapper = styled.div`
   background: white;
   background-size: auto;
   height: 100%;
-  width: 60%;
+  width: auto;
   padding: 3%;
   margin-left: 2%;
   border-radius: 10px;
@@ -341,7 +408,7 @@ margin: 5px;
 margin-left: 0px;
 `
 const IngredientWrapper = styled.div`
-margin-top: 10%;
+margin-top: 5%;
 `
 const StyledDescription = styled.p`
 border: 0;
@@ -363,4 +430,29 @@ width: 250px;
 height: 50px;
 border-radius:  30px ;
 border: 1px solid #2D3566;
+`
+const StyledIngredientAmount = styled.input`
+background: #f5f7fa;
+width: 200px;
+height: 50px;
+border-radius: 10px;
+border: 1px solid #f5f7fa;
+margin: 5px;
+margin-left: 0px;
+`
+const StyledDropdown = styled.select`
+margin: 1vh;
+width: 100px;
+height: 30px;
+background: #f5f7fa;
+border-radius: 5px;
+`
+
+const DeleteButton = styled.button` 
+margin-left: 10vw;
+width: 5vw;
+height: 10vh;
+background: red;
+border-radius: 5px;
+font-size: 20px
 `
