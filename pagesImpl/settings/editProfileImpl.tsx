@@ -33,6 +33,29 @@ const ForgotForm = () => {
   const handleChangeVisibility = (e: any) => {
     setVisibility(e.target.value);
   };
+  
+  const updateVisibility = async (userId, visibilityStatus) => {
+    // Assuming the endpoint is '/api/user/visibility' and expects 'userId' and 'visibility'
+    const isVisible = visibilityStatus === 'public';
+
+    const response = await fetch('https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/user/setVisibility', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: userId, 
+        visible: isVisible, 
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update visibility');
+    }
+
+    const data = await response.json();
+    return data;
+  };
 
   const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
     event.preventDefault();
@@ -43,6 +66,14 @@ const ForgotForm = () => {
       dispatch(userDataAction.setPassword({password}))
       dispatch(userDataAction.setId({id}))
       dispatch(userDataAction.requestFlowUpdatePassword())
+      try {
+        const userId = 37; 
+        await updateVisibility(userId, visibility);
+        alert('Profile visibility updated successfully');
+      } catch (error) {
+        console.error('Error updating profile visibility:', error);
+        alert('Failed to update profile visibility');
+      }
 
   };
 
