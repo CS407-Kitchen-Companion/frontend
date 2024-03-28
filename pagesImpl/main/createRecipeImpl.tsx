@@ -114,7 +114,7 @@ const handleDeleteTag= (index: any) => {
 };
 
 //Visibility
-const [visibility, setVisibility] = useState('public');
+const [visible, setVisibility] = useState('public');
 
 const handleChangeVisibility = (e: any) => {
 
@@ -125,6 +125,14 @@ const handleChangeVisibility = (e: any) => {
     
 const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
   event.preventDefault();
+  
+  if(visible === 'public'){
+    const visibility = true
+    dispatch(recipeDataAction.setVisibility({visibility}))
+  } else {
+    const visibility = false
+    dispatch(recipeDataAction.setVisibility({visibility}))
+  }
   
   dispatch(recipeDataAction.setTitle({title}))
 
@@ -206,9 +214,7 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
            />
            <StyledDropdown value={ingredient.unit} onChange={(e) => handleChangeIngredientUnit(index, e)}>
           <option value="g">gram(s)</option>
-          <option value="Tbsp">Tablespoon(s)</option>
-          <option value="tbsp">Teaspoon(s)</option>
-          <option value="oz">Ounce(s)</option>
+          <option value="ml">mL(s)</option>
           </StyledDropdown>
            <StyledDeleteButton type="button" onClick={() => handleDeleteIngredient(index)}>
              Remove
@@ -320,8 +326,8 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
        <StyledLabel>Visibility</StyledLabel>
        <StyledDescription>Can your recipe be viewed publicly?
        </StyledDescription>
-        <StyledDropdown value={visibility} onChange={handleChangeVisibility}>
-          <option value="public">Public</option>
+        <StyledDropdown value={visible} onChange={handleChangeVisibility}>
+          <option value='public'>Public</option>
           <option value="private">Private</option>
         </StyledDropdown>
        

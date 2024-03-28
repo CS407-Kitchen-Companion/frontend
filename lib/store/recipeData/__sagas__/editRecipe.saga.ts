@@ -5,11 +5,12 @@ import { recipeDataAction, selectRecipeData, RecipeDataState, selectRecipeDataVa
 import { navActions } from '@lib/store/nav/nav.slice'
 
 
-function* flowCreateRecipeSaga() {
-  yield put(recipeDataAction.beginFlowCreateRecipe())
+function* flowEditRecipeSaga() {
+  yield put(recipeDataAction.beginFlowEditRecipe())
   
   const { 
-    recipeDataVar, visibility 
+    recipeDataVar, visibility, postID
+
   }: RecipeDataState = yield select(selectRecipeData)
   // noti that request user to check the form
   const { 
@@ -30,7 +31,7 @@ function* flowCreateRecipeSaga() {
     tags,
     appliances,
     ingredients })
-  const { data, error } = yield fetchEndpoint('createRecipe', {
+  const { data, error } = yield fetchEndpoint('editRecipe', {
     title,
     content,
     serves,
@@ -39,7 +40,8 @@ function* flowCreateRecipeSaga() {
     tags,
     appliances,
     ingredients,
-    visibility 
+    visibility,
+    postID
   })
   
   console.log(ingredients)
@@ -47,7 +49,7 @@ function* flowCreateRecipeSaga() {
   if (error) {
     // TODO popup
     console.log(error)
-    yield put(recipeDataAction.failureFlowCreateRecipe())
+    yield put(recipeDataAction.failureFlowEditRecipe())
     return
   }
 
@@ -56,12 +58,12 @@ function* flowCreateRecipeSaga() {
 
   // TODO success popup
   console.log(data)
-  yield put(navActions.push({ url: '/main' }))
-  yield put(recipeDataAction.successFlowCreateRecipe())
+  yield put(navActions.push({ url: `/viewpost/${postID}` }))
+  yield put(recipeDataAction.successFlowEditRecipe())
 }
 
 function* watchSubmitRegisterSaga() {
-  yield takeLeading(recipeDataAction.requestFlowCreateRecipe.type, flowCreateRecipeSaga)
+  yield takeLeading(recipeDataAction.requestFlowEditRecipe.type, flowEditRecipeSaga)
 }
-
 export default [watchSubmitRegisterSaga]
+

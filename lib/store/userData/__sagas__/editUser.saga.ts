@@ -9,8 +9,8 @@ import { isUndefined } from 'lodash'
 import Cookies from 'js-cookie';
 
 
-function* flowSubmitLoginSaga() {
-  yield put(userDataAction.beginFlowSubmitLogin())
+function* flowEditUserSaga() {
+  yield put(userDataAction.beginFlowEditUser())
   const { username, password }: UserDataState = yield select(selectUserData)
   // noti that request user to check the form
   if (
@@ -21,10 +21,10 @@ function* flowSubmitLoginSaga() {
     })
   ) {
     // TODO: popup
-    yield put(userDataAction.failureFlowSubmitLogin())
+    yield put(userDataAction.failureFlowEditUser())
     return
   }
-  const { data, error } = yield fetchEndpoint('submitLogin', {
+  const { data, error } = yield fetchEndpoint('editUser', {
     username,
     password
     
@@ -33,7 +33,7 @@ function* flowSubmitLoginSaga() {
   if (error ) {
     // TODO popup
     
-    yield put(userDataAction.failureFlowSubmitLogin())
+    yield put(userDataAction.failureFlowEditUser())
     return
   }
   if(data){
@@ -48,11 +48,8 @@ function* flowSubmitLoginSaga() {
     Cookies.set('id', id, { expires: 7, secure: true });
 
     yield put(navActions.push({ url: '/main' }))
-    yield put(userDataAction.successFlowSubmitLogin())
-  } else {
-    console.log("incorrect credentials")
-    yield put(userDataAction.failureFlowSubmitLogin())
-  }
+    yield put(userDataAction.successFlowEditUser())
+  } 
   
 
   // TODO success popup
@@ -60,7 +57,7 @@ function* flowSubmitLoginSaga() {
 }
 
 function* watchSubmitLoginSaga() {
-  yield takeLeading(userDataAction.requestFlowSubmitLogin.type, flowSubmitLoginSaga)
+  yield takeLeading(userDataAction.requestFlowEditUser.type, flowEditUserSaga)
 }
 
 export default [watchSubmitLoginSaga]

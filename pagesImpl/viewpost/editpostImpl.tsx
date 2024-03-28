@@ -77,6 +77,7 @@ const RecipeForm : React.FC<PostIdImplProps> = ({ postId }) => {
   const [time, setTime] = useState('');
   const [servings, setServings] = useState('');
   const router = useRouter();
+  const dispatch = useDispatch();
   
   //Ingredient handling
   const [ingrs, setIngrs] = useState([{ ingredient: '', amount: 0, unit: 'g' }]);
@@ -155,7 +156,7 @@ const handleDeleteTag= (index: any) => {
 };
     
 //Visibility
-const [visibility, setVisibility] = useState('public');
+const [visibile, setVisibility] = useState('public');
 
 const handleChangeVisibility = (e: any) => {
 
@@ -177,16 +178,56 @@ useEffect(() => {
     
 const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
   event.preventDefault();
-  console.log(title);
-  console.log(ingredients);
-  //TODO Edit recipe api call
-  router.push("/main");
+  if(visibile === 'public'){
+    const visibility = true
+    dispatch(recipeDataAction.setVisibility({visibility}))
+  } else {
+    const visibility = false
+    dispatch(recipeDataAction.setVisibility({visibility}))
+  }
+  
+  dispatch(recipeDataAction.setTitle({title}))
+
+  let content: Array<string> = ['']
+  directions.forEach((element: any, index: number) => {
+    content[index] = element.value
+  });
+  dispatch(recipeDataAction.setContent({content}))
+  
+  var serving = parseInt(servings)
+  dispatch(recipeDataAction.setServings({serving}))
+
+  var timer = parseInt(time)
+  dispatch(recipeDataAction.setTime({timer}))
+
+  let tag: Array<string> = ['']
+  tags.forEach((element: any, index: number) => {
+    tag[index] = element.value
+  });
+  dispatch(recipeDataAction.setTags({tag}))
+
+  let appls: Array<string> = ['']
+  appliances.forEach((element: any, index: number) => {
+    appls[index] = element.value
+  });
+  dispatch(recipeDataAction.setAppls({appls}))
+
+  console.log(ingredients)
+  ingredients.forEach((element: any, index: number) => {
+    const newIngredients = [...ingrs];
+    newIngredients[index].ingredient = (element.ingredient);
+    newIngredients[index].amount = parseFloat(element.amount);
+    newIngredients[index].unit = (element.unit);
+    setIngrs(newIngredients);
+  });
+  console.log(ingrs)
+  dispatch(recipeDataAction.setIngr({ingrs}))
   alert('Recipe updated!')      
   };
 
 const handleDeleteRecipe = () => {
   if(confirm("Confirm delete recipe?")){
-
+    dispatch(recipeDataAction.requestFlowDeleteRecipe())
   }
 };
 
@@ -230,9 +271,7 @@ const handleDeleteRecipe = () => {
            />
            <StyledDropdown value={ingredient.unit} onChange={(e) => handleChangeIngredientUnit(index, e)}>
           <option value="g">gram(s)</option>
-          <option value="Tbsp">Tablespoon(s)</option>
-          <option value="tbsp">Teaspoon(s)</option>
-          <option value="oz">Ounce(s)</option>
+          <option value="ml">mL(s)</option>
           </StyledDropdown>
            <StyledDeleteButton type="button" onClick={() => handleDeleteIngredient(index)}>
              Remove
@@ -341,7 +380,7 @@ const handleDeleteRecipe = () => {
        <StyledLabel>Visibility</StyledLabel>
        <StyledDescription>Can your recipe be viewed publicly?
        </StyledDescription>
-       <StyledDropdown value={visibility} onChange={handleChangeVisibility}>
+       <StyledDropdown value={visibile} onChange={handleChangeVisibility}>
           <option value="public">Public</option>
           <option value="private">Private</option>
         </StyledDropdown>

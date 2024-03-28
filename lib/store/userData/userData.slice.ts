@@ -5,7 +5,7 @@ export interface IName {
   name: string
 }
 export interface IVisibility {
-  visibility: string
+  visibility: boolean
 }
 export interface IEmail {
   email: string
@@ -48,7 +48,7 @@ export interface UserDataState {
   bio: string,
   profilePicture: string,
   isSubmitted: boolean,
-  visibility: string
+  visibility: boolean
 }
 
 const initialState = (): UserDataState => {
@@ -63,7 +63,7 @@ const initialState = (): UserDataState => {
     bio: '',
     profilePicture: '',
     isSubmitted: false,
-    visibility: ''
+    visibility: true
   }
 }
 
@@ -94,6 +94,18 @@ const userDataSlice = createSlice({
     beginFlowGetUserById: () => {},
     successFlowGetUserById: () => {},
     failureFlowGetUserById: () => {},
+
+     //get user flow
+     requestFlowDeleteUser: () => {},
+     beginFlowDeleteUser: () => {},
+     successFlowDeleteUser: () => {},
+     failureFlowDeleteUser: () => {},
+
+     //get user flow
+     requestFlowEditUser: () => {},
+     beginFlowEditUser: () => {},
+     successFlowEditUser: () => {},
+     failureFlowEditUser: () => {},
 
     // setter
     setName: (state, action: PayloadAction<IName>) => {

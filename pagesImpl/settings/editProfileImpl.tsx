@@ -21,10 +21,10 @@ export default function EditProfileImpl() {
 
 
 const ForgotForm = () => {
-  const [oldpwd, setOldPwd] = useState('');
-  const [password, setPass] = useState('');
-  const[newPwd, setNewPwd]= useState('');
-  const [id, setId] = useState(30);
+  const [bio, setBio] = useState('');
+  const [pfp, setPfp] = useState('');
+  const[username, setUsername]= useState('');
+  const [id, setId] = useState(0);
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -33,8 +33,13 @@ const ForgotForm = () => {
   const handleChangeVisibility = (e: any) => {
     setVisibility(e.target.value);
   };
-  
-  const updateVisibility = async (userId, visibilityStatus) => {
+  const handleChangeBio = (e: any) => {
+    setBio(e.target.value);
+  };
+  const handleChangePfp = (e: any) => {
+    setPfp(e.target.value);
+  };
+  const updateVisibility = async (userId : any, visibilityStatus: string) => {
     // Assuming the endpoint is '/api/user/visibility' and expects 'userId' and 'visibility'
     const isVisible = visibilityStatus === 'public';
 
@@ -60,22 +65,34 @@ const ForgotForm = () => {
   const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
     event.preventDefault();
       console.log(id)
-      setPass(newPwd)
-      dispatch(userDataAction.setOldPwd({oldpwd}))
-      dispatch(userDataAction.setNewPwd({newPwd}))
-      dispatch(userDataAction.setPassword({password}))
-      dispatch(userDataAction.setId({id}))
-      dispatch(userDataAction.requestFlowUpdatePassword())
+      if(visibility === 'public'){
+        const visibility = true
+        dispatch(userDataAction.setVisibility({visibility}))
+      } else {
+        const visibility = false
+        dispatch(userDataAction.setVisibility({visibility}))
+      }
+      dispatch(userDataAction.setProfilePicture({profilePicture: pfp}))
+      dispatch(userDataAction.setBio({bio}))
+      
+      
+      //dispatch(userDataAction.requestFlow())
+     
       try {
         const userId = 37; 
         await updateVisibility(userId, visibility);
-        alert('Profile visibility updated successfully');
+        //alert('Profile visibility updated successfully');
       } catch (error) {
         console.error('Error updating profile visibility:', error);
         alert('Failed to update profile visibility');
       }
 
   };
+  const handleDeleteRecipe = () => {
+    if(confirm("Confirm delete account?")){
+      dispatch(userDataAction.requestFlowDeleteUser())
+    }
+  }
 
   return (
     <FormWrapper>
@@ -85,7 +102,7 @@ const ForgotForm = () => {
         }
       }>Edit Profile</h1>
       <InputWrapper>
-      <DeleteButton>
+      <DeleteButton onClick={handleDeleteRecipe}>
         Delete Account
       </DeleteButton>
       </InputWrapper>
@@ -95,12 +112,21 @@ const ForgotForm = () => {
 
       <InputWrapper>
       <StyledLabel>Profile Pic: </StyledLabel>
-      <StyledInput></StyledInput>
+      <StyledInput
+      type="text"
+      value={pfp}
+      onChange={handleChangePfp}
+      ></StyledInput>
       </InputWrapper>
 
       <InputWrapper>
-      <StyledLabel>Profile Bio: </StyledLabel>
-      <StyledInput></StyledInput>
+      <StyledLabel
+      >Profile Bio: </StyledLabel>
+      <StyledInput
+      type="text"
+      value={bio}
+      onChange={handleChangeBio}
+      ></StyledInput>
       </InputWrapper>
       <InputWrapper>
       <StyledLabel>Profile Visibility: </StyledLabel>

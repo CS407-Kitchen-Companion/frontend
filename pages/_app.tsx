@@ -4,9 +4,11 @@ import { AppContext, AppProps } from 'next/app'
 import Head from 'next/head'
 import { Provider, useDispatch } from 'react-redux'
 import { wrapper } from '@lib/store/store'
+import { checkCookie } from '@lib/utils/cookieHelper'
 
 const MyApp: FC<AppProps> = ({ Component, ...rest }) => {
   const { store, props } = wrapper.useWrappedStore(rest)
+  
   return (
     <Provider store={store}>
       <AppShell Component={Component} {...props} />
@@ -16,7 +18,7 @@ const MyApp: FC<AppProps> = ({ Component, ...rest }) => {
 
 const AppShell: FC<AppProps> = ({ Component, ...rest }) => {
   const router = useRouter()
-
+  const check = checkCookie()
   useEffect(() => {
     const handleRouteChange = (url: any) => {
       window.scrollTo(0, 0)

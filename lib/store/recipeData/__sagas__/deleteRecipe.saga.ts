@@ -5,49 +5,25 @@ import { recipeDataAction, selectRecipeData, RecipeDataState, selectRecipeDataVa
 import { navActions } from '@lib/store/nav/nav.slice'
 
 
-function* flowCreateRecipeSaga() {
-  yield put(recipeDataAction.beginFlowCreateRecipe())
+function* flowDeleteRecipeSaga() {
+  yield put(recipeDataAction.beginFlowDeleteRecipe())
   
   const { 
-    recipeDataVar, visibility 
+    postID 
   }: RecipeDataState = yield select(selectRecipeData)
   // noti that request user to check the form
-  const { 
-    title,
-    content,
-    serves,
-    calories,
-    time,
-    tags,
-    appliances,
-    ingredients 
-  } = recipeDataVar
-  console.log({title,
-    content,
-    serves,
-    time,
-    calories,
-    tags,
-    appliances,
-    ingredients })
-  const { data, error } = yield fetchEndpoint('createRecipe', {
-    title,
-    content,
-    serves,
-    time,
-    calories,
-    tags,
-    appliances,
-    ingredients,
-    visibility 
+ 
+  
+  const { data, error } = yield fetchEndpoint('deleteRecipe', {
+    postID
   })
   
-  console.log(ingredients)
+  console.log(postID)
   
   if (error) {
     // TODO popup
     console.log(error)
-    yield put(recipeDataAction.failureFlowCreateRecipe())
+    yield put(recipeDataAction.failureFlowDeleteRecipe())
     return
   }
 
@@ -56,12 +32,13 @@ function* flowCreateRecipeSaga() {
 
   // TODO success popup
   console.log(data)
+  yield put(recipeDataAction.resetRecipe())
   yield put(navActions.push({ url: '/main' }))
-  yield put(recipeDataAction.successFlowCreateRecipe())
+  yield put(recipeDataAction.successFlowDeleteRecipe())
 }
 
 function* watchSubmitRegisterSaga() {
-  yield takeLeading(recipeDataAction.requestFlowCreateRecipe.type, flowCreateRecipeSaga)
+  yield takeLeading(recipeDataAction.requestFlowDeleteRecipe.type, flowDeleteRecipeSaga)
 }
 
 export default [watchSubmitRegisterSaga]
