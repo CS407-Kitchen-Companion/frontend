@@ -1,14 +1,23 @@
 import styled from '@emotion/styled'
 import { useRouter } from"next/navigation";
-import { FormEvent } from 'react'
+import { FormEvent, useEffect } from 'react'
 import React, { useState } from 'react';
 import { PageImplView } from '@pagesImpl/__components__/PageImplView'
 import { useDispatch, useSelector } from 'react-redux'
 import { Header } from '@pagesImpl/__components__/Header'
-import { userDataAction, selectPassword } from '@lib/store/userData/userData.slice'
+import { userDataAction, selectUserName, selectProfilePicture, selectBio, selectId, selectEditing } from '@lib/store/userData/userData.slice'
 import Head from 'next/head';
+import { useGetSearchedResultsQuery } from '@lib/store/api/api.slice';
 
 export default function EditProfileImpl() {
+  const dispatch = useDispatch();
+  
+  
+  useEffect(() => {
+     dispatch(userDataAction.requestFlowGetProfile())
+    
+  }, [dispatch]);
+
   return (
     <PageImplView>
         <Header/>
@@ -21,11 +30,18 @@ export default function EditProfileImpl() {
 
 
 const ForgotForm = () => {
+  const getUsername = useSelector(selectUserName)
+  const getPfp = useSelector(selectProfilePicture)
+  const getBio = useSelector(selectBio)
+  const getId = useSelector(selectId)
+ 
+  
+
   const [bio, setBio] = useState('');
   const [pfp, setPfp] = useState('');
   const[username, setUsername]= useState('');
+
   const [id, setId] = useState(0);
-  const router = useRouter();
   const dispatch = useDispatch();
 
   const [visibility, setVisibility] = useState('public');
@@ -34,9 +50,11 @@ const ForgotForm = () => {
     setVisibility(e.target.value);
   };
   const handleChangeBio = (e: any) => {
-    setBio(e.target.value);
+    e.preventDefault()
+    setBio(e.target.value)
   };
   const handleChangePfp = (e: any) => {
+    e.preventDefault()
     setPfp(e.target.value);
   };
   const updateVisibility = async (userId : any, visibilityStatus: string) => {
@@ -65,6 +83,7 @@ const ForgotForm = () => {
   const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
     event.preventDefault();
       console.log(id)
+      //dispatch(userDataAction.setEditing({editing: true}))
       if(visibility === 'public'){
         const visibility = true
         dispatch(userDataAction.setVisibility({visibility}))
@@ -75,8 +94,7 @@ const ForgotForm = () => {
       dispatch(userDataAction.setProfilePicture({profilePicture: pfp}))
       dispatch(userDataAction.setBio({bio}))
       
-      
-      //dispatch(userDataAction.requestFlow())
+      dispatch(userDataAction.requestFlowEditUser())
      
       try {
         const userId = 37; 
@@ -85,8 +103,8 @@ const ForgotForm = () => {
       } catch (error) {
         console.error('Error updating profile visibility:', error);
         alert('Failed to update profile visibility');
-      }
-
+      } 
+      alert('Profile updated!')
   };
   const handleDeleteRecipe = () => {
     if(confirm("Confirm delete account?")){
@@ -94,6 +112,17 @@ const ForgotForm = () => {
     }
   }
 
+  useEffect(() => {
+    
+    setBio(getBio)
+    setPfp(getPfp)
+    setUsername(getUsername)
+    setId(getId)
+    
+
+    
+  }, [getBio, getPfp, getUsername, getId]);
+  
   return (
     <FormWrapper>
         <h1 style={
@@ -108,7 +137,7 @@ const ForgotForm = () => {
       </InputWrapper>
     <form onSubmit={handleSubmit}>
       
-      <StyledLabel>Username: </StyledLabel>
+      <StyledLabel>Username: {username}</StyledLabel>
 
       <InputWrapper>
       <StyledLabel>Profile Pic: </StyledLabel>
@@ -117,6 +146,7 @@ const ForgotForm = () => {
       value={pfp}
       onChange={handleChangePfp}
       ></StyledInput>
+      <ProfilePic src={pfp}></ProfilePic>
       </InputWrapper>
 
       <InputWrapper>
@@ -200,6 +230,15 @@ height: 8vh;
 background: red;
 border-radius: 5px;
 font-size: 20px
+`
+
+const ProfilePic = styled.img`
+width: 5vw;
+height: 5vw;
+border: 2px solid #2D3566;
+border-radius: 50%;
+background: #2D3566;
+margin: 0 0 0 5vh;
 `
 /*
 <div>

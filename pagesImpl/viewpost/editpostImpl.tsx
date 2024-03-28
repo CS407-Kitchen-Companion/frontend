@@ -222,6 +222,7 @@ const handleSubmit =  async (event: FormEvent<HTMLFormElement>)  => {
   });
   console.log(ingrs)
   dispatch(recipeDataAction.setIngr({ingrs}))
+  dispatch(recipeDataAction.requestFlowEditRecipe())
   alert('Recipe updated!')      
   };
 

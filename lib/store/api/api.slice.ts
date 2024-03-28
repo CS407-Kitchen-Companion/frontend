@@ -62,9 +62,9 @@ export const apiSlice = createApi({
         }),
       }),
       editRecipe: builder.mutation({
-        query: ( {postID,...body}) => ({
+        query: ( {...body}) => ({
           body: JSON.stringify(body),
-          url: `recipe/${postID}/edit`,
+          url: `recipe/edit`,
           method: METHOD_TYPE,
         }),
       }),
@@ -94,6 +94,15 @@ export const apiSlice = createApi({
       }),
       verifyEmail: builder.query({
         query: ({ id, token }) => `user/verify?uid=${id}&token=${token}`,
+      }),
+      getUsernameById: builder.query({
+        query: ({ id }) => `user/${id}/username`,
+      }),
+      getUserPic: builder.query({
+        query: ({ id }) => `user/${id}/photo`,
+      }),
+      getUserBio: builder.query({
+        query: ({ id }) => `user/${id}/details`,
       }),
       
       //DELETE

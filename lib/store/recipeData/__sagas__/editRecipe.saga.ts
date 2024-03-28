@@ -41,10 +41,10 @@ function* flowEditRecipeSaga() {
     appliances,
     ingredients,
     visibility,
-    postID
+    id: postID
   })
   
-  console.log(ingredients)
+  //console.log(ingredients)
   
   if (error) {
     // TODO popup

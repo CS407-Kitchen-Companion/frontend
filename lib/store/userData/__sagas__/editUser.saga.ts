@@ -11,46 +11,30 @@ import Cookies from 'js-cookie';
 
 function* flowEditUserSaga() {
   yield put(userDataAction.beginFlowEditUser())
-  const { username, password }: UserDataState = yield select(selectUserData)
+  const { id, profilePicture, bio }: UserDataState = yield select(selectUserData)
   // noti that request user to check the form
-  if (
-    !checkLength({
-      string: username,
-      length: 1,
-      comparisonType: ComparisonType.BIGGER,
-    })
-  ) {
-    // TODO: popup
-    yield put(userDataAction.failureFlowEditUser())
-    return
-  }
+  console.log('id: ' + id + 'pfp: '+ profilePicture + 'bio: '+ bio)
   const { data, error } = yield fetchEndpoint('editUser', {
-    username,
-    password
+    id,
+    photo: profilePicture,
+    details: bio
     
   })
-
+  console.log('id: ' + id + 'pfp: '+ profilePicture + 'bio: '+ bio)
   if (error ) {
     // TODO popup
     
     yield put(userDataAction.failureFlowEditUser())
     return
   }
+  
   if(data){
     
-    const {token} =  data.data
-    const id = data.response
-    console.log(token)
-    console.log(data.response)
-    yield put(userDataAction.setToken({token}))
-    yield put(userDataAction.setId({id}))
-    Cookies.set('token', token, { expires: 7, secure: true });
-    Cookies.set('id', id, { expires: 7, secure: true });
-
-    yield put(navActions.push({ url: '/main' }))
+    yield put(userDataAction.setBio({bio}))
+    yield put(userDataAction.setProfilePicture({profilePicture}))
     yield put(userDataAction.successFlowEditUser())
   } 
-  
+ // yield put(userDataAction.setEditing({editing: false}))
 
   // TODO success popup
  

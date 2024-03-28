@@ -37,6 +37,10 @@ export interface IIsSubmitted {
   isSubmitted: boolean
 }
 
+export interface IEditing {
+  editing: boolean
+}
+
 export interface UserDataState {
   username: string,
   email: string,
@@ -48,7 +52,8 @@ export interface UserDataState {
   bio: string,
   profilePicture: string,
   isSubmitted: boolean,
-  visibility: boolean
+  visibility: boolean,
+  editing: boolean
 }
 
 const initialState = (): UserDataState => {
@@ -63,7 +68,8 @@ const initialState = (): UserDataState => {
     bio: '',
     profilePicture: '',
     isSubmitted: false,
-    visibility: true
+    visibility: true,
+    editing: false
   }
 }
 
@@ -95,17 +101,23 @@ const userDataSlice = createSlice({
     successFlowGetUserById: () => {},
     failureFlowGetUserById: () => {},
 
-     //get user flow
+     //delete user flow
      requestFlowDeleteUser: () => {},
      beginFlowDeleteUser: () => {},
      successFlowDeleteUser: () => {},
      failureFlowDeleteUser: () => {},
 
-     //get user flow
+     //edit user flow
      requestFlowEditUser: () => {},
      beginFlowEditUser: () => {},
      successFlowEditUser: () => {},
      failureFlowEditUser: () => {},
+
+     //get profile flow
+     requestFlowGetProfile: () => {},
+     beginFlowGetProfile: () => {},
+     successFlowGetProfile: () => {},
+     failureFlowGetProfile: () => {},
 
     // setter
     setName: (state, action: PayloadAction<IName>) => {
@@ -124,10 +136,14 @@ const userDataSlice = createSlice({
       state.newPassword = action.payload.newPwd
     },
     setToken: (state, action: PayloadAction<IToken>) => {
+      if(!(state.token === action.payload.token)){
       state.token = action.payload.token
+      }
     },
     setId: (state, action: PayloadAction<IId>) => {
+      if(!(state.id === action.payload.id)){
       state.id = action.payload.id
+      }
     },
     setBio: (state, action: PayloadAction<IBio>) => {
       state.bio = action.payload.bio
@@ -144,6 +160,9 @@ const userDataSlice = createSlice({
     setVisibility: (state, action: PayloadAction<IVisibility>) => {
       state.visibility = action.payload.visibility
     },
+    setEditing: (state, action: PayloadAction<IEditing>)=> {
+      state.editing = action.payload.editing
+    }
 
   },
 })
@@ -165,6 +184,7 @@ export const selectProfilePicture= createSelector(userData, state => state.profi
 export const selectIsUsernameValid = createSelector(userData, state => state.username !== "")
 export const selectIsSubmitted = createSelector(userData, state => state.isSubmitted)
 export const selectUserVisibility = createSelector(userData, state => state.visibility)
+export const selectEditing = createSelector(userData, state => state.editing)
 
 
 // root reducer
