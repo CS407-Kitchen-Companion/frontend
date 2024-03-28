@@ -15,10 +15,7 @@ const MainImplWithNoSSR = dynamic(() => import('@pagesImpl/main/mainImpl'), {
 })
 
 export default function Main() {
-  if(!checkCookie()){
-    const dispatch = useDispatch()
-    dispatch(navActions.push({url: '/login'}))
-  }
+
   return (
     <>
       <Head>
